@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "enhanced-rite-470210-c9",
+  "private_key_id": "4092f029b2e2204054a4d67aac9f5d943ebc87ed",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCvlrKBjJ5qfbit\nH+GJjqhEBa6OQMp+UqzF0CKvd4BTh/uymhFeAXImFsjprpY1NeBdBOpOIusOWtPp\naFNRyYiUPeCgJdzJS5qgiVzOiKzvtBBTgvZEL6vK4lwZwYnaha+Lu5xr3eawEkiT\nYWMdc2uGNefrKcDT5JCZLGC2ceitSC/0MnNw27N1THQBtl0BHu5JzPCEuTwzwXeR\n5kmlBORR7eQfbqaX6B+JmK9JWmmRryuv/NEHrI2sPRJ7a4R3KJPZooP/fu20Thm5\nsq09++2bvijENIdFh2+7r07nHDUfe/j9anRa3o3L9yPBy7yy5NBTiM33ypryZIbY\n3888qjxPAgMBAAECggEAB1jWY2wHWuM19FtfpSyfcDrqD6wmfzMTHA5j8bkwIg6i\nWZDdM+JDv0HTPLx7nKcUrHaVi4a4Xdyc7A1brEjFSHKmFWsZTGoTFOYfEaWPrS34\n1lbc2l9mRN/o1xR7IdGOnxCFy/TKf6RAx03tYo5xcIv6vRDrHRvHAyCac6WSYHP/\nIl7Srxu7fGiI0dhNHrIDDBz13qEC0g17YwiTLZWf8pjbolkx32sCbtnJdUTSfRZp\n9qduVnay3ZQRlys0IUHjlLuB0FJPABnf5LZPjD9IKAh0g/YIOVcVHcq/34BtI+UN\nI1mBzqeA4Eu8GLw9Br0H+Y/R+LcZqUXi5XkucV7FdQKBgQDwNvy9zXpOz76F6xEr\n6h4vKBqnAsI1gy5MNXOqX/VOGQnGo0iQenRnvzwKmM4Ws95GBYk8NZpdAGi0GZh8\nbEz9msUNEfZXx1zkyNZxndbOG4172ppbEE7jZ/82gWI6LZg4cfz626udifC26FLl\n5mRXDGykM3Vxz7oZ6DWPMzpV0wKBgQC7IIl9oalC3ZsLj1lUob/y4qroMk+NNWrz\nx60rYY15KwTw9/XeJsIu/dA8I9KEIF4LopKkiLr/u99vfZp4ZHNIwY3eRlYVcaGz\ntz9rJruB3iRJuvyjdFVwYPTzCdtlFG0x0gfXwdoueKJbwvm5j5GhldBy7yEbT4gk\nRrKsW4DGFQKBgQCx6zhl6LRnfU2TaRlt2lkC+oRLISrxcbkv7wM9tRc/AiKQgs4z\nXM+tLCJvguBaRl0ipeUQuG8d5Tin9LFRrvGTgTfkR2Kbf2lZdzwGKS85t4SisLZV\nLo4Pty57k3dKugyd+iezMlM5OzsUbp0/9NZq9yPcttSNOJuRpsFM0FerywKBgBKS\n2zLOHgfWCTKvitVcrLnGB+K+Q6kneTMzSZv5tdomC/qDEjN3s2SIquedQqL8t3j+\nLQIJ1E3X7wiY9gEnL040cAl0/8xnF/7HnJLdKFVuoDl1RuhOfsCFzypkexNgYKpG\nR6MByc89CBiFlNX3SyQ3w5X06FtWnJPFNKzo9DI1AoGBAIaRbKPEFGoQ4VOMWOm9\nNmhH+piyPprBJ8eXHkQOjRWcBrZSRa3F88xdhqfnEKwfSE47TCBIADJB7EPQQBRL\nKm5KzG7SC2ZXNW1cQjwrYsdFgPSq4ye5BsahkBzA62/H7YFVajG3NSZHTrKuX1m7\nm1jdyuwjjyUs6N9sf5uMGFJV\n-----END PRIVATE KEY-----\n",
+  "client_email": "podcast-728@enhanced-rite-470210-c9.iam.gserviceaccount.com",
+  "client_id": "117500213614045296488",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/podcast-728%40enhanced-rite-470210-c9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

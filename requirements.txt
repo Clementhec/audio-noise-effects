@@ -1,2 +1,13 @@
 google-cloud-speech>=2.0.0
 grpcio==1.51.3
+pandas
+openai
+tiktoken
+textwrap
+typing
+matplotlib
+plotly
+scipy
+sklearn
+numpy
+tenacity

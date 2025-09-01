@@ -80,7 +80,5 @@ if __name__ == "__main__":
         exit(1)
 
     result = transcribe_audio(args.audio_file, args.lang)
-    print("\n--- Résultat par segment (Google) ---\n")
-    print(json.dumps(result["results"], indent=2, ensure_ascii=False))
-    print("\n--- Timings par mot ---\n")
-    print(json.dumps(result["words_timings"], indent=2, ensure_ascii=False))
+    #print(json.dumps(result["results"], indent=2, ensure_ascii=False))
+    #print(json.dumps(result["words_timings"], indent=2, ensure_ascii=False))

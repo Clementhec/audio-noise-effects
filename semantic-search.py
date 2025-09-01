@@ -28,5 +28,5 @@ def search_reviews(df, product_description, n=3, pprint=True):
     return results
 
 
-results = search_reviews(df, "Mount Fuji is a very tall mountain.", n=3)
+results = search_reviews(df, "La plupart des îles sont montagneuses, parfois volcaniques.", n=3)
 print(results)

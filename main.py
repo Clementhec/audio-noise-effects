@@ -118,21 +118,19 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
     print()
 
     try:
-        from speech_to_text.stt_elevenlabs import transcribe_audio_elevenlabs
-        from io import BytesIO
-
-        # Read audio file
-        with open(audio_path, 'rb') as f:
-            audio_data = BytesIO(f.read())
+        from speech_to_text import transcribe_audio_file
 
         print("Running STT transcription...")
-        result = transcribe_audio_elevenlabs(
-            audio_source=audio_data,
-            save_to_json_file=True
+        result = transcribe_audio_file(
+            audio_file_path=audio_path,
+            output_dir="speech_to_text/output",
+            language_code='en'
         )
 
-        transcription_path = Path("speech_to_text/output/full_transcription.json")
-        word_timing_path = Path("speech_to_text/output/word_timing.json")
+        # Get output file paths from result
+        output_files = result.get('output_files', {})
+        transcription_path = Path(output_files.get('transcription', 'speech_to_text/output/full_transcription.json'))
+        word_timing_path = Path(output_files.get('word_timing', 'speech_to_text/output/word_timing.json'))
 
         print()
         print(f"✓ STT processing complete!")
@@ -149,6 +147,9 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
         print()
         print("Install required packages:")
         print("  pip install elevenlabs python-dotenv requests")
+        raise
+    except FileNotFoundError as e:
+        print(f"✗ Error: {e}")
         raise
     except Exception as e:
         print(f"✗ Error during STT processing: {e}")
@@ -178,14 +179,12 @@ def run_embeddings_step(
     print(f"Word timing file: {word_timing_path}")
     print()
 
-    # Import and run process_stt_embeddings
+    # Import required modules
     import json
     import pandas as pd
     import numpy as np
-
-    sys.path.insert(0, str(project_root / "text-processing"))
-    from speech_segmenter import SpeechSegmenter
-    from utils.embeddings_utils import get_embeddings
+    from text_processing import SpeechSegmenter
+    from utils import get_embeddings
 
     def parse_time_string(time_str: str) -> float:
         """Convert time string from STT format to float seconds."""
@@ -279,15 +278,16 @@ def run_embeddings_step(
     return output_path
 
 
-def run_semantic_matching_step(embeddings_path: Path) -> Path:
+def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
     """
     Step 4: Match speech embeddings with sound effects.
 
     Args:
         embeddings_path: Path to speech embeddings CSV
+        top_k: Number of top similar sounds to find for each segment
 
     Returns:
-        Path to generated timeline CSV
+        Path to generated similarity results JSON
     """
     print("=" * 70)
     print("STEP 4: Semantic Matching with Sound Effects")
@@ -299,7 +299,7 @@ def run_semantic_matching_step(embeddings_path: Path) -> Path:
     if not sound_embeddings_path.exists():
         print(f"⚠ Sound embeddings not found: {sound_embeddings_path}")
         print("  Please generate sound embeddings first.")
-        print("  Run: uv run python generate_sound_embeddings.py")
+        print("  Run: uv run python utils/sound_embedding/generate_embeddings.py")
         print()
         return None
 
@@ -307,18 +307,77 @@ def run_semantic_matching_step(embeddings_path: Path) -> Path:
     print(f"Sound embeddings: {sound_embeddings_path}")
     print()
 
-    # Import semantic matcher
-    print("Running semantic matching...")
-    print("Note: Run this command manually with custom parameters if needed:")
-    print(f"  uv run python semantic_matcher.py \\")
-    print(f"    {embeddings_path} \\")
-    print(f"    {sound_embeddings_path} \\")
-    print(f"    --output data/video_timeline.csv")
-    print()
+    try:
+        import pandas as pd
+        from ast import literal_eval
+        from similarity import find_similar_sounds
 
-    # For now, just return the expected output path
-    output_path = Path("data/video_timeline.csv")
-    return output_path
+        # Load speech embeddings
+        print("Loading speech embeddings...")
+        df_speech = pd.read_csv(embeddings_path)
+
+        # Convert embeddings from string to list/array
+        if 'embedding' in df_speech.columns:
+            if isinstance(df_speech['embedding'].iloc[0], str):
+                df_speech['embedding'] = df_speech['embedding'].apply(literal_eval)
+
+        print(f"  Loaded {len(df_speech)} speech segments")
+        print()
+
+        # Load sound embeddings
+        print("Loading sound embeddings...")
+        df_sounds = pd.read_csv(sound_embeddings_path)
+
+        # Convert embeddings from string to list/array
+        if 'embedding' in df_sounds.columns:
+            if isinstance(df_sounds['embedding'].iloc[0], str):
+                df_sounds['embedding'] = df_sounds['embedding'].apply(literal_eval)
+
+        print(f"  Loaded {len(df_sounds)} sound effects")
+        print()
+
+        # Run similarity matching
+        print(f"Finding top {top_k} similar sounds for each speech segment...")
+        output_path = Path("output/video_similarity_matches.json")
+
+        results = find_similar_sounds(
+            df_speech=df_speech,
+            df_sounds=df_sounds,
+            top_k=top_k,
+            save_to_json_file=True,
+            output_path=str(output_path)
+        )
+
+        print()
+        print(f"✓ Similarity matching complete!")
+        print(f"  Matched {len(results)} speech segments")
+        print(f"  Results saved to: {output_path}")
+        print()
+
+        # Display sample results
+        if results:
+            print("Sample matches:")
+            print("-" * 70)
+            for i, result in enumerate(results[:3]):  # Show first 3
+                print(f"\nSegment {result['speech_index']}: \"{result['speech_text'][:60]}...\"")
+                top_match = result['top_matches'][0]
+                print(f"  Best match: {top_match['sound_title']}")
+                print(f"  Similarity: {top_match['similarity']:.4f}")
+                print(f"  Description: {top_match['sound_description'][:80]}...")
+
+            if len(results) > 3:
+                print(f"\n... and {len(results) - 3} more segments")
+
+        print()
+        return output_path
+
+    except ImportError as e:
+        print(f"✗ Error: Missing dependencies")
+        print(f"  {e}")
+        raise
+    except Exception as e:
+        print(f"✗ Error during similarity matching: {e}")
+        raise
 
 
 def main():
@@ -334,8 +393,14 @@ Examples:
   # Extract audio and run STT
   python main.py video.mp4 --run-stt
 
-  # Run full pipeline (extract + STT + embeddings)
+  # Extract + STT + embeddings
+  python main.py video.mp4 --run-stt --run-embeddings
+
+  # Run full pipeline (extract + STT + embeddings + matching)
   python main.py video.mp4 --full-pipeline
+
+  # Full pipeline with top 10 sound matches per segment
+  python main.py video.mp4 --full-pipeline --top-k 10
 
   # Custom sample rate
   python main.py video.mp4 --sample-rate 44100 --channels 2
@@ -385,16 +450,34 @@ Examples:
         help="Output directory for audio file (default: speech_to_text/input)"
     )
 
+    parser.add_argument(
+        "--run-matching",
+        action="store_true",
+        help="Run similarity matching with sound effects (requires --run-embeddings)"
+    )
+
+    parser.add_argument(
+        "--top-k",
+        type=int,
+        default=5,
+        help="Number of top similar sounds to find for each segment (default: 5)"
+    )
+
     args = parser.parse_args()
 
     # Full pipeline enables all steps
     if args.full_pipeline:
         args.run_stt = True
         args.run_embeddings = True
+        args.run_matching = True
 
     # Validate dependencies
     if args.run_embeddings and not args.run_stt:
         print("Error: --run-embeddings requires --run-stt")
+        sys.exit(1)
+
+    if args.run_matching and not args.run_embeddings:
+        print("Error: --run-matching requires --run-embeddings")
         sys.exit(1)
 
     print()
@@ -432,8 +515,12 @@ Examples:
                     word_timing_path
                 )
 
-                # Step 4: Semantic matching info
-                timeline_path = run_semantic_matching_step(embeddings_path)
+                # Step 4: Semantic matching (optional)
+                if args.run_matching:
+                    similarity_results_path = run_semantic_matching_step(
+                        embeddings_path,
+                        top_k=args.top_k
+                    )
 
         # Final summary
         print("=" * 70)
@@ -450,25 +537,35 @@ Examples:
         if args.run_embeddings:
             print(f"  ✓ Embeddings: data/video_speech_embeddings.csv")
 
+        if args.run_matching:
+            print(f"  ✓ Similarity matches: output/video_similarity_matches.json")
+
         print()
 
         if not args.run_stt:
             print("Next steps:")
             print("  1. Run STT processing:")
-            print(f"     python main.py {args.video} --run-stt")
+            print(f"     uv run python main.py {args.video} --run-stt")
             print()
         elif not args.run_embeddings:
             print("Next steps:")
             print("  1. Generate embeddings:")
-            print(f"     python main.py {args.video} --run-embeddings")
+            print(f"     uv run python main.py {args.video} --run-stt --run-embeddings")
+            print()
+        elif not args.run_matching:
+            print("Next steps:")
+            print("  1. Run similarity matching:")
+            print(f"     uv run python main.py {args.video} --run-stt --run-embeddings --run-matching")
+            print("  OR")
+            print("     uv run python main.py {args.video} --full-pipeline")
             print()
         else:
+            print("✓ Full pipeline completed successfully!")
+            print()
             print("Next steps:")
-            print("  1. Run semantic matching:")
-            print("     uv run python semantic_matcher.py \\")
-            print("       data/video_speech_embeddings.csv \\")
-            print("       data/soundbible_embeddings.csv \\")
-            print("       --output data/video_timeline.csv")
+            print("  1. Review similarity matches: output/video_similarity_matches.json")
+            print("  2. Download matched sound effects")
+            print("  3. Mix audio with video")
             print()
 
         print("=" * 70)

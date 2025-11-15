@@ -21,11 +21,17 @@ uv run python main.py video.mp4 --sample-rate 44100 --channels 2
 
 ### Run Full Pipeline
 
-Extract audio, run STT, and generate embeddings:
+Extract audio, run STT, generate embeddings, and match with sound effects:
 
 ```bash
 uv run python main.py video.mp4 --full-pipeline
 ```
+
+This will:
+1. Extract audio to WAV
+2. Transcribe with word-level timing
+3. Generate semantic embeddings
+4. Find similar sound effects for each speech segment
 
 ## Pipeline Steps
 
@@ -48,15 +54,11 @@ The pipeline consists of 4 steps:
 - Generates semantic embeddings using `all-MiniLM-L6-v2`
 - Saves to `data/video_speech_embeddings.csv`
 
-### Step 4: Semantic Matching (Manual)
-- Match speech segments with sound effects
-- Run separately:
-  ```bash
-  uv run python semantic_matcher.py \
-    data/video_speech_embeddings.csv \
-    data/soundbible_embeddings.csv \
-    --output data/video_timeline.csv
-  ```
+### Step 4: Similarity Matching (Optional: `--run-matching`)
+- Matches speech segments with sound effects semantically
+- Uses cosine similarity between embeddings
+- Finds top K most similar sounds for each segment
+- Saves to `output/video_similarity_matches.json`
 
 ## Command Line Options
 
@@ -69,10 +71,12 @@ Required:
 Optional:
   --run-stt                 Run STT after audio extraction
   --run-embeddings          Generate embeddings (requires --run-stt)
+  --run-matching            Match with sound effects (requires --run-embeddings)
   --full-pipeline           Run all steps automatically
   --sample-rate RATE        Sample rate in Hz (default: 16000)
   --channels NUM            Number of channels (default: 1)
   --output-dir DIR          Output directory (default: speech_to_text/input)
+  --top-k NUM               Number of top similar sounds per segment (default: 5)
 ```
 
 ## Examples
@@ -108,14 +112,23 @@ uv run python main.py my_video.mp4 --full-pipeline
 - `speech_to_text/output/full_transcription.json`
 - `speech_to_text/output/word_timing.json`
 - `data/video_speech_embeddings.csv`
+- `output/video_similarity_matches.json`
 
-### 4. High Quality Audio (44.1kHz Stereo)
+### 4. Full Pipeline with Custom Top-K
+
+Find top 10 similar sounds for each segment:
+
+```bash
+uv run python main.py my_video.mp4 --full-pipeline --top-k 10
+```
+
+### 5. High Quality Audio (44.1kHz Stereo)
 
 ```bash
 uv run python main.py concert.mp4 --sample-rate 44100 --channels 2
 ```
 
-### 5. Custom Output Directory
+### 6. Custom Output Directory
 
 ```bash
 uv run python main.py video.mp4 --output-dir audio_files/

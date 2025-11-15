@@ -43,7 +43,7 @@ def find_similar_sounds(df_speech: pd.DataFrame,
                    - 'embedding': embedding vectoriel (numpy array ou liste)
                    - 'title': titre du son
                    - 'description': description du son
-                   - 'audio_url': URL du fichier audio
+                   - 'audio_url_wav': URL du fichier audio WAV
         top_k: Nombre de sons les plus similaires à retourner pour chaque segment
         save_to_json_file: Si True, sauvegarde les résultats dans un fichier JSON
         output_path: Chemin du fichier de sortie. Si None, utilise 'output/similarity.json'
@@ -85,7 +85,7 @@ def find_similar_sounds(df_speech: pd.DataFrame,
                 'sound_title': sound_row.get('title', 'N/A'),
                 'sound_description': sound_row.get('description', 'N/A'),
                 'similarity': float(similarity),
-                'audio_url': sound_row.get('audio_url', 'N/A')
+                'audio_url_wav': sound_row.get('audio_url_wav', 'N/A')
             })
         
         # Trier par similarité décroissante
@@ -102,9 +102,13 @@ def find_similar_sounds(df_speech: pd.DataFrame,
     if save_to_json_file:
         # Utiliser le chemin par défaut si non spécifié
         if output_path is None:
-            output_path = os.path.join("output", 'similarity.json')
+            output_path = os.path.join("similarity/output", 'similarity.json')
 
         # Créer le répertoire parent s'il n'existe pas
+    
+        output_path = os.path.join("similarity/output", 'similarity.json')
+        
+        # Créer le répertoire output s'il n'existe pas
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
         # Sauvegarder en JSON avec indentation pour la lisibilité

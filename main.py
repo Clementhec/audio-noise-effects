@@ -278,6 +278,99 @@ def run_embeddings_step(
     return output_path
 
 
+def run_llm_filtering_step(
+    similarity_results_path: Path,
+    max_sounds: Optional[int] = None
+) -> Path:
+    """
+    Step 5: Use LLM to intelligently filter and select best sound matches.
+
+    Args:
+        similarity_results_path: Path to similarity matching results JSON
+        max_sounds: Maximum number of sentences to select for sound effects (None = LLM decides)
+
+    Returns:
+        Path to filtered results JSON
+    """
+    print("=" * 70)
+    print("STEP 5: LLM Intelligent Filtering")
+    print("=" * 70)
+    print()
+
+    print(f"Similarity results: {similarity_results_path}")
+    if max_sounds:
+        print(f"Max sounds to select: {max_sounds}")
+    else:
+        print("Max sounds: LLM will decide")
+    print()
+
+    try:
+        import json
+        from llm_filtering import filter_sounds
+
+        # Load similarity results
+        print("Loading similarity results...")
+        with open(similarity_results_path, 'r', encoding='utf-8') as f:
+            similarity_data = json.load(f)
+
+        print(f"  Found {len(similarity_data)} speech segments")
+        print()
+
+        # Run LLM filtering
+        print("Running LLM analysis...")
+        print("  The LLM will:")
+        print("  - Determine which sentences benefit most from sound effects")
+        print("  - Identify the specific word where to place each sound")
+        print("  - Select the most appropriate sound from top matches")
+        print()
+
+        output_path = Path("output/video_filtered_sounds.json")
+
+        result = filter_sounds(
+            similarity_data=similarity_data,
+            max_sounds=max_sounds,
+            keep_only_with_sound=True,
+            output_file=str(output_path)
+        )
+
+        filtered_count = len(result.get('filtered_sounds', []))
+
+        print()
+        print(f"✓ LLM filtering complete!")
+        print(f"  Selected {filtered_count} segments for sound effects")
+        print(f"  Results saved to: {output_path}")
+        print()
+
+        # Display sample results
+        if result.get('filtered_sounds'):
+            print("Sample filtered results:")
+            print("-" * 70)
+            for i, item in enumerate(result['filtered_sounds'][:3]):  # Show first 3
+                print(f"\nSegment {item['speech_index']}: \"{item['speech_text'][:60]}...\"")
+                print(f"  Target word: '{item.get('target_word', 'N/A')}'")
+                if item.get('selected_sound'):
+                    sound = item['selected_sound']
+                    print(f"  Selected sound: {sound.get('sound_title', 'N/A')}")
+                    print(f"  Reason: {sound.get('reason', 'N/A')[:80]}...")
+
+            if filtered_count > 3:
+                print(f"\n... and {filtered_count - 3} more segments")
+
+        print()
+        return output_path
+
+    except ImportError as e:
+        print(f"✗ Error: Missing dependencies for LLM filtering")
+        print(f"  {e}")
+        print()
+        print("Install required packages:")
+        print("  pip install google-generativeai")
+        raise
+    except Exception as e:
+        print(f"✗ Error during LLM filtering: {e}")
+        raise
+
+
 def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
     """
     Step 4: Match speech embeddings with sound effects.
@@ -396,11 +489,14 @@ Examples:
   # Extract + STT + embeddings
   python main.py video.mp4 --run-stt --run-embeddings
 
-  # Run full pipeline (extract + STT + embeddings + matching)
+  # Run full pipeline (extract + STT + embeddings + matching + LLM filtering)
   python main.py video.mp4 --full-pipeline
 
-  # Full pipeline with top 10 sound matches per segment
-  python main.py video.mp4 --full-pipeline --top-k 10
+  # Full pipeline with top 10 sound matches and LLM selecting max 5 sounds
+  python main.py video.mp4 --full-pipeline --top-k 10 --max-sounds 5
+
+  # Full pipeline letting LLM decide how many sounds to use
+  python main.py video.mp4 --full-pipeline
 
   # Custom sample rate
   python main.py video.mp4 --sample-rate 44100 --channels 2
@@ -463,6 +559,19 @@ Examples:
         help="Number of top similar sounds to find for each segment (default: 5)"
     )
 
+    parser.add_argument(
+        "--run-llm-filter",
+        action="store_true",
+        help="Use LLM to intelligently filter best sound matches (requires --run-matching)"
+    )
+
+    parser.add_argument(
+        "--max-sounds",
+        type=int,
+        default=None,
+        help="Maximum number of sentences to select for sound effects (default: LLM decides)"
+    )
+
     args = parser.parse_args()
 
     # Full pipeline enables all steps
@@ -470,6 +579,7 @@ Examples:
         args.run_stt = True
         args.run_embeddings = True
         args.run_matching = True
+        args.run_llm_filter = True
 
     # Validate dependencies
     if args.run_embeddings and not args.run_stt:
@@ -478,6 +588,10 @@ Examples:
 
     if args.run_matching and not args.run_embeddings:
         print("Error: --run-matching requires --run-embeddings")
+        sys.exit(1)
+
+    if args.run_llm_filter and not args.run_matching:
+        print("Error: --run-llm-filter requires --run-matching")
         sys.exit(1)
 
     print()
@@ -522,6 +636,13 @@ Examples:
                         top_k=args.top_k
                     )
 
+                    # Step 5: LLM filtering (optional)
+                    if args.run_llm_filter:
+                        filtered_results_path = run_llm_filtering_step(
+                            similarity_results_path,
+                            max_sounds=args.max_sounds
+                        )
+
         # Final summary
         print("=" * 70)
         print("PIPELINE COMPLETE!")
@@ -540,6 +661,9 @@ Examples:
         if args.run_matching:
             print(f"  ✓ Similarity matches: output/video_similarity_matches.json")
 
+        if args.run_llm_filter:
+            print(f"  ✓ LLM filtered sounds: output/video_filtered_sounds.json")
+
         print()
 
         if not args.run_stt:
@@ -557,15 +681,23 @@ Examples:
             print("  1. Run similarity matching:")
             print(f"     uv run python main.py {args.video} --run-stt --run-embeddings --run-matching")
             print("  OR")
-            print("     uv run python main.py {args.video} --full-pipeline")
+            print(f"     uv run python main.py {args.video} --full-pipeline")
+            print()
+        elif not args.run_llm_filter:
+            print("Next steps:")
+            print("  1. Run LLM filtering to select best sounds:")
+            print(f"     uv run python main.py {args.video} --full-pipeline")
+            print("  OR manually with max sounds:")
+            print(f"     uv run python main.py {args.video} --run-stt --run-embeddings --run-matching --run-llm-filter --max-sounds 5")
             print()
         else:
             print("✓ Full pipeline completed successfully!")
             print()
             print("Next steps:")
-            print("  1. Review similarity matches: output/video_similarity_matches.json")
+            print("  1. Review filtered sounds: output/video_filtered_sounds.json")
             print("  2. Download matched sound effects")
-            print("  3. Mix audio with video")
+            print("  3. Create audio timeline from filtered results")
+            print("  4. Mix audio with video")
             print()
 
         print("=" * 70)

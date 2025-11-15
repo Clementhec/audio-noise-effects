@@ -35,7 +35,7 @@ This will:
 
 ## Pipeline Steps
 
-The pipeline consists of 4 steps:
+The pipeline consists of 5 steps:
 
 ### Step 1: Extract Audio (Always runs)
 - Converts MP4 video to WAV audio
@@ -60,6 +60,14 @@ The pipeline consists of 4 steps:
 - Finds top K most similar sounds for each segment
 - Saves to `output/video_similarity_matches.json`
 
+### Step 5: LLM Intelligent Filtering (Optional: `--run-llm-filter`)
+- Uses Google Gemini LLM to intelligently select best sounds
+- Determines which sentences benefit most from sound effects
+- Identifies specific target word for each sound placement
+- Selects most appropriate sound from top-K candidates
+- Saves to `output/video_filtered_sounds.json`
+- Requires: `GOOGLE_API_KEY` in `.env` file
+
 ## Command Line Options
 
 ```
@@ -72,11 +80,13 @@ Optional:
   --run-stt                 Run STT after audio extraction
   --run-embeddings          Generate embeddings (requires --run-stt)
   --run-matching            Match with sound effects (requires --run-embeddings)
+  --run-llm-filter          LLM intelligent filtering (requires --run-matching)
   --full-pipeline           Run all steps automatically
   --sample-rate RATE        Sample rate in Hz (default: 16000)
   --channels NUM            Number of channels (default: 1)
   --output-dir DIR          Output directory (default: speech_to_text/input)
   --top-k NUM               Number of top similar sounds per segment (default: 5)
+  --max-sounds NUM          Max sentences to select for sounds (default: LLM decides)
 ```
 
 ## Examples
@@ -114,21 +124,37 @@ uv run python main.py my_video.mp4 --full-pipeline
 - `data/video_speech_embeddings.csv`
 - `output/video_similarity_matches.json`
 
-### 4. Full Pipeline with Custom Top-K
+### 4. Full Pipeline with LLM Filtering
 
-Find top 10 similar sounds for each segment:
+Complete pipeline with intelligent sound selection:
 
 ```bash
-uv run python main.py my_video.mp4 --full-pipeline --top-k 10
+uv run python main.py my_video.mp4 --full-pipeline
 ```
 
-### 5. High Quality Audio (44.1kHz Stereo)
+**Output:**
+- All previous files plus:
+- `output/video_filtered_sounds.json` - LLM-selected sounds with target words
+
+### 5. Custom LLM Filtering
+
+Control max sounds and top-k:
+
+```bash
+# Find 10 candidates, let LLM select best 5
+uv run python main.py my_video.mp4 --full-pipeline --top-k 10 --max-sounds 5
+
+# Find 15 candidates, LLM decides how many to use
+uv run python main.py my_video.mp4 --full-pipeline --top-k 15
+```
+
+### 6. High Quality Audio (44.1kHz Stereo)
 
 ```bash
 uv run python main.py concert.mp4 --sample-rate 44100 --channels 2
 ```
 
-### 6. Custom Output Directory
+### 7. Custom Output Directory
 
 ```bash
 uv run python main.py video.mp4 --output-dir audio_files/
@@ -161,6 +187,15 @@ Create a `.env` file in the project root:
 ELEVENLABS_API_KEY=your_api_key_here
 ```
 
+### 4. Google API Key (for LLM Filtering - Optional)
+Add to `.env` file for intelligent sound filtering:
+
+```env
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+
 ## Directory Structure
 
 After running the pipeline:
@@ -176,8 +211,10 @@ Audio-noise-effects/
 │       └── word_timing.json
 ├── data/
 │   ├── video_speech_embeddings.csv
-│   ├── soundbible_embeddings.csv
-│   └── video_timeline.csv
+│   └── soundbible_embeddings.csv
+├── output/
+│   ├── video_similarity_matches.json
+│   └── video_filtered_sounds.json
 └── video_preprocessing/
     ├── video_to_audio.py
     └── ...

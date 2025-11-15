@@ -61,10 +61,13 @@ Here is the data to analyze:
         for i, match in enumerate(item['top_matches'][:3], 1):  # Top 3 only
             prompt += f"  {i}. {match['sound_title']} (similarity: {match['similarity']:.2f})\n"
             prompt += f"     Description: {match['sound_description']}\n"
+            prompt += f"     URL: {match['audio_url_wav']}\n"
     
     prompt += """
 
 RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
+
+CRITICAL: You MUST use the EXACT audio_url_wav provided in the data above. DO NOT create or modify URLs.
 
 {
   "filtered_sounds": [
@@ -75,7 +78,7 @@ RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
       "target_word": "specific word where to place the sound (null if should_add_sound=false)",
       "selected_sound": {
         "sound_title": "title of chosen sound",
-        "audio_url": "url",
+        "audio_url_wav": "EXACT URL from the data above - DO NOT MODIFY",
         "reason": "brief explanation of why this sound and this word"
       },
       "reasoning": "explanation of the decision"

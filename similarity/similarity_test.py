@@ -45,8 +45,8 @@ def print_similarity_results(results: List[Dict[str, Any]],
         max_description_length: Longueur maximale de la description à afficher
     """
     print(f"Nombre de segments analysés: {len(results)}")
-    print()
-    
+    print(results)
+    """
     for result in results:
         print(f"Segment {result['speech_index']}: '{result['speech_text']}'")
         print(f"Top {len(result['top_matches'])} sons similaires:")
@@ -60,7 +60,7 @@ def print_similarity_results(results: List[Dict[str, Any]],
         
         print()
         print("-" * 80)
-        print()
+        print()"""
 
 
 def main():

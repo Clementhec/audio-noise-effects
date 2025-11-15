@@ -123,7 +123,7 @@ class SpeechEmbeddingPipeline:
                 'end_time': segment['end_time'],
                 'duration': segment['end_time'] - segment['start_time'],
                 'word_count': segment['word_count'],
-                'embedding': embeddings[i],
+                'embedding': np.array(embeddings[i]),
                 'embedding_model': self.EMBEDDING_MODEL
             })
 

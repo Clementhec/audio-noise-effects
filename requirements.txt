@@ -1,13 +1,14 @@
 google-cloud-speech>=2.0.0
 grpcio==1.51.3
 pandas
-openai
-tiktoken
+sentence-transformers
+transformers
+torch
 textwrap
 typing
 matplotlib
 plotly
 scipy
-sklearn
+scikit-learn
 numpy
 tenacity

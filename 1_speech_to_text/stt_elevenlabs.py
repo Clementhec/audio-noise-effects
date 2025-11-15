@@ -102,4 +102,21 @@ def transcribe_audio_elevenlabs(
         "word_timings": word_timings
     }
     
+    # Créer le dossier output s'il n'existe pas
+    output_dir = os.path.join(os.path.dirname(__file__), "output")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Sauvegarder la transcription complète dans un fichier JSON
+    full_transcript_path = os.path.join(output_dir, "full_transcription.json")
+    with open(full_transcript_path, 'w', encoding='utf-8') as f:
+        json.dump({
+            "full_transcript": full_transcript,
+            "segment_result": segment_result
+        }, f, ensure_ascii=False, indent=2)
+    
+    # Sauvegarder les timings des mots dans un fichier JSON
+    word_timing_path = os.path.join(output_dir, "word_timing.json")
+    with open(word_timing_path, 'w', encoding='utf-8') as f:
+        json.dump(word_timings, f, ensure_ascii=False, indent=2)
+    
     return result

@@ -11,9 +11,9 @@ from pathlib import Path
 from argparse import ArgumentParser
 
 # Add parent directory to path
-sys.path.append(str(Path(__file__).parent.parent))
+# sys.path.append(str(Path(__file__).parent.parent))
 
-from text_processing.speech_embedder import SpeechEmbeddingPipeline
+from .speech_embedder import SpeechEmbeddingPipeline
 
 INPUT_FOLDER = "STT/output"
 
@@ -181,6 +181,8 @@ if __name__ == "__main__":
         main()
 
     else:
-        file_path = 
+        file_path = Path(INPUT_FOLDER) / file_name
+        print(file_path)
+        assert os.path.exists(file_path)
 
 

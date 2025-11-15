@@ -112,7 +112,8 @@ def filter_sounds(
     similarity_data: List[Dict[str, Any]], 
     max_sounds: Optional[int] = None,
     api_key: Optional[str] = None,
-    keep_only_with_sound: bool = True
+    keep_only_with_sound: bool = True,
+    output_file: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Filtre les sons en utilisant le LLM.
@@ -124,6 +125,7 @@ def filter_sounds(
                    exactement ce nombre de phrases parmi les plus pertinentes.
         api_key: Clé API Google (optionnel)
         keep_only_with_sound: Si True, ne garde que les résultats avec should_add_sound=true (défaut: True)
+        output_file: Chemin du fichier de sortie. Si None, utilise 'llm_filtering/output/filtered_sounds.json'
         
     Returns:
         Dictionnaire avec les sons filtrés et les mots cibles
@@ -140,6 +142,18 @@ def filter_sounds(
             item for item in result['filtered_sounds'] 
             if item.get('should_add_sound', False)
         ]
+    
+    # Sauvegarde automatique dans output/
+    if output_file is None:
+        output_file = 'llm_filtering/output/filtered_sounds.json'
+    
+    output_dir = os.path.dirname(output_file)
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
+    print(f"Résultat sauvegardé dans {output_file}")
     
     return result
 

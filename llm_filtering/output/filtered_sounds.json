@@ -7,22 +7,22 @@
       "target_word": "thunder",
       "selected_sound": {
         "sound_title": "Distant Thunder",
-        "audio_url": "https://www.example.com/distant_thunder.mp3",
-        "reason": "This sound directly matches the keyword 'thunder' and its description of being 'in the distance' perfectly complements the sentence's context."
+        "audio_url": "https://example.com/distant_thunder.mp3",
+        "reason": "This sound directly matches the key element 'thunder' and the context 'rumbling in the distance'."
       },
-      "reasoning": "The sentence explicitly mentions 'thunder', and the 'Distant Thunder' sound effect is the most appropriate and relevant choice, enhancing the auditory experience of hearing distant thunder."
+      "reasoning": "The sentence explicitly mentions 'thunder' and its distant nature, making 'Distant Thunder' a perfect and impactful sound effect. Placing it on 'thunder' provides immediate auditory reinforcement."
     },
     {
-      "speech_index": 3,
-      "speech_text": "The airplane flew overhead making a tremendous roaring sound",
+      "speech_index": 7,
+      "speech_text": "The church bells rang out across the quiet village",
       "should_add_sound": true,
-      "target_word": "airplane",
+      "target_word": "bells",
       "selected_sound": {
-        "sound_title": "Airplane Fly Over",
-        "audio_url": "https://www.example.com/airplane_fly_over.mp3",
-        "reason": "This sound effect is specifically designed for an airplane flying overhead, which directly correlates with the sentence's description."
+        "sound_title": "Church Bells Ringing",
+        "audio_url": "https://example.com/church_bells_ringing.mp3",
+        "reason": "This sound is a direct and highly relevant match for 'church bells'."
       },
-      "reasoning": "The sentence describes an 'airplane flew overhead making a tremendous roaring sound'. The 'Airplane Fly Over' sound effect is the most direct and fitting match to convey this experience naturally."
+      "reasoning": "The sentence focuses on 'church bells ringing', and the 'Church Bells Ringing' sound effect offers a clear and evocative auditory experience. Placing it on 'bells' makes the sound's origin explicit."
     }
   ]
 }

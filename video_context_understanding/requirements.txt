@@ -1,0 +1,18 @@
+# Video-LLaVA Video Understanding Requirements
+
+# Core dependencies
+transformers>=4.37.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Video processing
+av>=10.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Optional but recommended for better performance
+accelerate>=0.25.0
+bitsandbytes>=0.41.0  # For 4-bit/8-bit quantization
+
+# Utility
+Pillow>=10.0.0

@@ -108,7 +108,6 @@ def transcribe_audio_elevenlabs(
     }
     
     if save_to_json_file:
-<<<<<<< HEAD
         # Déterminer le répertoire de sortie
         if output_dir is None:
             # Utiliser le répertoire par défaut (speech_to_text/output)
@@ -118,11 +117,6 @@ def transcribe_audio_elevenlabs(
         # Créer le répertoire de sortie s'il n'existe pas
         os.makedirs(output_dir, exist_ok=True)
 
-=======
-        # Obtenir le répertoire du module actuel
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        output_dir = os.path.join(current_dir, 'output')
->>>>>>> 59874839fed3dbdf845f13e50c2c0c77cd5d645c
         # Sauvegarder la transcription complète dans un fichier JSON
         full_transcript_path = os.path.join(output_dir, "full_transcription.json")
         with open(full_transcript_path, 'w', encoding='utf-8') as f:

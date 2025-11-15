@@ -61,6 +61,23 @@ except Exception as e:
     print(f"   ✗ Error: {e}")
 
 print()
+
+# Test llm_filtering module
+print("6. Testing llm_filtering module...")
+try:
+    from llm_filtering import filter_sounds, filter_from_file
+    print("   ✓ filter_sounds imported successfully")
+    print("   ✓ filter_from_file imported successfully")
+except ModuleNotFoundError as e:
+    if 'google.generativeai' in str(e):
+        print("   ⚠ google-generativeai not installed (optional for LLM filtering)")
+        print("   Install with: pip install google-generativeai")
+    else:
+        print(f"   ✗ Error: {e}")
+except Exception as e:
+    print(f"   ✗ Error: {e}")
+
+print()
 print("=" * 70)
 print("All imports tested successfully!")
 print("=" * 70)

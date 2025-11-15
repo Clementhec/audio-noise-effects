@@ -7,7 +7,8 @@ This module implements **Step 2 and Step 3** of the audio enhancement pipeline: 
 The text processing pipeline takes STT (Speech-to-Text) output from Google Cloud Speech API and generates semantic embeddings that can be matched against sound effect embeddings for intelligent sound placement.
 
 **Key Design Principles:**
-- **Compatible Embeddings**: Uses `text-embedding-3-small` - the same model used for sound embeddings
+- **Compatible Embeddings**: Uses `all-MiniLM-L6-v2` from HuggingFace - the same model used for sound embeddings
+- **Local Processing**: No API keys required - runs entirely on your machine
 - **Timing Preservation**: Maintains word-level timestamps for precise audio synchronization
 - **Information Preservation**: No pre-filtering - all segments are embedded for score-based matching
 - **Flexible Segmentation**: Supports sentence-based and time-window based segmentation strategies
@@ -67,7 +68,8 @@ segments = segmenter.segment_by_sentences(transcript, word_timings)
 Main pipeline that generates embeddings for speech segments.
 
 **Features:**
-- Uses `text-embedding-3-small` (1536 dimensions)
+- Uses `all-MiniLM-L6-v2` from HuggingFace (384 dimensions)
+- Local processing - no API keys required
 - Batch processing for efficiency
 - Outputs to CSV and JSON formats
 - Preserves all timing metadata
@@ -92,8 +94,8 @@ df = pipeline.process_stt_output(stt_result)
 # - end_time: Ending timestamp (seconds)
 # - duration: Segment length (seconds)
 # - word_count: Number of words
-# - embedding: 1536-dim numpy array
-# - embedding_model: "text-embedding-3-small"
+# - embedding: 384-dim numpy array
+# - embedding_model: "all-MiniLM-L6-v2"
 ```
 
 ## Usage
@@ -140,16 +142,16 @@ print(df[['segment_id', 'text', 'start_time', 'end_time']])
 ### CSV Format
 ```csv
 segment_id,text,start_time,end_time,duration,word_count,embedding,embedding_model
-0,"The dog is barking.",1.2,3.5,2.3,4,"[0.023, -0.045, ...]",text-embedding-3-small
-1,"Thunder echoes loudly.",3.6,6.1,2.5,3,"[-0.012, 0.089, ...]",text-embedding-3-small
+0,"The dog is barking.",1.2,3.5,2.3,4,"[0.023, -0.045, ...]",all-MiniLM-L6-v2
+1,"Thunder echoes loudly.",3.6,6.1,2.5,3,"[-0.012, 0.089, ...]",all-MiniLM-L6-v2
 ```
 
 ### JSON Format
 ```json
 {
   "metadata": {
-    "embedding_model": "text-embedding-3-small",
-    "embedding_dimension": 1536,
+    "embedding_model": "all-MiniLM-L6-v2",
+    "embedding_dimension": 384,
     "segmentation_method": "sentences",
     "total_segments": 42
   },
@@ -162,7 +164,7 @@ segment_id,text,start_time,end_time,duration,word_count,embedding,embedding_mode
       "duration": 2.3,
       "word_count": 4,
       "embedding": [0.023, -0.045, ...],
-      "embedding_model": "text-embedding-3-small"
+      "embedding_model": "all-MiniLM-L6-v2"
     }
   ]
 }
@@ -221,10 +223,7 @@ for idx, row in speech_df.iterrows():
 ## Configuration
 
 ### Environment Variables
-```bash
-# Required for embedding generation
-export OPENAI_API_KEY="your-api-key"
-```
+No API keys or environment variables required! The HuggingFace model runs locally.
 
 ### Pipeline Parameters
 
@@ -235,16 +234,18 @@ export OPENAI_API_KEY="your-api-key"
 | `output_dir` | `None` | Directory for output files |
 
 ### Embedding Model
-- **Model**: `text-embedding-3-small`
-- **Dimensions**: 1536
+- **Model**: `all-MiniLM-L6-v2` (HuggingFace sentence-transformers)
+- **Dimensions**: 384
 - **Critical**: Must match the model used for sound embeddings
+- **Advantages**: Local processing, no API keys, free, fast
 
 ## Performance Considerations
 
-- **Batch Processing**: Uses `get_embeddings()` for efficient API usage
-- **API Limits**: OpenAI allows up to 2,048 texts per batch
-- **Cost**: ~$0.00002 per 1K tokens with text-embedding-3-small
-- **Rate Limits**: Handled automatically with retry logic in `embeddings_utils.py`
+- **Batch Processing**: Uses `get_embeddings()` for efficient local processing
+- **No API Calls**: Runs entirely on your machine - no rate limits or costs
+- **Speed**: Processes ~32 segments per batch by default (configurable)
+- **First Run**: Model downloads automatically from HuggingFace (~80MB)
+- **GPU Support**: Automatically uses GPU if available (CUDA/MPS) for faster processing
 
 ## Testing
 

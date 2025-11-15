@@ -31,8 +31,8 @@ class SpeechEmbeddingPipeline:
     """
 
     # Model must match the one used for sound embeddings!
-    EMBEDDING_MODEL = "text-embedding-3-small"
-    EMBEDDING_DIMENSION = 1536
+    EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # HuggingFace sentence-transformers model
+    EMBEDDING_DIMENSION = 384
 
     def __init__(
         self,

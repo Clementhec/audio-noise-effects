@@ -106,24 +106,24 @@ df = pd.DataFrame({
     'end_time': float,             # End timestamp (seconds)
     'duration': float,             # Segment duration (seconds)
     'word_count': int,             # Number of words
-    'embedding': np.ndarray,       # 1536-dimensional vector
-    'embedding_model': str         # "text-embedding-3-small"
+    'embedding': np.ndarray,       # 384-dimensional vector
+    'embedding_model': str         # "all-MiniLM-L6-v2"
 })
 ```
 
 **Example:**
 ```python
    segment_id                              text  start_time  end_time  duration  word_count                                          embedding     embedding_model
-0           0          The dog barked loudly.         0.0       1.3       1.3           4  [0.023, -0.045, 0.012, ..., -0.033]  text-embedding-3-small
-1           1  Thunder echoed across the valley.         1.5       3.2       1.7           5  [-0.012, 0.089, -0.056, ..., 0.021]  text-embedding-3-small
+0           0          The dog barked loudly.         0.0       1.3       1.3           4  [0.023, -0.045, 0.012, ..., -0.033]  all-MiniLM-L6-v2
+1           1  Thunder echoed across the valley.         1.5       3.2       1.7           5  [-0.012, 0.089, -0.056, ..., 0.021]  all-MiniLM-L6-v2
 ```
 
 ### As CSV File
 
 ```csv
 segment_id,text,start_time,end_time,duration,word_count,embedding,embedding_model
-0,"The dog barked loudly.",0.0,1.3,1.3,4,"[0.023, -0.045, 0.012, ..., -0.033]",text-embedding-3-small
-1,"Thunder echoed across the valley.",1.5,3.2,1.7,5,"[-0.012, 0.089, -0.056, ..., 0.021]",text-embedding-3-small
+0,"The dog barked loudly.",0.0,1.3,1.3,4,"[0.023, -0.045, 0.012, ..., -0.033]",all-MiniLM-L6-v2
+1,"Thunder echoed across the valley.",1.5,3.2,1.7,5,"[-0.012, 0.089, -0.056, ..., 0.021]",all-MiniLM-L6-v2
 ```
 
 **Loading CSV:**
@@ -138,8 +138,8 @@ df['embedding'] = df['embedding'].apply(eval).apply(np.array)
 ```json
 {
   "metadata": {
-    "embedding_model": "text-embedding-3-small",
-    "embedding_dimension": 1536,
+    "embedding_model": "all-MiniLM-L6-v2",
+    "embedding_dimension": 384,
     "segmentation_method": "sentences",
     "total_segments": 2
   },
@@ -152,7 +152,7 @@ df['embedding'] = df['embedding'].apply(eval).apply(np.array)
       "duration": 1.3,
       "word_count": 4,
       "embedding": [0.023, -0.045, 0.012, ..., -0.033],
-      "embedding_model": "text-embedding-3-small"
+      "embedding_model": "all-MiniLM-L6-v2"
     },
     {
       "segment_id": 1,
@@ -162,7 +162,7 @@ df['embedding'] = df['embedding'].apply(eval).apply(np.array)
       "duration": 1.7,
       "word_count": 5,
       "embedding": [-0.012, 0.089, -0.056, ..., 0.021],
-      "embedding_model": "text-embedding-3-small"
+      "embedding_model": "all-MiniLM-L6-v2"
     }
   ]
 }
@@ -191,12 +191,12 @@ df_sounds = pd.DataFrame({
     'keywords': str,               # Comma-separated keywords
     'audio_url': str,              # URL to audio file
     'length': float,               # Sound duration (seconds)
-    'embedding': np.ndarray,       # 1536-dimensional vector (same model!)
+    'embedding': np.ndarray,       # 384-dimensional vector (same model!)
     # ... other metadata columns
 })
 ```
 
-**Critical: Both speech and sound embeddings use `text-embedding-3-small` model**
+**Critical: Both speech and sound embeddings use `all-MiniLM-L6-v2` model**
 
 ---
 
@@ -270,7 +270,7 @@ import pandas as pd
 STTResult = Dict[str, Any]
 WordTiming = Dict[str, Any]
 Segment = Dict[str, Any]
-Embedding = np.ndarray  # Shape: (1536,)
+Embedding = np.ndarray  # Shape: (384,)
 
 # Function signatures
 def load_stt_output(stt_result: STTResult) -> tuple[str, List[WordTiming]]:

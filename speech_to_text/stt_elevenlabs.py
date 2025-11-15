@@ -104,7 +104,7 @@ def transcribe_audio_elevenlabs(
     }
     
     if save_to_json_file:
-            # Obtenir le répertoire du module actuel
+        # Obtenir le répertoire du module actuel
         current_dir = os.path.dirname(os.path.abspath(__file__))
         output_dir = os.path.join(current_dir, 'output')
         # Sauvegarder la transcription complète dans un fichier JSON

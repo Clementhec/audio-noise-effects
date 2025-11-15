@@ -1,0 +1,28 @@
+{
+  "filtered_sounds": [
+    {
+      "speech_index": 1,
+      "speech_text": "I heard thunder rumbling in the distance earlier this morning",
+      "should_add_sound": true,
+      "target_word": "thunder",
+      "selected_sound": {
+        "sound_title": "Distant Thunder",
+        "audio_url": "https://www.example.com/distant_thunder.mp3",
+        "reason": "This sound directly matches the keyword 'thunder' and its description of being 'in the distance' perfectly complements the sentence's context."
+      },
+      "reasoning": "The sentence explicitly mentions 'thunder', and the 'Distant Thunder' sound effect is the most appropriate and relevant choice, enhancing the auditory experience of hearing distant thunder."
+    },
+    {
+      "speech_index": 3,
+      "speech_text": "The airplane flew overhead making a tremendous roaring sound",
+      "should_add_sound": true,
+      "target_word": "airplane",
+      "selected_sound": {
+        "sound_title": "Airplane Fly Over",
+        "audio_url": "https://www.example.com/airplane_fly_over.mp3",
+        "reason": "This sound effect is specifically designed for an airplane flying overhead, which directly correlates with the sentence's description."
+      },
+      "reasoning": "The sentence describes an 'airplane flew overhead making a tremendous roaring sound'. The 'Airplane Fly Over' sound effect is the most direct and fitting match to convey this experience naturally."
+    }
+  ]
+}

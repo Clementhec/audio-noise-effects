@@ -69,16 +69,17 @@ def transcribe_audio(audio_file_path, language_code="fr-FR"):
 if __name__ == "__main__":
     import argparse
     import json
+    """
     parser = argparse.ArgumentParser(description="Transcription audio avec Google Cloud STT")
     parser.add_argument("audio_file", help="Chemin vers le fichier audio (WAV/FLAC/LINEAR16)")
     parser.add_argument("--lang", default="fr-FR", help="Code langue (ex: fr-FR)")
-    args = parser.parse_args()
+    args = parser.parse_args()"""
 
     # Vérifie la variable d'environnement GOOGLE_APPLICATION_CREDENTIALS
     if not os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
         print("[ERREUR] Vous devez définir la variable d'environnement GOOGLE_APPLICATION_CREDENTIALS vers votre fichier clé JSON de service Google Cloud.")
         exit(1)
 
-    result = transcribe_audio(args.audio_file, args.lang)
+    result = transcribe_audio("test.wav", language_code="fr-FR")
     #print(json.dumps(result["results"], indent=2, ensure_ascii=False))
     #print(json.dumps(result["words_timings"], indent=2, ensure_ascii=False))

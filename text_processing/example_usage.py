@@ -8,11 +8,15 @@ import os
 import sys
 import json
 from pathlib import Path
+from argparse import ArgumentParser
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from text_processing.speech_embedder import SpeechEmbeddingPipeline
+
+INPUT_FOLDER = "speech_to_text/output"
+OUTPUT_FOLDER = "text_processing/output"
 
 
 def create_sample_stt_output():
@@ -168,4 +172,57 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    parser.add_argument("--file_name", type=str, default="", help="Input full transcript location")
+
+    args = parser.parse_args()
+
+    file_name = args.file_name
+    
+    if not len(file_name):
+        main()
+
+    else:
+        file_path = Path(INPUT_FOLDER) / file_name
+        print(file_path)        
+        print(file_path._str +"_full_transcript.json")
+        assert os.path.exists(file_path._str +"_full_transcription.json")
+        assert os.path.exists(file_path._str +"_word_timing.json")
+        
+        pipeline = SpeechEmbeddingPipeline(
+            segmentation_method="sentences",
+            max_words_per_segment=15,
+            output_dir=OUTPUT_FOLDER
+        )
+
+        with open(file_path._str + "_full_transcription.json" , 'r+') as input_transcript:
+            full_transcript = json.load(input_transcript)
+        with open(file_path._str + "_word_timing.json" , 'r+') as word_timing:
+            wt = json.load(word_timing)
+            wt = [
+                {
+                    "word": w['word'],
+                    "start_time": float(w['startTime'].rstrip('s')),
+                    "end_time": float(w['endTime'].rstrip('s'))
+                }
+                for w in wt
+            ]
+
+        print(wt)
+        
+        stt_result = dict(**full_transcript)
+        stt_result['results'] = {
+            'transcript': stt_result['full_transcript'],
+            'confidence': .5
+        }
+        stt_result['words_timings'] = wt
+
+        print(json.dumps(stt_result, indent=2))
+
+        df = pipeline.process_stt_output(
+            stt_result,
+            save_output=True,
+            output_filename="example_speech_embeddings"
+        )
+
+        print(df)

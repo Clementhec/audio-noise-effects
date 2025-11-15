@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from io import BytesIO
 import requests
@@ -16,10 +17,11 @@ def transcribe_audio_elevenlabs(
     diarize: bool = False,
     output_format: str = "both",  # Options: "segments", "words", "both"
     save_to_json_file: bool = True,
+    output_dir: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Transcrit un fichier audio en utilisant l'API ElevenLabs.
-    
+
     Args:
         audio_source: URL du fichier audio ou objet BytesIO contenant les données audio
         api_key: Clé API ElevenLabs (si None, utilise ELEVENLABS_API_KEY depuis .env)
@@ -28,7 +30,9 @@ def transcribe_audio_elevenlabs(
         language_code: Langue du fichier audio (si None, détection automatique)
         diarize: Annoter qui parle
         output_format: Format de sortie - "segments", "words", ou "both"
-    
+        save_to_json_file: Sauvegarder les résultats en fichiers JSON
+        output_dir: Répertoire de sortie (si None, utilise speech_to_text/output)
+
     Returns:
         Dictionnaire contenant:
         - segment_result: Liste des segments avec transcription et timings
@@ -104,9 +108,21 @@ def transcribe_audio_elevenlabs(
     }
     
     if save_to_json_file:
+<<<<<<< HEAD
+        # Déterminer le répertoire de sortie
+        if output_dir is None:
+            # Utiliser le répertoire par défaut (speech_to_text/output)
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            output_dir = os.path.join(current_dir, 'output')
+
+        # Créer le répertoire de sortie s'il n'existe pas
+        os.makedirs(output_dir, exist_ok=True)
+
+=======
         # Obtenir le répertoire du module actuel
         current_dir = os.path.dirname(os.path.abspath(__file__))
         output_dir = os.path.join(current_dir, 'output')
+>>>>>>> 59874839fed3dbdf845f13e50c2c0c77cd5d645c
         # Sauvegarder la transcription complète dans un fichier JSON
         full_transcript_path = os.path.join(output_dir, "full_transcription.json")
         with open(full_transcript_path, 'w', encoding='utf-8') as f:
@@ -114,10 +130,85 @@ def transcribe_audio_elevenlabs(
                 "full_transcript": full_transcript,
                 "segment_result": segment_result
             }, f, ensure_ascii=False, indent=2)
-        
+
         # Sauvegarder les timings des mots dans un fichier JSON
         word_timing_path = os.path.join(output_dir, "word_timing.json")
         with open(word_timing_path, 'w', encoding='utf-8') as f:
             json.dump(word_timings, f, ensure_ascii=False, indent=2)
-    
+
+        # Ajouter les chemins de sortie au résultat
+        result['output_files'] = {
+            'transcription': full_transcript_path,
+            'word_timing': word_timing_path
+        }
+
+    return result
+
+
+def transcribe_audio_file(
+    audio_file_path: Union[str, Path],
+    output_dir: Optional[Union[str, Path]] = None,
+    api_key: Optional[str] = None,
+    model_id: str = "scribe_v1",
+    tag_audio_events: bool = False,
+    language_code: Optional[str] = None,
+    diarize: bool = False,
+) -> Dict[str, Any]:
+    """
+    Transcribe an audio file using ElevenLabs API (wrapper for file paths).
+
+    This is a convenience function that accepts file paths directly instead of
+    requiring BytesIO objects.
+
+    Args:
+        audio_file_path: Path to the audio file (WAV, MP3, etc.)
+        output_dir: Directory to save output JSON files (default: speech_to_text/output)
+        api_key: ElevenLabs API key (if None, uses ELEVENLABS_API_KEY from .env)
+        model_id: Model ID to use (default: "scribe_v1")
+        tag_audio_events: Tag audio events like laughter, applause, etc.
+        language_code: Language of the audio (if None, auto-detect)
+        diarize: Annotate who is speaking
+
+    Returns:
+        Dictionary containing:
+        - full_transcript: Full transcription text
+        - segment_result: List of segments with transcription and timing
+        - word_timings: List of words with individual timing
+        - output_files: Paths to saved JSON files (if save_to_json_file=True)
+
+    Raises:
+        FileNotFoundError: If audio file doesn't exist
+
+    Example:
+        >>> result = transcribe_audio_file("speech_to_text/input/video.wav")
+        >>> print(result['full_transcript'])
+        >>> print(result['output_files']['transcription'])
+    """
+    audio_file_path = Path(audio_file_path)
+
+    # Validate file exists
+    if not audio_file_path.exists():
+        raise FileNotFoundError(f"Audio file not found: {audio_file_path}")
+
+    # Read audio file into BytesIO
+    with open(audio_file_path, 'rb') as f:
+        audio_data = BytesIO(f.read())
+
+    # Convert output_dir to string if it's a Path
+    if output_dir is not None:
+        output_dir = str(output_dir)
+
+    # Call the main transcription function
+    result = transcribe_audio_elevenlabs(
+        audio_source=audio_data,
+        api_key=api_key,
+        model_id=model_id,
+        tag_audio_events=tag_audio_events,
+        language_code=language_code,
+        diarize=diarize,
+        output_format="both",
+        save_to_json_file=True,
+        output_dir=output_dir
+    )
+
     return result

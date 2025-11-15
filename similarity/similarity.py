@@ -26,10 +26,11 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 
-def find_similar_sounds(df_speech: pd.DataFrame, 
+def find_similar_sounds(df_speech: pd.DataFrame,
                        df_sounds: pd.DataFrame,
                        top_k: int = 5,
-                       save_to_json_file: bool = True
+                       save_to_json_file: bool = True,
+                       output_path: str = None
                        ) -> List[Dict[str, Any]]:
     """
     Trouve les sons les plus similaires pour chaque segment de parole.
@@ -44,7 +45,7 @@ def find_similar_sounds(df_speech: pd.DataFrame,
                    - 'description': description du son
                    - 'audio_url_wav': URL du fichier audio WAV
         top_k: Nombre de sons les plus similaires à retourner pour chaque segment
-        save_to_json: Si True, sauvegarde les résultats dans un fichier JSON
+        save_to_json_file: Si True, sauvegarde les résultats dans un fichier JSON
         output_path: Chemin du fichier de sortie. Si None, utilise 'output/similarity.json'
     
     Returns:
@@ -99,16 +100,21 @@ def find_similar_sounds(df_speech: pd.DataFrame,
     
     # Sauvegarder en JSON si demandé
     if save_to_json_file:
+        # Utiliser le chemin par défaut si non spécifié
+        if output_path is None:
+            output_path = os.path.join("output", 'similarity.json')
+
+        # Créer le répertoire parent s'il n'existe pas
     
         output_path = os.path.join("similarity/output", 'similarity.json')
         
         # Créer le répertoire output s'il n'existe pas
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        
+
         # Sauvegarder en JSON avec indentation pour la lisibilité
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
-        
+
         print(f"Résultats sauvegardés dans : {output_path}")
     
     return results

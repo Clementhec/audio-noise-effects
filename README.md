@@ -8,9 +8,9 @@ This project implements an AI-driven pipeline that analyzes narrated speech, und
 
 **Key Capabilities:**
 - Speech-to-text transcription with word-level timing precision
-- Semantic analysis of speech content using embeddings
-- Intelligent matching between speech context and sound effects
-- LLM-powered selection of optimal placement moments
+- Semantic embedding of speech content and sound metadata in compatible vector space
+- Vector similarity matching between speech context and sound effects
+- Score-based filtering to select optimal sound placements
 - Automated audio mixing and synchronization
 
 ## Architecture
@@ -22,18 +22,22 @@ Input (Audio/Video)
     ↓
 [Audio Extraction] → Extract audio track from video
     ↓
-[Speech-to-Text] → Transcribe speech with Google Cloud Speech API
+[Speech-to-Text] → Transcribe speech with word-level timing
     ↓
-[Semantic Analysis] → Generate embeddings for transcribed content
+[Speech Embedding] → Generate embeddings for speech segments
     ↓
-[Vector Matching] → Match speech context to sound effect descriptions
+[Sound Embedding] → Pre-computed embeddings for sound metadata
     ↓
-[LLM Filtering] → Select optimal sentences for enhancement
+[Vector Matching] → Calculate similarity scores between speech and sounds
     ↓
-[Audio Mixing] → Combine original audio with sound effects
+[Score-based Filtering] → Select best matches based on similarity thresholds
+    ↓
+[Audio Mixing] → Combine original audio with selected sound effects
     ↓
 Output (Enhanced Audio/Video)
 ```
+
+**Key Principle**: Both speech content and sound metadata must use **compatible embeddings** (same model, same embedding space) to enable meaningful similarity comparisons. Filtering decisions are made based on **actual similarity scores**, not pre-selection.
 
 **Technology Stack:**
 - **Python 3.x** - Core language
@@ -54,7 +58,7 @@ Audio-noise-effects/
 ├── stt_google.py                                        # Speech-to-text module
 ├── embeddings.py                                        # Sound metadata embedding generator
 ├── semantic-search.py                                   # Vector similarity search
-├── LLM-sentence-highlight.py                            # Intelligent placement selection
+├── LLM-sentence-highlight.py                            # (Exploratory) LLM-based pre-filtering
 ├── requirements.txt                                     # Python dependencies
 └── README.md
 ```
@@ -62,10 +66,11 @@ Audio-noise-effects/
 ### Module Descriptions
 
 - **stt_google.py**: Transcribes audio using Google Cloud Speech API, extracting full transcript and word-level timings
-- **embeddings.py**: Generates vector embeddings for sound effect descriptions in the library
-- **semantic-search.py**: Performs vector similarity search to match speech content with relevant sounds
-- **LLM-sentence-highlight.py**: Uses LLM to identify sentences that would benefit from sound enhancement
-- **utils/embeddings_utils.py**: Utility functions for embeddings, distance metrics, and visualization
+- **embeddings.py**: Generates vector embeddings for sound effect descriptions using OpenAI's text-embedding-3-small model
+- **semantic-search.py**: Performs vector similarity search using cosine distance to calculate scores between speech embeddings and sound embeddings
+- **utils/embeddings_utils.py**: Utility functions for generating compatible embeddings, calculating distance metrics (cosine, L1, L2, Linf), and visualization
+
+**Note on Architecture**: The current `LLM-sentence-highlight.py` module represents an exploratory approach that pre-filters sentences before matching. The recommended architecture uses **score-based filtering** instead - calculate similarity scores for all speech segments against all sounds, then filter by threshold. This preserves all information and makes decisions based on actual compatibility.
 
 ## Installation & Setup
 
@@ -196,9 +201,11 @@ for idx, row in matches.iterrows():
 
 ### LLM Sentence Highlighting (LLM-sentence-highlight.py)
 
+**⚠️ DEPRECATED APPROACH**: This module represents an exploratory technique that pre-filters sentences before similarity matching. This loses information because it makes selection decisions without knowing actual compatibility scores. **The recommended approach is score-based filtering** (see workflow example above).
+
 Uses LLM to identify which sentences in the transcript would benefit from sound effect enhancement.
 
-**Usage:**
+**Usage (for reference only):**
 
 ```python
 from LLM_sentence_highlight import highlight_sentences
@@ -212,11 +219,17 @@ for sentence in highlighted:
     print(f"Enhance: {sentence}")
 ```
 
-**Features:**
-- Structured output using Pydantic models
-- Returns exact text fragments (no rephrasing)
-- Configurable number of highlights
-- Optimized for impactful moment detection
+**Why This Approach Is Not Recommended:**
+- Pre-filters sentences **before** calculating similarity scores with sounds
+- Makes blind decisions without knowing which sounds are actually compatible
+- Loses information that could lead to better matches
+- The LLM has no access to the sound library or embedding similarity metrics
+
+**Better Alternative:**
+1. Embed ALL speech segments
+2. Calculate similarity scores with ALL sounds
+3. Filter by score threshold (e.g., cosine similarity ≥ 0.75)
+4. Select best matches based on actual compatibility
 
 ---
 
@@ -259,45 +272,71 @@ distances = distances_from_embeddings(
 
 ## Usage Examples
 
-### Basic End-to-End Workflow
+### Recommended End-to-End Workflow (Score-Based Matching)
 
 ```python
 import pandas as pd
+import numpy as np
 from stt_google import transcribe_audio
-from semantic_search import search_sounds
-from LLM_sentence_highlight import highlight_sentences
+from utils.embeddings_utils import get_embeddings, cosine_similarity
 
-# Step 1: Transcribe audio
+# Step 1: Transcribe audio with word-level timing
 audio_file = "input_audio.wav"
 transcript_data = transcribe_audio(audio_file, language_code="en-US")
 transcript = transcript_data['results']['transcript']
 word_timings = transcript_data['words_timings']
 
-# Step 2: Identify key moments for enhancement
-highlighted_sentences = highlight_sentences(transcript, max_highlights=5)
+# Step 2: Segment transcript into sentences/phrases
+# (Simple sentence splitting - could use more sophisticated segmentation)
+sentences = transcript.split('.')
+sentences = [s.strip() for s in sentences if s.strip()]
 
-# Step 3: Load sound library
+# Step 3: Generate embeddings for ALL speech segments (compatible with sound embeddings)
+speech_embeddings = get_embeddings(sentences, model="text-embedding-3-small")
+
+# Step 4: Load pre-computed sound embeddings (same model!)
 sounds_df = pd.read_csv("data/soundbible_details_from_section_with_embeddings.csv")
+# Parse embedding strings to numpy arrays
+sounds_df['embedding'] = sounds_df['embedding'].apply(eval).apply(np.array)
 
-# Step 4: Find matching sounds for each highlighted sentence
+# Step 5: Calculate similarity scores between ALL speech segments and ALL sounds
 sound_timeline = []
-for sentence in highlighted_sentences:
-    matches = search_sounds(sounds_df, sentence, n=3)
-    best_match = matches.iloc[0]
+for idx, sentence in enumerate(sentences):
+    speech_emb = speech_embeddings[idx]
 
-    # Find timing for this sentence in the transcript
-    # (Implementation depends on sentence position matching)
+    # Calculate cosine similarity with all sounds
+    similarities = sounds_df['embedding'].apply(
+        lambda sound_emb: cosine_similarity(speech_emb, sound_emb)
+    )
+    sounds_df['similarity_score'] = similarities
 
-    sound_timeline.append({
-        'text': sentence,
-        'sound_url': best_match['audio_url'],
-        'sound_title': best_match['title'],
-        'timestamp': None  # Calculate from word_timings
-    })
+    # Step 6: Filter by threshold and select best match
+    SIMILARITY_THRESHOLD = 0.75  # Adjust based on desired selectivity
+    candidates = sounds_df[sounds_df['similarity_score'] >= SIMILARITY_THRESHOLD]
 
-# Step 5: Mix audio (implementation in development)
+    if len(candidates) > 0:
+        best_match = candidates.nlargest(1, 'similarity_score').iloc[0]
+
+        # Map sentence to timestamp using word_timings
+        # (Implementation depends on word alignment)
+
+        sound_timeline.append({
+            'text': sentence,
+            'sound_url': best_match['audio_url'],
+            'sound_title': best_match['title'],
+            'similarity_score': best_match['similarity_score'],
+            'timestamp': None  # Calculate from word_timings
+        })
+
+# Step 7: Mix audio (implementation in development)
 # mix_audio_with_effects(audio_file, sound_timeline, output_file="enhanced_audio.wav")
 ```
+
+**Key Advantages of This Approach:**
+- Uses **compatible embeddings** (same model for speech and sounds)
+- Makes decisions based on **actual similarity scores**, not blind pre-filtering
+- Preserves all information until filtering stage
+- Threshold-based filtering is transparent and tunable
 
 ### Custom Sound Selection
 

@@ -8,11 +8,14 @@ import os
 import sys
 import json
 from pathlib import Path
+from argparse import ArgumentParser
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from text_processing.speech_embedder import SpeechEmbeddingPipeline
+
+INPUT_FOLDER = "STT/output"
 
 
 def create_sample_stt_output():
@@ -168,4 +171,16 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    parser.add_argument("--file_name", type=str, default="")
+
+    args = parser.parse_args()
+
+    file_name = args.file_name
+    if not len(file_name):
+        main()
+
+    else:
+        file_path = 
+
+

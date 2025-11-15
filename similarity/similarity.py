@@ -4,6 +4,8 @@ Module pour calculer la similarité entre des embeddings de parole et des embedd
 """
 import pandas as pd
 import numpy as np
+import json
+import os
 from typing import List, Dict, Any
 
 
@@ -26,7 +28,9 @@ def cosine_similarity(a, b):
 
 def find_similar_sounds(df_speech: pd.DataFrame, 
                        df_sounds: pd.DataFrame,
-                       top_k: int = 5) -> List[Dict[str, Any]]:
+                       top_k: int = 5,
+                       save_to_json_file: bool = True
+                       ) -> List[Dict[str, Any]]:
     """
     Trouve les sons les plus similaires pour chaque segment de parole.
     
@@ -40,6 +44,8 @@ def find_similar_sounds(df_speech: pd.DataFrame,
                    - 'description': description du son
                    - 'audio_url': URL du fichier audio
         top_k: Nombre de sons les plus similaires à retourner pour chaque segment
+        save_to_json: Si True, sauvegarde les résultats dans un fichier JSON
+        output_path: Chemin du fichier de sortie. Si None, utilise 'output/similarity.json'
     
     Returns:
         Liste de dictionnaires contenant les résultats pour chaque segment de parole.
@@ -91,6 +97,18 @@ def find_similar_sounds(df_speech: pd.DataFrame,
             'top_matches': similarities_sorted[:top_k]
         })
     
+    # Sauvegarder en JSON si demandé
+    if save_to_json_file:
+    
+        output_path = os.path.join("output", 'similarity.json')
+        
+        # Créer le répertoire output s'il n'existe pas
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        
+        # Sauvegarder en JSON avec indentation pour la lisibilité
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+        
+        print(f"Résultats sauvegardés dans : {output_path}")
+    
     return results
-
-

@@ -1,0 +1,11 @@
+[project]
+name = "audio-noise-effect"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "audioop-lts>=0.2.2",
+    "dotenv>=0.9.9",
+    "elevenlabs>=2.23.0",
+    "pydub>=0.25.1",
+    "requests>=2.32.5",
+]

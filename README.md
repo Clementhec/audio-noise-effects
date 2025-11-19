@@ -109,6 +109,18 @@ Audio-noise-effects/
 - Google Cloud account with Speech-to-Text API enabled
 - OpenAI API key
 
+## Configuration
+
+### API Key Setup
+
+Add to `.env` file:
+```env
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+
 ### Install Dependencies
 
 ```bash

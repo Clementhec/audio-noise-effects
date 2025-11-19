@@ -7,3 +7,4 @@ drafts/
 *.mp4
 *.wav
 *.sh
+*.lock

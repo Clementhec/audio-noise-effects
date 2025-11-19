@@ -2,6 +2,7 @@
 
 An intelligent audio processing system that automatically enhances audio and video content by adding contextually relevant sound effects based on speech content analysis.
 
+
 ## Overview
 
 This project implements an AI-driven pipeline that analyzes narrated speech, understands the semantic context, and intelligently inserts sound effects from a library of 2,120+ sounds at the most appropriate moments. The system combines speech recognition, natural language understanding, vector embeddings, and audio processing to create dynamic and engaging audio experiences.
@@ -46,6 +47,10 @@ Output (Enhanced Audio/Video)
 - **NumPy/SciPy** - Vector operations and similarity metrics
 - **Pandas** - Data manipulation and sound library management
 
+## References
+
+- [Existing Eleven labs project](https://videotosfx.elevenlabs.io/)
+
 ## Project Structure
 
 ```
@@ -83,6 +88,10 @@ Audio-noise-effects/
 
 ```bash
 pip install -r requirements.txt
+```
+
+```bash
+sudo apt-get install portaudio19-dev
 ```
 
 ### Configuration

@@ -1,6147 +1,2447 @@
 [
   {
-    "word": "I'm",
-    "startTime": "0.22s",
-    "endTime": "0.36s"
+    "word": "He's",
+    "startTime": "0.099s",
+    "endTime": "0.119s"
   },
   {
     "word": " ",
-    "startTime": "0.36s",
-    "endTime": "0.38s"
+    "startTime": "0.119s",
+    "endTime": "0.139s"
   },
   {
-    "word": "sorry,",
-    "startTime": "0.38s",
-    "endTime": "0.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "0.72s",
-    "endTime": "1.84s"
-  },
-  {
-    "word": "but",
-    "startTime": "1.84s",
-    "endTime": "1.92s"
+    "word": "been",
+    "startTime": "0.139s",
+    "endTime": "0.14s"
   },
   {
     "word": " ",
-    "startTime": "1.92s",
-    "endTime": "1.94s"
+    "startTime": "0.14s",
+    "endTime": "0.14s"
   },
   {
-    "word": "I",
-    "startTime": "1.94s",
-    "endTime": "2.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "2.02s",
-    "endTime": "2.04s"
-  },
-  {
-    "word": "don't",
-    "startTime": "2.04s",
-    "endTime": "2.16s"
+    "word": "with",
+    "startTime": "0.14s",
+    "endTime": "0.259s"
   },
   {
     "word": " ",
-    "startTime": "2.16s",
-    "endTime": "2.18s"
+    "startTime": "0.259s",
+    "endTime": "0.28s"
   },
   {
-    "word": "want",
-    "startTime": "2.18s",
-    "endTime": "2.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "2.28s",
-    "endTime": "2.32s"
-  },
-  {
-    "word": "to",
-    "startTime": "2.32s",
-    "endTime": "2.38s"
+    "word": "us",
+    "startTime": "0.28s",
+    "endTime": "0.28s"
   },
   {
     "word": " ",
-    "startTime": "2.38s",
-    "endTime": "2.42s"
+    "startTime": "0.28s",
+    "endTime": "2.0s"
   },
   {
-    "word": "be",
-    "startTime": "2.42s",
-    "endTime": "2.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "2.52s",
-    "endTime": "2.6s"
-  },
-  {
-    "word": "a-",
-    "startTime": "2.6s",
-    "endTime": "2.74s"
+    "word": "for",
+    "startTime": "2.0s",
+    "endTime": "2.079s"
   },
   {
     "word": " ",
-    "startTime": "2.74s",
-    "endTime": "2.78s"
+    "startTime": "2.079s",
+    "endTime": "2.079s"
   },
   {
-    "word": "an",
-    "startTime": "2.78s",
-    "endTime": "2.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "2.88s",
-    "endTime": "2.92s"
-  },
-  {
-    "word": "emperor.",
-    "startTime": "2.92s",
-    "endTime": "3.66s"
+    "word": "more",
+    "startTime": "2.079s",
+    "endTime": "2.179s"
   },
   {
     "word": " ",
-    "startTime": "3.66s",
-    "endTime": "3.68s"
+    "startTime": "2.179s",
+    "endTime": "2.199s"
   },
   {
-    "word": "That's",
-    "startTime": "3.68s",
-    "endTime": "3.84s"
+    "word": "than",
+    "startTime": "2.199s",
+    "endTime": "2.22s"
   },
   {
     "word": " ",
-    "startTime": "3.84s",
-    "endTime": "3.88s"
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "15",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "years",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "with",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "the",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "face",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "of",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "a",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "dead",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "man",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.22s",
+    "endTime": "2.22s"
+  },
+  {
+    "word": "on",
+    "startTime": "2.22s",
+    "endTime": "2.279s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.279s",
+    "endTime": "2.359s"
+  },
+  {
+    "word": "his",
+    "startTime": "2.359s",
+    "endTime": "2.46s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.46s",
+    "endTime": "2.62s"
+  },
+  {
+    "word": "face,",
+    "startTime": "2.62s",
+    "endTime": "2.619s"
+  },
+  {
+    "word": " ",
+    "startTime": "2.619s",
+    "endTime": "2.619s"
   },
   {
     "word": "not",
-    "startTime": "3.88s",
+    "startTime": "2.619s",
+    "endTime": "3.179s"
+  },
+  {
+    "word": " ",
+    "startTime": "3.179s",
+    "endTime": "3.419s"
+  },
+  {
+    "word": "a",
+    "startTime": "3.419s",
+    "endTime": "3.419s"
+  },
+  {
+    "word": " ",
+    "startTime": "3.419s",
+    "endTime": "3.439s"
+  },
+  {
+    "word": "mask,",
+    "startTime": "3.439s",
+    "endTime": "3.899s"
+  },
+  {
+    "word": " ",
+    "startTime": "3.899s",
+    "endTime": "3.919s"
+  },
+  {
+    "word": "but",
+    "startTime": "3.919s",
     "endTime": "4.019s"
   },
   {
     "word": " ",
     "startTime": "4.019s",
-    "endTime": "4.04s"
+    "endTime": "4.038s"
   },
   {
-    "word": "my",
-    "startTime": "4.04s",
-    "endTime": "4.149s"
-  },
-  {
-    "word": " ",
-    "startTime": "4.149s",
-    "endTime": "4.22s"
-  },
-  {
-    "word": "business.",
-    "startTime": "4.22s",
-    "endTime": "5.76s"
+    "word": "a",
+    "startTime": "4.038s",
+    "endTime": "4.038s"
   },
   {
     "word": " ",
-    "startTime": "5.76s",
-    "endTime": "5.859s"
+    "startTime": "4.038s",
+    "endTime": "4.139s"
   },
   {
-    "word": "I",
-    "startTime": "5.86s",
-    "endTime": "5.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "5.88s",
-    "endTime": "5.92s"
-  },
-  {
-    "word": "don't",
-    "startTime": "5.92s",
-    "endTime": "6.0s"
+    "word": "real",
+    "startTime": "4.139s",
+    "endTime": "4.279s"
   },
   {
     "word": " ",
-    "startTime": "6.0s",
-    "endTime": "6.02s"
+    "startTime": "4.279s",
+    "endTime": "4.279s"
   },
   {
-    "word": "want",
-    "startTime": "6.02s",
-    "endTime": "6.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "6.1s",
-    "endTime": "6.12s"
-  },
-  {
-    "word": "to",
-    "startTime": "6.12s",
-    "endTime": "6.2s"
+    "word": "face.",
+    "startTime": "4.279s",
+    "endTime": "4.759s"
   },
   {
     "word": " ",
-    "startTime": "6.2s",
-    "endTime": "6.28s"
+    "startTime": "4.759s",
+    "endTime": "4.759s"
   },
   {
-    "word": "rule",
-    "startTime": "6.28s",
-    "endTime": "6.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "6.52s",
-    "endTime": "6.58s"
-  },
-  {
-    "word": "or",
-    "startTime": "6.58s",
-    "endTime": "6.62s"
+    "word": "It",
+    "startTime": "4.759s",
+    "endTime": "4.779s"
   },
   {
     "word": " ",
-    "startTime": "6.62s",
-    "endTime": "6.7s"
+    "startTime": "4.779s",
+    "endTime": "4.819s"
   },
   {
-    "word": "conquer",
-    "startTime": "6.7s",
-    "endTime": "7.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "7.06s",
-    "endTime": "7.18s"
-  },
-  {
-    "word": "anyone.",
-    "startTime": "7.18s",
-    "endTime": "8.2s"
+    "word": "all",
+    "startTime": "4.819s",
+    "endTime": "4.839s"
   },
   {
     "word": " ",
-    "startTime": "8.2s",
-    "endTime": "8.26s"
+    "startTime": "4.839s",
+    "endTime": "4.919s"
   },
   {
-    "word": "I",
-    "startTime": "8.26s",
-    "endTime": "8.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "8.3s",
-    "endTime": "8.32s"
-  },
-  {
-    "word": "should",
-    "startTime": "8.32s",
-    "endTime": "8.44s"
+    "word": "started",
+    "startTime": "4.919s",
+    "endTime": "5.719s"
   },
   {
     "word": " ",
-    "startTime": "8.44s",
-    "endTime": "8.459s"
+    "startTime": "5.719s",
+    "endTime": "5.719s"
   },
   {
-    "word": "like",
-    "startTime": "8.46s",
-    "endTime": "8.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "8.56s",
-    "endTime": "8.6s"
-  },
-  {
-    "word": "to",
-    "startTime": "8.6s",
-    "endTime": "8.66s"
+    "word": "after",
+    "startTime": "5.719s",
+    "endTime": "5.719s"
   },
   {
     "word": " ",
-    "startTime": "8.66s",
-    "endTime": "8.7s"
+    "startTime": "5.719s",
+    "endTime": "5.719s"
   },
   {
-    "word": "help",
-    "startTime": "8.7s",
-    "endTime": "8.88s"
+    "word": "a",
+    "startTime": "5.719s",
+    "endTime": "5.739s"
   },
   {
     "word": " ",
-    "startTime": "8.88s",
+    "startTime": "5.739s",
+    "endTime": "5.759s"
+  },
+  {
+    "word": "terrible",
+    "startTime": "5.759s",
+    "endTime": "6.059s"
+  },
+  {
+    "word": " ",
+    "startTime": "6.059s",
+    "endTime": "6.079s"
+  },
+  {
+    "word": "accident",
+    "startTime": "6.079s",
+    "endTime": "6.519s"
+  },
+  {
+    "word": " ",
+    "startTime": "6.519s",
+    "endTime": "6.599s"
+  },
+  {
+    "word": "that",
+    "startTime": "6.599s",
+    "endTime": "6.759s"
+  },
+  {
+    "word": " ",
+    "startTime": "6.759s",
+    "endTime": "6.939s"
+  },
+  {
+    "word": "left",
+    "startTime": "6.939s",
+    "endTime": "6.94s"
+  },
+  {
+    "word": " ",
+    "startTime": "6.94s",
+    "endTime": "6.94s"
+  },
+  {
+    "word": "half",
+    "startTime": "6.94s",
+    "endTime": "6.94s"
+  },
+  {
+    "word": " ",
+    "startTime": "6.94s",
+    "endTime": "6.94s"
+  },
+  {
+    "word": "of",
+    "startTime": "6.94s",
+    "endTime": "6.94s"
+  },
+  {
+    "word": " ",
+    "startTime": "6.94s",
+    "endTime": "7.76s"
+  },
+  {
+    "word": "his",
+    "startTime": "7.76s",
+    "endTime": "7.899s"
+  },
+  {
+    "word": " ",
+    "startTime": "7.899s",
+    "endTime": "7.899s"
+  },
+  {
+    "word": "face",
+    "startTime": "7.899s",
+    "endTime": "8.0s"
+  },
+  {
+    "word": " ",
+    "startTime": "8.0s",
+    "endTime": "8.18s"
+  },
+  {
+    "word": "unrecognizable.",
+    "startTime": "8.18s",
     "endTime": "8.92s"
   },
   {
-    "word": "everyone",
+    "word": " ",
     "startTime": "8.92s",
-    "endTime": "9.22s"
+    "endTime": "8.92s"
+  },
+  {
+    "word": "Doctors",
+    "startTime": "8.92s",
+    "endTime": "9.52s"
   },
   {
     "word": " ",
-    "startTime": "9.22s",
-    "endTime": "9.24s"
+    "startTime": "9.52s",
+    "endTime": "9.539s"
   },
   {
-    "word": "if",
-    "startTime": "9.24s",
-    "endTime": "9.36s"
+    "word": "said",
+    "startTime": "9.539s",
+    "endTime": "9.64s"
   },
   {
     "word": " ",
-    "startTime": "9.36s",
-    "endTime": "9.399s"
+    "startTime": "9.64s",
+    "endTime": "9.699s"
   },
   {
-    "word": "possible,",
-    "startTime": "9.4s",
+    "word": "he",
+    "startTime": "9.699s",
+    "endTime": "9.699s"
+  },
+  {
+    "word": " ",
+    "startTime": "9.699s",
+    "endTime": "9.699s"
+  },
+  {
+    "word": "would",
+    "startTime": "9.699s",
     "endTime": "9.76s"
   },
   {
     "word": " ",
     "startTime": "9.76s",
-    "endTime": "10.12s"
+    "endTime": "9.92s"
   },
   {
-    "word": "Jew,",
-    "startTime": "10.18s",
-    "endTime": "10.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "10.56s",
-    "endTime": "10.62s"
-  },
-  {
-    "word": "Gentile,",
-    "startTime": "10.62s",
-    "endTime": "11.64s"
+    "word": "never",
+    "startTime": "9.92s",
+    "endTime": "9.94s"
   },
   {
     "word": " ",
-    "startTime": "11.64s",
-    "endTime": "11.66s"
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
-    "word": "Black",
-    "startTime": "11.66s",
-    "endTime": "11.84s"
-  },
-  {
-    "word": " ",
-    "startTime": "11.84s",
-    "endTime": "11.92s"
-  },
-  {
-    "word": "man,",
-    "startTime": "11.92s",
-    "endTime": "12.26s"
+    "word": "speak",
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
     "word": " ",
-    "startTime": "12.26s",
-    "endTime": "12.28s"
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
-    "word": "white.",
-    "startTime": "12.28s",
-    "endTime": "13.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "13.46s",
-    "endTime": "13.5s"
-  },
-  {
-    "word": "We",
-    "startTime": "13.5s",
-    "endTime": "13.56s"
+    "word": "again,",
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
     "word": " ",
-    "startTime": "13.56s",
-    "endTime": "13.62s"
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
-    "word": "all",
-    "startTime": "13.62s",
-    "endTime": "13.77s"
-  },
-  {
-    "word": " ",
-    "startTime": "13.77s",
-    "endTime": "13.799s"
-  },
-  {
-    "word": "want",
-    "startTime": "13.8s",
-    "endTime": "13.9s"
+    "word": "would",
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
     "word": " ",
-    "startTime": "13.9s",
-    "endTime": "13.92s"
+    "startTime": "9.94s",
+    "endTime": "9.94s"
   },
   {
-    "word": "to",
-    "startTime": "13.92s",
-    "endTime": "14.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "14.02s",
-    "endTime": "14.059s"
-  },
-  {
-    "word": "help",
-    "startTime": "14.06s",
-    "endTime": "14.28s"
+    "word": "never",
+    "startTime": "9.94s",
+    "endTime": "9.98s"
   },
   {
     "word": " ",
-    "startTime": "14.28s",
-    "endTime": "14.3s"
+    "startTime": "9.98s",
+    "endTime": "10.0s"
+  },
+  {
+    "word": "smile",
+    "startTime": "10.0s",
+    "endTime": "10.0s"
+  },
+  {
+    "word": " ",
+    "startTime": "10.0s",
+    "endTime": "10.0s"
+  },
+  {
+    "word": "again",
+    "startTime": "10.0s",
+    "endTime": "10.0s"
+  },
+  {
+    "word": " ",
+    "startTime": "10.0s",
+    "endTime": "11.099s"
+  },
+  {
+    "word": "and",
+    "startTime": "11.099s",
+    "endTime": "11.1s"
+  },
+  {
+    "word": " ",
+    "startTime": "11.1s",
+    "endTime": "11.1s"
+  },
+  {
+    "word": "would",
+    "startTime": "11.1s",
+    "endTime": "11.42s"
+  },
+  {
+    "word": " ",
+    "startTime": "11.42s",
+    "endTime": "12.0s"
+  },
+  {
+    "word": "never",
+    "startTime": "12.0s",
+    "endTime": "12.599s"
+  },
+  {
+    "word": " ",
+    "startTime": "12.599s",
+    "endTime": "12.619s"
+  },
+  {
+    "word": "be",
+    "startTime": "12.619s",
+    "endTime": "12.64s"
+  },
+  {
+    "word": " ",
+    "startTime": "12.64s",
+    "endTime": "12.64s"
+  },
+  {
+    "word": "seen",
+    "startTime": "12.64s",
+    "endTime": "12.879s"
+  },
+  {
+    "word": " ",
+    "startTime": "12.88s",
+    "endTime": "12.9s"
+  },
+  {
+    "word": "in",
+    "startTime": "12.9s",
+    "endTime": "12.9s"
+  },
+  {
+    "word": " ",
+    "startTime": "12.9s",
+    "endTime": "12.92s"
+  },
+  {
+    "word": "public",
+    "startTime": "12.92s",
+    "endTime": "13.299s"
+  },
+  {
+    "word": " ",
+    "startTime": "13.299s",
+    "endTime": "13.399s"
+  },
+  {
+    "word": "again.",
+    "startTime": "13.399s",
+    "endTime": "13.719s"
+  },
+  {
+    "word": " ",
+    "startTime": "13.719s",
+    "endTime": "13.72s"
+  },
+  {
+    "word": "But",
+    "startTime": "13.72s",
+    "endTime": "13.72s"
+  },
+  {
+    "word": " ",
+    "startTime": "13.72s",
+    "endTime": "13.739s"
+  },
+  {
+    "word": "he",
+    "startTime": "13.739s",
+    "endTime": "13.779s"
+  },
+  {
+    "word": " ",
+    "startTime": "13.779s",
+    "endTime": "13.819s"
+  },
+  {
+    "word": "accepted",
+    "startTime": "13.819s",
+    "endTime": "14.299s"
+  },
+  {
+    "word": " ",
+    "startTime": "14.299s",
+    "endTime": "14.319s"
+  },
+  {
+    "word": "something",
+    "startTime": "14.319s",
+    "endTime": "14.84s"
+  },
+  {
+    "word": " ",
+    "startTime": "14.84s",
+    "endTime": "14.859s"
+  },
+  {
+    "word": "that",
+    "startTime": "14.859s",
+    "endTime": "14.98s"
+  },
+  {
+    "word": " ",
+    "startTime": "14.98s",
+    "endTime": "14.98s"
+  },
+  {
+    "word": "no",
+    "startTime": "14.98s",
+    "endTime": "14.98s"
+  },
+  {
+    "word": " ",
+    "startTime": "14.98s",
+    "endTime": "15.079s"
   },
   {
     "word": "one",
-    "startTime": "14.3s",
-    "endTime": "14.4s"
+    "startTime": "15.079s",
+    "endTime": "15.56s"
   },
   {
     "word": " ",
-    "startTime": "14.4s",
-    "endTime": "14.44s"
+    "startTime": "15.56s",
+    "endTime": "15.599s"
   },
   {
-    "word": "another.",
-    "startTime": "14.44s",
-    "endTime": "14.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "14.96s",
-    "endTime": "15.0s"
-  },
-  {
-    "word": "Human",
-    "startTime": "15.0s",
-    "endTime": "15.28s"
+    "word": "had",
+    "startTime": "15.599s",
+    "endTime": "15.759s"
   },
   {
     "word": " ",
-    "startTime": "15.28s",
-    "endTime": "15.32s"
+    "startTime": "15.759s",
+    "endTime": "16.779s"
   },
   {
-    "word": "beings",
-    "startTime": "15.32s",
-    "endTime": "15.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "15.66s",
-    "endTime": "15.7s"
-  },
-  {
-    "word": "are",
-    "startTime": "15.7s",
-    "endTime": "15.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "15.76s",
-    "endTime": "15.799s"
-  },
-  {
-    "word": "like",
-    "startTime": "15.8s",
-    "endTime": "15.97s"
-  },
-  {
-    "word": " ",
-    "startTime": "15.97s",
-    "endTime": "16.02s"
-  },
-  {
-    "word": "that.",
-    "startTime": "16.02s",
+    "word": "ever",
+    "startTime": "16.779s",
     "endTime": "16.86s"
   },
   {
     "word": " ",
     "startTime": "16.86s",
-    "endTime": "16.88s"
+    "endTime": "16.86s"
   },
   {
-    "word": "We",
-    "startTime": "16.88s",
-    "endTime": "16.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "16.96s",
-    "endTime": "16.98s"
-  },
-  {
-    "word": "want",
-    "startTime": "16.98s",
-    "endTime": "17.08s"
+    "word": "done",
+    "startTime": "16.86s",
+    "endTime": "16.86s"
   },
   {
     "word": " ",
-    "startTime": "17.08s",
-    "endTime": "17.1s"
+    "startTime": "16.86s",
+    "endTime": "16.86s"
   },
   {
-    "word": "to",
-    "startTime": "17.1s",
-    "endTime": "17.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "17.16s",
-    "endTime": "17.2s"
-  },
-  {
-    "word": "live",
-    "startTime": "17.2s",
-    "endTime": "17.32s"
+    "word": "before.",
+    "startTime": "16.86s",
+    "endTime": "16.879s"
   },
   {
     "word": " ",
-    "startTime": "17.32s",
-    "endTime": "17.34s"
+    "startTime": "16.879s",
+    "endTime": "16.879s"
   },
   {
-    "word": "by",
-    "startTime": "17.34s",
-    "endTime": "17.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "17.44s",
-    "endTime": "17.46s"
-  },
-  {
-    "word": "each",
-    "startTime": "17.46s",
-    "endTime": "17.56s"
+    "word": "A",
+    "startTime": "16.879s",
+    "endTime": "16.879s"
   },
   {
     "word": " ",
-    "startTime": "17.56s",
-    "endTime": "17.599s"
+    "startTime": "16.879s",
+    "endTime": "16.879s"
   },
   {
-    "word": "other's",
-    "startTime": "17.6s",
-    "endTime": "17.78s"
-  },
-  {
-    "word": " ",
-    "startTime": "17.78s",
-    "endTime": "17.84s"
-  },
-  {
-    "word": "happiness,",
-    "startTime": "17.84s",
-    "endTime": "18.18s"
+    "word": "complete",
+    "startTime": "16.879s",
+    "endTime": "16.979s"
   },
   {
     "word": " ",
-    "startTime": "18.18s",
-    "endTime": "18.22s"
+    "startTime": "16.979s",
+    "endTime": "17.0s"
   },
   {
-    "word": "not",
-    "startTime": "18.22s",
-    "endTime": "18.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "18.32s",
-    "endTime": "18.36s"
-  },
-  {
-    "word": "by",
-    "startTime": "18.36s",
-    "endTime": "18.42s"
+    "word": "facial",
+    "startTime": "17.0s",
+    "endTime": "17.52s"
   },
   {
     "word": " ",
-    "startTime": "18.42s",
-    "endTime": "18.46s"
+    "startTime": "17.52s",
+    "endTime": "18.1s"
   },
   {
-    "word": "each",
-    "startTime": "18.46s",
+    "word": "transplant",
+    "startTime": "18.1s",
+    "endTime": "18.399s"
+  },
+  {
+    "word": " ",
+    "startTime": "18.399s",
+    "endTime": "18.399s"
+  },
+  {
+    "word": "taken",
+    "startTime": "18.399s",
+    "endTime": "18.44s"
+  },
+  {
+    "word": " ",
+    "startTime": "18.44s",
     "endTime": "18.56s"
   },
   {
-    "word": " ",
+    "word": "from",
     "startTime": "18.56s",
-    "endTime": "18.599s"
-  },
-  {
-    "word": "other's",
-    "startTime": "18.6s",
-    "endTime": "18.8s"
+    "endTime": "18.559s"
   },
   {
     "word": " ",
-    "startTime": "18.8s",
-    "endTime": "18.84s"
+    "startTime": "18.559s",
+    "endTime": "18.559s"
   },
   {
-    "word": "misery.",
-    "startTime": "18.84s",
-    "endTime": "19.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "20.02s",
-    "endTime": "20.04s"
-  },
-  {
-    "word": "We",
-    "startTime": "20.04s",
-    "endTime": "20.12s"
+    "word": "a",
+    "startTime": "18.559s",
+    "endTime": "18.559s"
   },
   {
     "word": " ",
-    "startTime": "20.12s",
-    "endTime": "20.16s"
+    "startTime": "18.559s",
+    "endTime": "18.579s"
   },
   {
-    "word": "don't",
-    "startTime": "20.16s",
-    "endTime": "20.22s"
-  },
-  {
-    "word": " ",
-    "startTime": "20.22s",
-    "endTime": "20.24s"
-  },
-  {
-    "word": "want",
-    "startTime": "20.24s",
-    "endTime": "20.3s"
+    "word": "donor.",
+    "startTime": "18.579s",
+    "endTime": "19.12s"
   },
   {
     "word": " ",
-    "startTime": "20.3s",
+    "startTime": "19.12s",
+    "endTime": "19.12s"
+  },
+  {
+    "word": "For",
+    "startTime": "19.12s",
+    "endTime": "19.219s"
+  },
+  {
+    "word": " ",
+    "startTime": "19.219s",
+    "endTime": "19.359s"
+  },
+  {
+    "word": "24",
+    "startTime": "19.359s",
+    "endTime": "19.68s"
+  },
+  {
+    "word": " ",
+    "startTime": "19.68s",
+    "endTime": "19.7s"
+  },
+  {
+    "word": "hours",
+    "startTime": "19.7s",
+    "endTime": "19.8s"
+  },
+  {
+    "word": " ",
+    "startTime": "19.8s",
+    "endTime": "19.819s"
+  },
+  {
+    "word": "straight,",
+    "startTime": "19.819s",
+    "endTime": "19.959s"
+  },
+  {
+    "word": " ",
+    "startTime": "19.959s",
+    "endTime": "20.339s"
+  },
+  {
+    "word": "a",
+    "startTime": "20.339s",
     "endTime": "20.34s"
   },
   {
-    "word": "to",
+    "word": " ",
     "startTime": "20.34s",
-    "endTime": "20.42s"
+    "endTime": "20.479s"
+  },
+  {
+    "word": "team",
+    "startTime": "20.479s",
+    "endTime": "21.12s"
   },
   {
     "word": " ",
-    "startTime": "20.42s",
-    "endTime": "20.48s"
+    "startTime": "21.12s",
+    "endTime": "21.139s"
   },
   {
-    "word": "hate",
-    "startTime": "20.48s",
-    "endTime": "20.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "20.66s",
-    "endTime": "20.68s"
-  },
-  {
-    "word": "and",
-    "startTime": "20.68s",
-    "endTime": "20.76s"
+    "word": "of",
+    "startTime": "21.139s",
+    "endTime": "21.18s"
   },
   {
     "word": " ",
-    "startTime": "20.76s",
-    "endTime": "20.8s"
+    "startTime": "21.18s",
+    "endTime": "21.18s"
   },
   {
-    "word": "despise",
-    "startTime": "20.8s",
-    "endTime": "21.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "21.28s",
-    "endTime": "21.34s"
-  },
-  {
-    "word": "one",
-    "startTime": "21.34s",
-    "endTime": "21.44s"
+    "word": "surgeons",
+    "startTime": "21.18s",
+    "endTime": "21.54s"
   },
   {
     "word": " ",
-    "startTime": "21.44s",
-    "endTime": "21.48s"
+    "startTime": "21.54s",
+    "endTime": "21.559s"
   },
   {
-    "word": "another.",
-    "startTime": "21.48s",
-    "endTime": "22.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "22.42s",
-    "endTime": "22.48s"
-  },
-  {
-    "word": "In",
-    "startTime": "22.48s",
-    "endTime": "22.52s"
+    "word": "reconnected",
+    "startTime": "21.559s",
+    "endTime": "22.02s"
   },
   {
     "word": " ",
-    "startTime": "22.52s",
-    "endTime": "22.56s"
+    "startTime": "22.02s",
+    "endTime": "22.059s"
   },
   {
-    "word": "this",
-    "startTime": "22.56s",
+    "word": "muscles,",
+    "startTime": "22.059s",
+    "endTime": "22.439s"
+  },
+  {
+    "word": " ",
+    "startTime": "22.439s",
+    "endTime": "22.46s"
+  },
+  {
+    "word": "nerves",
+    "startTime": "22.46s",
     "endTime": "22.68s"
   },
   {
     "word": " ",
     "startTime": "22.68s",
-    "endTime": "22.7s"
+    "endTime": "22.78s"
   },
   {
-    "word": "world,",
-    "startTime": "22.7s",
-    "endTime": "22.9s"
-  },
-  {
-    "word": " ",
-    "startTime": "22.9s",
-    "endTime": "22.92s"
-  },
-  {
-    "word": "there's",
-    "startTime": "22.92s",
-    "endTime": "23.08s"
+    "word": "and",
+    "startTime": "22.78s",
+    "endTime": "22.819s"
   },
   {
     "word": " ",
-    "startTime": "23.08s",
-    "endTime": "23.12s"
+    "startTime": "22.819s",
+    "endTime": "22.819s"
   },
   {
-    "word": "room",
-    "startTime": "23.12s",
-    "endTime": "23.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "23.32s",
-    "endTime": "23.36s"
-  },
-  {
-    "word": "for",
-    "startTime": "23.36s",
-    "endTime": "23.46s"
+    "word": "bones.",
+    "startTime": "22.819s",
+    "endTime": "23.319s"
   },
   {
     "word": " ",
-    "startTime": "23.46s",
+    "startTime": "23.319s",
+    "endTime": "23.34s"
+  },
+  {
+    "word": "At",
+    "startTime": "23.34s",
+    "endTime": "23.42s"
+  },
+  {
+    "word": " ",
+    "startTime": "23.42s",
+    "endTime": "23.459s"
+  },
+  {
+    "word": "the",
+    "startTime": "23.459s",
     "endTime": "23.52s"
   },
   {
-    "word": "everyone,",
+    "word": " ",
     "startTime": "23.52s",
-    "endTime": "23.88s"
+    "endTime": "23.539s"
+  },
+  {
+    "word": "moment",
+    "startTime": "23.539s",
+    "endTime": "23.559s"
   },
   {
     "word": " ",
-    "startTime": "23.88s",
-    "endTime": "23.89s"
-  },
-  {
-    "word": "and",
-    "startTime": "23.89s",
-    "endTime": "23.95s"
-  },
-  {
-    "word": " ",
-    "startTime": "23.95s",
-    "endTime": "23.98s"
-  },
-  {
-    "word": "the",
-    "startTime": "23.98s",
-    "endTime": "24.01s"
-  },
-  {
-    "word": " ",
-    "startTime": "24.01s",
-    "endTime": "24.06s"
-  },
-  {
-    "word": "good",
-    "startTime": "24.06s",
-    "endTime": "24.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "24.16s",
-    "endTime": "24.22s"
-  },
-  {
-    "word": "Earth",
-    "startTime": "24.22s",
-    "endTime": "24.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "24.4s",
-    "endTime": "24.44s"
-  },
-  {
-    "word": "is",
-    "startTime": "24.44s",
-    "endTime": "24.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "24.58s",
-    "endTime": "24.64s"
-  },
-  {
-    "word": "rich",
-    "startTime": "24.64s",
-    "endTime": "25.04s"
-  },
-  {
-    "word": " ",
-    "startTime": "25.04s",
-    "endTime": "25.64s"
-  },
-  {
-    "word": "and",
-    "startTime": "25.64s",
-    "endTime": "25.69s"
-  },
-  {
-    "word": " ",
-    "startTime": "25.69s",
-    "endTime": "25.759s"
-  },
-  {
-    "word": "can",
-    "startTime": "25.76s",
-    "endTime": "25.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "25.86s",
-    "endTime": "25.919s"
-  },
-  {
-    "word": "provide",
-    "startTime": "25.92s",
-    "endTime": "26.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "26.34s",
-    "endTime": "26.4s"
-  },
-  {
-    "word": "for",
-    "startTime": "26.4s",
-    "endTime": "26.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "26.5s",
-    "endTime": "26.54s"
-  },
-  {
-    "word": "everyone.",
-    "startTime": "26.54s",
-    "endTime": "27.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "27.46s",
-    "endTime": "27.5s"
-  },
-  {
-    "word": "The",
-    "startTime": "27.5s",
-    "endTime": "27.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "27.56s",
-    "endTime": "27.6s"
-  },
-  {
-    "word": "way",
-    "startTime": "27.6s",
-    "endTime": "27.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "27.72s",
-    "endTime": "27.759s"
+    "startTime": "23.559s",
+    "endTime": "23.579s"
   },
   {
     "word": "of",
-    "startTime": "27.76s",
-    "endTime": "27.84s"
+    "startTime": "23.579s",
+    "endTime": "23.62s"
   },
   {
     "word": " ",
-    "startTime": "27.84s",
-    "endTime": "27.88s"
+    "startTime": "23.62s",
+    "endTime": "23.639s"
   },
   {
-    "word": "life",
-    "startTime": "27.88s",
-    "endTime": "28.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "28.12s",
-    "endTime": "28.18s"
-  },
-  {
-    "word": "can",
-    "startTime": "28.18s",
-    "endTime": "28.28s"
+    "word": "his",
+    "startTime": "23.639s",
+    "endTime": "23.799s"
   },
   {
     "word": " ",
-    "startTime": "28.28s",
-    "endTime": "28.3s"
+    "startTime": "23.799s",
+    "endTime": "23.819s"
   },
   {
-    "word": "be",
-    "startTime": "28.3s",
-    "endTime": "28.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "28.44s",
-    "endTime": "28.52s"
-  },
-  {
-    "word": "free",
-    "startTime": "28.52s",
-    "endTime": "28.78s"
+    "word": "awakening,",
+    "startTime": "23.819s",
+    "endTime": "24.02s"
   },
   {
     "word": " ",
-    "startTime": "28.78s",
-    "endTime": "28.84s"
-  },
-  {
-    "word": "and",
-    "startTime": "28.84s",
-    "endTime": "28.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "28.92s",
-    "endTime": "29.0s"
-  },
-  {
-    "word": "beautiful,",
-    "startTime": "29.04s",
-    "endTime": "30.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "30.4s",
-    "endTime": "30.44s"
-  },
-  {
-    "word": "but",
-    "startTime": "30.44s",
-    "endTime": "30.54s"
-  },
-  {
-    "word": " ",
-    "startTime": "30.54s",
-    "endTime": "30.56s"
-  },
-  {
-    "word": "we",
-    "startTime": "30.56s",
-    "endTime": "30.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "30.64s",
-    "endTime": "30.68s"
-  },
-  {
-    "word": "have",
-    "startTime": "30.68s",
-    "endTime": "30.8s"
-  },
-  {
-    "word": " ",
-    "startTime": "30.8s",
-    "endTime": "30.84s"
-  },
-  {
-    "word": "lost",
-    "startTime": "30.84s",
-    "endTime": "31.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "31.06s",
-    "endTime": "31.07s"
+    "startTime": "24.02s",
+    "endTime": "24.039s"
   },
   {
     "word": "the",
-    "startTime": "31.07s",
-    "endTime": "31.2s"
+    "startTime": "24.039s",
+    "endTime": "24.1s"
   },
   {
     "word": " ",
-    "startTime": "31.2s",
-    "endTime": "31.24s"
+    "startTime": "24.1s",
+    "endTime": "24.12s"
   },
   {
-    "word": "way.",
-    "startTime": "31.24s",
-    "endTime": "32.479s"
+    "word": "mirror",
+    "startTime": "24.12s",
+    "endTime": "24.459s"
   },
   {
     "word": " ",
-    "startTime": "32.479s",
-    "endTime": "32.52s"
+    "startTime": "24.459s",
+    "endTime": "24.939s"
   },
   {
-    "word": "Greed",
-    "startTime": "32.52s",
-    "endTime": "32.94s"
+    "word": "showed",
+    "startTime": "24.939s",
+    "endTime": "25.059s"
   },
   {
     "word": " ",
-    "startTime": "32.94s",
-    "endTime": "33.04s"
-  },
-  {
-    "word": "has",
-    "startTime": "33.04s",
-    "endTime": "33.25s"
-  },
-  {
-    "word": " ",
-    "startTime": "33.25s",
-    "endTime": "33.3s"
-  },
-  {
-    "word": "poisoned",
-    "startTime": "33.3s",
-    "endTime": "33.62s"
-  },
-  {
-    "word": " ",
-    "startTime": "33.62s",
-    "endTime": "33.66s"
-  },
-  {
-    "word": "men's",
-    "startTime": "33.66s",
-    "endTime": "33.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "33.92s",
-    "endTime": "33.94s"
-  },
-  {
-    "word": "souls,",
-    "startTime": "33.94s",
-    "endTime": "35.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "35.06s",
-    "endTime": "35.1s"
-  },
-  {
-    "word": "has",
-    "startTime": "35.1s",
-    "endTime": "35.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "35.28s",
-    "endTime": "35.32s"
-  },
-  {
-    "word": "barricaded",
-    "startTime": "35.32s",
-    "endTime": "35.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "35.76s",
-    "endTime": "35.8s"
-  },
-  {
-    "word": "the",
-    "startTime": "35.8s",
-    "endTime": "35.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "35.88s",
-    "endTime": "35.92s"
-  },
-  {
-    "word": "world",
-    "startTime": "35.92s",
-    "endTime": "36.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "36.2s",
-    "endTime": "36.24s"
-  },
-  {
-    "word": "with",
-    "startTime": "36.24s",
-    "endTime": "36.35s"
-  },
-  {
-    "word": " ",
-    "startTime": "36.35s",
-    "endTime": "36.38s"
-  },
-  {
-    "word": "hate,",
-    "startTime": "36.38s",
-    "endTime": "37.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "37.3s",
-    "endTime": "37.36s"
-  },
-  {
-    "word": "has",
-    "startTime": "37.36s",
-    "endTime": "37.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "37.56s",
-    "endTime": "37.58s"
-  },
-  {
-    "word": "goose-stepped",
-    "startTime": "37.58s",
-    "endTime": "38.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "38.02s",
-    "endTime": "38.08s"
-  },
-  {
-    "word": "us",
-    "startTime": "38.08s",
-    "endTime": "38.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "38.16s",
-    "endTime": "38.22s"
-  },
-  {
-    "word": "into",
-    "startTime": "38.22s",
-    "endTime": "38.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "38.38s",
-    "endTime": "38.42s"
-  },
-  {
-    "word": "misery",
-    "startTime": "38.42s",
-    "endTime": "38.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "38.72s",
-    "endTime": "38.74s"
-  },
-  {
-    "word": "and",
-    "startTime": "38.74s",
-    "endTime": "38.83s"
-  },
-  {
-    "word": " ",
-    "startTime": "38.83s",
-    "endTime": "38.94s"
-  },
-  {
-    "word": "bloodshed.",
-    "startTime": "38.94s",
-    "endTime": "40.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "40.2s",
-    "endTime": "40.22s"
-  },
-  {
-    "word": "We",
-    "startTime": "40.22s",
-    "endTime": "40.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "40.3s",
-    "endTime": "40.36s"
-  },
-  {
-    "word": "have",
-    "startTime": "40.36s",
-    "endTime": "40.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "40.46s",
-    "endTime": "40.5s"
-  },
-  {
-    "word": "developed",
-    "startTime": "40.5s",
-    "endTime": "40.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "40.86s",
-    "endTime": "40.88s"
-  },
-  {
-    "word": "speed,",
-    "startTime": "40.88s",
-    "endTime": "41.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "41.64s",
-    "endTime": "41.66s"
-  },
-  {
-    "word": "but",
-    "startTime": "41.66s",
-    "endTime": "41.78s"
-  },
-  {
-    "word": " ",
-    "startTime": "41.78s",
-    "endTime": "41.82s"
-  },
-  {
-    "word": "we",
-    "startTime": "41.82s",
-    "endTime": "41.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "41.88s",
-    "endTime": "41.92s"
-  },
-  {
-    "word": "have",
-    "startTime": "41.92s",
-    "endTime": "42.05s"
-  },
-  {
-    "word": " ",
-    "startTime": "42.05s",
-    "endTime": "42.1s"
-  },
-  {
-    "word": "shut",
-    "startTime": "42.1s",
-    "endTime": "42.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "42.24s",
-    "endTime": "42.28s"
-  },
-  {
-    "word": "ourselves",
-    "startTime": "42.28s",
-    "endTime": "42.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "42.72s",
-    "endTime": "42.76s"
-  },
-  {
-    "word": "in.",
-    "startTime": "42.76s",
-    "endTime": "43.53s"
-  },
-  {
-    "word": " ",
-    "startTime": "43.53s",
-    "endTime": "43.53s"
-  },
-  {
-    "word": "Machinery",
-    "startTime": "43.53s",
-    "endTime": "43.99s"
-  },
-  {
-    "word": " ",
-    "startTime": "43.99s",
-    "endTime": "43.99s"
-  },
-  {
-    "word": "that",
-    "startTime": "43.99s",
-    "endTime": "44.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "44.12s",
-    "endTime": "44.14s"
-  },
-  {
-    "word": "gives",
-    "startTime": "44.14s",
-    "endTime": "44.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "44.28s",
-    "endTime": "44.32s"
-  },
-  {
-    "word": "abundance",
-    "startTime": "44.32s",
-    "endTime": "44.85s"
-  },
-  {
-    "word": " ",
-    "startTime": "44.85s",
-    "endTime": "44.98s"
-  },
-  {
-    "word": "has",
-    "startTime": "44.98s",
-    "endTime": "45.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "45.12s",
-    "endTime": "45.16s"
-  },
-  {
-    "word": "left",
-    "startTime": "45.16s",
-    "endTime": "45.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "45.28s",
-    "endTime": "45.32s"
-  },
-  {
-    "word": "us",
-    "startTime": "45.32s",
-    "endTime": "45.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "45.4s",
-    "endTime": "45.44s"
-  },
-  {
-    "word": "in",
-    "startTime": "45.44s",
-    "endTime": "45.54s"
-  },
-  {
-    "word": " ",
-    "startTime": "45.54s",
-    "endTime": "45.56s"
-  },
-  {
-    "word": "want.",
-    "startTime": "45.56s",
-    "endTime": "46.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "46.4s",
-    "endTime": "46.44s"
-  },
-  {
-    "word": "Our",
-    "startTime": "46.44s",
-    "endTime": "46.6s"
-  },
-  {
-    "word": " ",
-    "startTime": "46.6s",
-    "endTime": "46.62s"
-  },
-  {
-    "word": "knowledge",
-    "startTime": "46.62s",
-    "endTime": "46.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "46.94s",
-    "endTime": "47.019s"
-  },
-  {
-    "word": "has",
-    "startTime": "47.02s",
-    "endTime": "47.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "47.16s",
-    "endTime": "47.18s"
-  },
-  {
-    "word": "made",
-    "startTime": "47.18s",
-    "endTime": "47.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "47.3s",
-    "endTime": "47.34s"
-  },
-  {
-    "word": "us",
-    "startTime": "47.34s",
-    "endTime": "47.449s"
-  },
-  {
-    "word": " ",
-    "startTime": "47.449s",
-    "endTime": "47.48s"
-  },
-  {
-    "word": "cynical,",
-    "startTime": "47.48s",
-    "endTime": "48.089s"
-  },
-  {
-    "word": " ",
-    "startTime": "48.089s",
-    "endTime": "48.14s"
-  },
-  {
-    "word": "our",
-    "startTime": "48.14s",
-    "endTime": "48.33s"
-  },
-  {
-    "word": " ",
-    "startTime": "48.33s",
-    "endTime": "48.36s"
-  },
-  {
-    "word": "cleverness",
-    "startTime": "48.36s",
-    "endTime": "48.69s"
-  },
-  {
-    "word": " ",
-    "startTime": "48.69s",
-    "endTime": "48.74s"
-  },
-  {
-    "word": "hard",
-    "startTime": "48.78s",
-    "endTime": "49.04s"
-  },
-  {
-    "word": " ",
-    "startTime": "49.04s",
-    "endTime": "49.06s"
-  },
-  {
-    "word": "and",
-    "startTime": "49.06s",
-    "endTime": "49.13s"
-  },
-  {
-    "word": " ",
-    "startTime": "49.13s",
-    "endTime": "49.16s"
-  },
-  {
-    "word": "unkind.",
-    "startTime": "49.16s",
-    "endTime": "50.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "50.34s",
-    "endTime": "50.36s"
-  },
-  {
-    "word": "We",
-    "startTime": "50.36s",
-    "endTime": "50.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "50.44s",
-    "endTime": "50.5s"
-  },
-  {
-    "word": "think",
-    "startTime": "50.5s",
-    "endTime": "50.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "50.68s",
-    "endTime": "50.72s"
-  },
-  {
-    "word": "too",
-    "startTime": "50.72s",
-    "endTime": "50.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "50.82s",
-    "endTime": "50.88s"
-  },
-  {
-    "word": "much",
-    "startTime": "50.88s",
-    "endTime": "51.26s"
-  },
-  {
-    "word": " ",
-    "startTime": "51.26s",
-    "endTime": "51.32s"
-  },
-  {
-    "word": "and",
-    "startTime": "51.32s",
-    "endTime": "51.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "51.46s",
-    "endTime": "51.64s"
-  },
-  {
-    "word": "feel",
-    "startTime": "51.64s",
-    "endTime": "51.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "51.94s",
-    "endTime": "52.04s"
-  },
-  {
-    "word": "too",
-    "startTime": "52.04s",
-    "endTime": "52.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "52.16s",
-    "endTime": "52.2s"
-  },
-  {
-    "word": "little.",
-    "startTime": "52.2s",
-    "endTime": "53.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "53.12s",
-    "endTime": "53.16s"
-  },
-  {
-    "word": "More",
-    "startTime": "53.16s",
-    "endTime": "53.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "53.34s",
-    "endTime": "53.36s"
-  },
-  {
-    "word": "than",
-    "startTime": "53.36s",
-    "endTime": "53.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "53.44s",
-    "endTime": "53.46s"
-  },
-  {
-    "word": "machinery,",
-    "startTime": "53.46s",
-    "endTime": "54.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "54.32s",
-    "endTime": "54.4s"
-  },
-  {
-    "word": "we",
-    "startTime": "54.4s",
-    "endTime": "54.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "54.46s",
-    "endTime": "54.54s"
-  },
-  {
-    "word": "need",
-    "startTime": "54.54s",
-    "endTime": "54.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "54.74s",
-    "endTime": "54.78s"
-  },
-  {
-    "word": "humanity.",
-    "startTime": "54.78s",
-    "endTime": "55.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "55.74s",
-    "endTime": "55.8s"
-  },
-  {
-    "word": "More",
-    "startTime": "55.8s",
-    "endTime": "55.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "55.94s",
-    "endTime": "55.96s"
-  },
-  {
-    "word": "than",
-    "startTime": "55.96s",
-    "endTime": "56.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "56.06s",
-    "endTime": "56.14s"
-  },
-  {
-    "word": "cleverness,",
-    "startTime": "56.14s",
-    "endTime": "56.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "56.98s",
-    "endTime": "57.02s"
-  },
-  {
-    "word": "we",
-    "startTime": "57.02s",
-    "endTime": "57.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "57.08s",
-    "endTime": "57.14s"
-  },
-  {
-    "word": "need",
-    "startTime": "57.14s",
-    "endTime": "57.29s"
-  },
-  {
-    "word": " ",
-    "startTime": "57.29s",
-    "endTime": "57.4s"
-  },
-  {
-    "word": "kindness",
-    "startTime": "57.4s",
-    "endTime": "57.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "57.92s",
-    "endTime": "57.98s"
-  },
-  {
-    "word": "and",
-    "startTime": "57.98s",
-    "endTime": "58.07s"
-  },
-  {
-    "word": " ",
-    "startTime": "58.07s",
-    "endTime": "58.14s"
-  },
-  {
-    "word": "gentleness.",
-    "startTime": "58.14s",
-    "endTime": "59.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "59.28s",
-    "endTime": "59.3s"
-  },
-  {
-    "word": "Without",
-    "startTime": "59.3s",
-    "endTime": "59.589s"
-  },
-  {
-    "word": " ",
-    "startTime": "59.589s",
-    "endTime": "59.589s"
-  },
-  {
-    "word": "these",
-    "startTime": "59.589s",
-    "endTime": "59.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "59.82s",
-    "endTime": "59.86s"
-  },
-  {
-    "word": "qualities,",
-    "startTime": "59.86s",
-    "endTime": "60.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "60.24s",
-    "endTime": "60.28s"
-  },
-  {
-    "word": "life",
-    "startTime": "60.28s",
-    "endTime": "60.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "60.44s",
-    "endTime": "60.48s"
-  },
-  {
-    "word": "will",
-    "startTime": "60.48s",
-    "endTime": "60.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "60.56s",
-    "endTime": "60.6s"
-  },
-  {
-    "word": "be",
-    "startTime": "60.6s",
-    "endTime": "60.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "60.74s",
-    "endTime": "60.78s"
-  },
-  {
-    "word": "violent,",
-    "startTime": "60.78s",
-    "endTime": "61.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "61.64s",
-    "endTime": "61.66s"
-  },
-  {
-    "word": "and",
-    "startTime": "61.66s",
-    "endTime": "61.73s"
-  },
-  {
-    "word": " ",
-    "startTime": "61.73s",
-    "endTime": "61.82s"
-  },
-  {
-    "word": "all",
-    "startTime": "61.82s",
-    "endTime": "61.97s"
-  },
-  {
-    "word": " ",
-    "startTime": "61.97s",
-    "endTime": "62.04s"
-  },
-  {
-    "word": "will",
-    "startTime": "62.04s",
-    "endTime": "62.19s"
-  },
-  {
-    "word": " ",
-    "startTime": "62.19s",
-    "endTime": "62.2s"
-  },
-  {
-    "word": "be",
-    "startTime": "62.2s",
-    "endTime": "62.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "62.28s",
-    "endTime": "62.32s"
-  },
-  {
-    "word": "lost.",
-    "startTime": "62.32s",
-    "endTime": "63.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "63.4s",
-    "endTime": "63.41s"
-  },
-  {
-    "word": "The",
-    "startTime": "63.41s",
-    "endTime": "63.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "63.5s",
-    "endTime": "63.52s"
-  },
-  {
-    "word": "airplane",
-    "startTime": "63.52s",
-    "endTime": "63.9s"
-  },
-  {
-    "word": " ",
-    "startTime": "63.9s",
-    "endTime": "63.92s"
-  },
-  {
-    "word": "and",
-    "startTime": "63.92s",
-    "endTime": "63.99s"
-  },
-  {
-    "word": " ",
-    "startTime": "63.99s",
-    "endTime": "64.019s"
-  },
-  {
-    "word": "the",
-    "startTime": "64.019s",
-    "endTime": "64.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "64.08s",
-    "endTime": "64.14s"
-  },
-  {
-    "word": "radio",
-    "startTime": "64.14s",
-    "endTime": "64.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "64.5s",
-    "endTime": "64.54s"
-  },
-  {
-    "word": "have",
-    "startTime": "64.54s",
-    "endTime": "64.67s"
-  },
-  {
-    "word": " ",
-    "startTime": "64.67s",
-    "endTime": "64.7s"
-  },
-  {
-    "word": "brought",
-    "startTime": "64.7s",
-    "endTime": "64.879s"
-  },
-  {
-    "word": " ",
-    "startTime": "64.879s",
-    "endTime": "64.92s"
-  },
-  {
-    "word": "us",
-    "startTime": "64.92s",
-    "endTime": "65.09s"
-  },
-  {
-    "word": " ",
-    "startTime": "65.09s",
-    "endTime": "65.099s"
-  },
-  {
-    "word": "closer",
-    "startTime": "65.099s",
-    "endTime": "65.39s"
-  },
-  {
-    "word": " ",
-    "startTime": "65.39s",
-    "endTime": "65.399s"
-  },
-  {
-    "word": "together.",
-    "startTime": "65.4s",
-    "endTime": "66.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "66.08s",
-    "endTime": "66.1s"
-  },
-  {
-    "word": "The",
-    "startTime": "66.1s",
-    "endTime": "66.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "66.16s",
-    "endTime": "66.22s"
-  },
-  {
-    "word": "very",
-    "startTime": "66.22s",
-    "endTime": "66.36s"
-  },
-  {
-    "word": " ",
-    "startTime": "66.36s",
-    "endTime": "66.4s"
-  },
-  {
-    "word": "nature",
-    "startTime": "66.4s",
-    "endTime": "66.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "66.66s",
-    "endTime": "66.7s"
-  },
-  {
-    "word": "of",
-    "startTime": "66.7s",
-    "endTime": "66.77s"
-  },
-  {
-    "word": " ",
-    "startTime": "66.77s",
-    "endTime": "66.8s"
-  },
-  {
-    "word": "these",
-    "startTime": "66.8s",
-    "endTime": "66.95s"
-  },
-  {
-    "word": " ",
-    "startTime": "66.95s",
-    "endTime": "66.98s"
-  },
-  {
-    "word": "inventions",
-    "startTime": "66.98s",
-    "endTime": "67.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "67.56s",
-    "endTime": "67.6s"
-  },
-  {
-    "word": "cries",
-    "startTime": "67.6s",
-    "endTime": "67.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "67.86s",
-    "endTime": "67.9s"
-  },
-  {
-    "word": "out",
-    "startTime": "67.9s",
-    "endTime": "68.05s"
-  },
-  {
-    "word": " ",
-    "startTime": "68.05s",
-    "endTime": "68.06s"
-  },
-  {
-    "word": "for",
-    "startTime": "68.06s",
-    "endTime": "68.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "68.16s",
-    "endTime": "68.17s"
-  },
-  {
-    "word": "the",
-    "startTime": "68.17s",
-    "endTime": "68.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "68.2s",
-    "endTime": "68.24s"
-  },
-  {
-    "word": "goodness",
-    "startTime": "68.24s",
-    "endTime": "68.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "68.5s",
-    "endTime": "68.52s"
-  },
-  {
-    "word": "in",
-    "startTime": "68.52s",
-    "endTime": "68.6s"
-  },
-  {
-    "word": " ",
-    "startTime": "68.6s",
-    "endTime": "68.66s"
-  },
-  {
-    "word": "men,",
-    "startTime": "68.66s",
-    "endTime": "68.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "68.94s",
-    "endTime": "69.3s"
-  },
-  {
-    "word": "cries",
-    "startTime": "69.3s",
-    "endTime": "69.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "69.58s",
-    "endTime": "69.62s"
-  },
-  {
-    "word": "out",
-    "startTime": "69.62s",
-    "endTime": "69.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "69.72s",
-    "endTime": "69.78s"
-  },
-  {
-    "word": "for",
-    "startTime": "69.78s",
-    "endTime": "69.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "69.86s",
-    "endTime": "69.9s"
-  },
-  {
-    "word": "universal",
-    "startTime": "69.9s",
-    "endTime": "70.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "70.34s",
-    "endTime": "70.42s"
-  },
-  {
-    "word": "brotherhood,",
-    "startTime": "70.42s",
-    "endTime": "70.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "70.96s",
-    "endTime": "70.98s"
-  },
-  {
-    "word": "for",
-    "startTime": "70.98s",
-    "endTime": "71.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "71.06s",
-    "endTime": "71.12s"
-  },
-  {
-    "word": "the",
-    "startTime": "71.12s",
-    "endTime": "71.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "71.16s",
-    "endTime": "71.22s"
-  },
-  {
-    "word": "unity",
-    "startTime": "71.22s",
-    "endTime": "71.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "71.46s",
-    "endTime": "71.5s"
-  },
-  {
-    "word": "of",
-    "startTime": "71.5s",
-    "endTime": "71.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "71.56s",
-    "endTime": "71.58s"
-  },
-  {
-    "word": "us",
-    "startTime": "71.58s",
-    "endTime": "71.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "71.68s",
-    "endTime": "71.72s"
-  },
-  {
-    "word": "all.",
-    "startTime": "71.72s",
-    "endTime": "72.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "72.52s",
-    "endTime": "72.58s"
-  },
-  {
-    "word": "Even",
-    "startTime": "72.58s",
-    "endTime": "72.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "72.76s",
-    "endTime": "72.82s"
-  },
-  {
-    "word": "now,",
-    "startTime": "72.82s",
-    "endTime": "73.0s"
-  },
-  {
-    "word": " ",
-    "startTime": "73.0s",
-    "endTime": "73.04s"
-  },
-  {
-    "word": "my",
-    "startTime": "73.04s",
-    "endTime": "73.18s"
-  },
-  {
-    "word": " ",
-    "startTime": "73.18s",
-    "endTime": "73.22s"
-  },
-  {
-    "word": "voice",
-    "startTime": "73.22s",
-    "endTime": "73.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "73.42s",
-    "endTime": "73.46s"
-  },
-  {
-    "word": "is",
-    "startTime": "73.46s",
-    "endTime": "73.54s"
-  },
-  {
-    "word": " ",
-    "startTime": "73.54s",
-    "endTime": "73.58s"
-  },
-  {
-    "word": "reaching",
-    "startTime": "73.58s",
-    "endTime": "73.84s"
-  },
-  {
-    "word": " ",
-    "startTime": "73.84s",
-    "endTime": "73.88s"
-  },
-  {
-    "word": "millions",
-    "startTime": "73.88s",
-    "endTime": "74.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "74.24s",
-    "endTime": "74.259s"
-  },
-  {
-    "word": "throughout",
-    "startTime": "74.26s",
-    "endTime": "74.53s"
-  },
-  {
-    "word": " ",
-    "startTime": "74.53s",
-    "endTime": "74.58s"
-  },
-  {
-    "word": "the",
-    "startTime": "74.58s",
-    "endTime": "74.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "74.64s",
-    "endTime": "74.7s"
-  },
-  {
-    "word": "world,",
-    "startTime": "74.7s",
-    "endTime": "75.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "75.52s",
-    "endTime": "75.56s"
-  },
-  {
-    "word": "millions",
-    "startTime": "75.56s",
-    "endTime": "75.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "75.92s",
-    "endTime": "75.96s"
-  },
-  {
-    "word": "of",
-    "startTime": "75.96s",
-    "endTime": "76.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "76.02s",
-    "endTime": "76.06s"
-  },
-  {
-    "word": "despairing",
-    "startTime": "76.06s",
-    "endTime": "76.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "76.58s",
-    "endTime": "76.679s"
-  },
-  {
-    "word": "men,",
-    "startTime": "76.68s",
-    "endTime": "77.0s"
-  },
-  {
-    "word": " ",
-    "startTime": "77.0s",
-    "endTime": "77.08s"
-  },
-  {
-    "word": "women,",
-    "startTime": "77.08s",
-    "endTime": "77.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "77.28s",
-    "endTime": "77.29s"
-  },
-  {
-    "word": "and",
-    "startTime": "77.29s",
-    "endTime": "77.35s"
-  },
-  {
-    "word": " ",
-    "startTime": "77.35s",
-    "endTime": "77.4s"
-  },
-  {
-    "word": "children,",
-    "startTime": "77.46s",
-    "endTime": "78.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "78.46s",
-    "endTime": "78.5s"
-  },
-  {
-    "word": "victims",
-    "startTime": "78.5s",
-    "endTime": "78.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "78.96s",
-    "endTime": "79.0s"
-  },
-  {
-    "word": "of",
-    "startTime": "79.0s",
-    "endTime": "79.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "79.06s",
-    "endTime": "79.1s"
+    "startTime": "25.059s",
+    "endTime": "25.079s"
   },
   {
     "word": "a",
-    "startTime": "79.1s",
-    "endTime": "79.16s"
+    "startTime": "25.079s",
+    "endTime": "25.1s"
   },
   {
     "word": " ",
-    "startTime": "79.16s",
-    "endTime": "79.22s"
+    "startTime": "25.1s",
+    "endTime": "25.12s"
   },
   {
-    "word": "system",
-    "startTime": "79.22s",
-    "endTime": "79.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "79.56s",
-    "endTime": "79.6s"
-  },
-  {
-    "word": "that",
-    "startTime": "79.6s",
-    "endTime": "79.75s"
+    "word": "stranger,",
+    "startTime": "25.12s",
+    "endTime": "25.459s"
   },
   {
     "word": " ",
-    "startTime": "79.75s",
-    "endTime": "79.78s"
-  },
-  {
-    "word": "makes",
-    "startTime": "79.78s",
-    "endTime": "80.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "80.02s",
-    "endTime": "80.06s"
-  },
-  {
-    "word": "men",
-    "startTime": "80.06s",
-    "endTime": "80.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "80.28s",
-    "endTime": "80.34s"
-  },
-  {
-    "word": "torture",
-    "startTime": "80.34s",
-    "endTime": "81.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "81.16s",
-    "endTime": "81.2s"
-  },
-  {
-    "word": "and",
-    "startTime": "81.2s",
-    "endTime": "81.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "81.3s",
-    "endTime": "81.34s"
-  },
-  {
-    "word": "imprison",
-    "startTime": "81.34s",
-    "endTime": "81.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "81.82s",
-    "endTime": "81.86s"
-  },
-  {
-    "word": "innocent",
-    "startTime": "81.86s",
-    "endTime": "82.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "82.24s",
-    "endTime": "82.259s"
-  },
-  {
-    "word": "people.",
-    "startTime": "82.26s",
-    "endTime": "83.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "83.66s",
-    "endTime": "83.679s"
-  },
-  {
-    "word": "To",
-    "startTime": "83.68s",
-    "endTime": "83.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "83.76s",
-    "endTime": "83.8s"
-  },
-  {
-    "word": "those",
-    "startTime": "83.8s",
-    "endTime": "84.01s"
-  },
-  {
-    "word": " ",
-    "startTime": "84.01s",
-    "endTime": "84.02s"
-  },
-  {
-    "word": "who",
-    "startTime": "84.02s",
-    "endTime": "84.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "84.1s",
-    "endTime": "84.14s"
-  },
-  {
-    "word": "can",
-    "startTime": "84.14s",
-    "endTime": "84.25s"
-  },
-  {
-    "word": " ",
-    "startTime": "84.25s",
-    "endTime": "84.3s"
-  },
-  {
-    "word": "hear",
-    "startTime": "84.3s",
-    "endTime": "84.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "84.46s",
-    "endTime": "84.48s"
-  },
-  {
-    "word": "me,",
-    "startTime": "84.48s",
-    "endTime": "84.57s"
-  },
-  {
-    "word": " ",
-    "startTime": "84.57s",
-    "endTime": "84.74s"
-  },
-  {
-    "word": "I",
-    "startTime": "84.74s",
-    "endTime": "84.75s"
-  },
-  {
-    "word": " ",
-    "startTime": "84.75s",
-    "endTime": "84.8s"
-  },
-  {
-    "word": "say,",
-    "startTime": "84.8s",
-    "endTime": "85.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "85.52s",
-    "endTime": "85.56s"
-  },
-  {
-    "word": "do",
-    "startTime": "85.56s",
-    "endTime": "85.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "85.68s",
-    "endTime": "85.7s"
-  },
-  {
-    "word": "not",
-    "startTime": "85.7s",
-    "endTime": "85.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "85.86s",
-    "endTime": "85.88s"
-  },
-  {
-    "word": "despair.",
-    "startTime": "85.88s",
-    "endTime": "86.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "86.98s",
-    "endTime": "87.0s"
-  },
-  {
-    "word": "The",
-    "startTime": "87.0s",
-    "endTime": "87.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "87.06s",
-    "endTime": "87.12s"
-  },
-  {
-    "word": "misery",
-    "startTime": "87.12s",
-    "endTime": "87.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "87.42s",
-    "endTime": "87.44s"
-  },
-  {
-    "word": "that",
-    "startTime": "87.44s",
-    "endTime": "87.55s"
-  },
-  {
-    "word": " ",
-    "startTime": "87.55s",
-    "endTime": "87.55s"
-  },
-  {
-    "word": "is",
-    "startTime": "87.55s",
-    "endTime": "87.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "87.68s",
-    "endTime": "87.69s"
-  },
-  {
-    "word": "now",
-    "startTime": "87.69s",
-    "endTime": "87.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "87.86s",
-    "endTime": "87.92s"
-  },
-  {
-    "word": "upon",
-    "startTime": "87.92s",
-    "endTime": "88.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "88.14s",
-    "endTime": "88.18s"
-  },
-  {
-    "word": "us",
-    "startTime": "88.18s",
-    "endTime": "88.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "88.28s",
-    "endTime": "88.32s"
-  },
-  {
-    "word": "is",
-    "startTime": "88.32s",
-    "endTime": "88.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "88.44s",
-    "endTime": "88.48s"
+    "startTime": "25.459s",
+    "endTime": "25.5s"
   },
   {
     "word": "but",
-    "startTime": "88.48s",
-    "endTime": "88.59s"
+    "startTime": "25.5s",
+    "endTime": "25.6s"
   },
   {
     "word": " ",
-    "startTime": "88.59s",
-    "endTime": "88.59s"
-  },
-  {
-    "word": "the",
-    "startTime": "88.59s",
-    "endTime": "88.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "88.72s",
-    "endTime": "88.76s"
-  },
-  {
-    "word": "passing",
-    "startTime": "88.76s",
-    "endTime": "89.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "89.14s",
-    "endTime": "89.18s"
-  },
-  {
-    "word": "of",
-    "startTime": "89.18s",
-    "endTime": "89.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "89.32s",
-    "endTime": "89.36s"
-  },
-  {
-    "word": "greed,",
-    "startTime": "89.36s",
-    "endTime": "90.19s"
-  },
-  {
-    "word": " ",
-    "startTime": "90.19s",
-    "endTime": "90.2s"
-  },
-  {
-    "word": "the",
-    "startTime": "90.2s",
-    "endTime": "90.36s"
-  },
-  {
-    "word": " ",
-    "startTime": "90.36s",
-    "endTime": "90.42s"
-  },
-  {
-    "word": "bitterness",
-    "startTime": "90.42s",
-    "endTime": "90.78s"
-  },
-  {
-    "word": " ",
-    "startTime": "90.78s",
-    "endTime": "90.82s"
-  },
-  {
-    "word": "of",
-    "startTime": "90.82s",
-    "endTime": "90.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "90.94s",
-    "endTime": "91.0s"
-  },
-  {
-    "word": "men",
-    "startTime": "91.0s",
-    "endTime": "91.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "91.24s",
-    "endTime": "91.28s"
-  },
-  {
-    "word": "who",
-    "startTime": "91.28s",
-    "endTime": "91.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "91.38s",
-    "endTime": "91.56s"
-  },
-  {
-    "word": "fear",
-    "startTime": "91.56s",
-    "endTime": "91.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "91.74s",
-    "endTime": "91.759s"
-  },
-  {
-    "word": "the",
-    "startTime": "91.76s",
-    "endTime": "91.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "91.88s",
-    "endTime": "91.92s"
-  },
-  {
-    "word": "way",
-    "startTime": "91.92s",
-    "endTime": "92.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "92.16s",
-    "endTime": "92.22s"
-  },
-  {
-    "word": "of",
-    "startTime": "92.22s",
-    "endTime": "92.36s"
-  },
-  {
-    "word": " ",
-    "startTime": "92.36s",
-    "endTime": "92.4s"
-  },
-  {
-    "word": "human",
-    "startTime": "92.4s",
-    "endTime": "92.7s"
-  },
-  {
-    "word": " ",
-    "startTime": "92.7s",
-    "endTime": "92.74s"
-  },
-  {
-    "word": "progress.",
-    "startTime": "92.74s",
-    "endTime": "93.79s"
-  },
-  {
-    "word": " ",
-    "startTime": "93.79s",
-    "endTime": "93.79s"
-  },
-  {
-    "word": "The",
-    "startTime": "93.79s",
-    "endTime": "93.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "93.88s",
-    "endTime": "93.92s"
-  },
-  {
-    "word": "hate",
-    "startTime": "93.92s",
-    "endTime": "94.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "94.08s",
-    "endTime": "94.12s"
-  },
-  {
-    "word": "of",
-    "startTime": "94.12s",
-    "endTime": "94.23s"
-  },
-  {
-    "word": " ",
-    "startTime": "94.23s",
-    "endTime": "94.28s"
-  },
-  {
-    "word": "men",
-    "startTime": "94.28s",
-    "endTime": "94.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "94.42s",
-    "endTime": "94.58s"
-  },
-  {
-    "word": "will",
-    "startTime": "94.58s",
-    "endTime": "94.79s"
-  },
-  {
-    "word": " ",
-    "startTime": "94.79s",
-    "endTime": "94.82s"
-  },
-  {
-    "word": "pass",
-    "startTime": "94.82s",
-    "endTime": "95.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "95.52s",
-    "endTime": "95.539s"
-  },
-  {
-    "word": "and",
-    "startTime": "95.54s",
-    "endTime": "95.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "95.68s",
-    "endTime": "95.72s"
-  },
-  {
-    "word": "dictators",
-    "startTime": "95.72s",
-    "endTime": "96.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "96.32s",
-    "endTime": "96.36s"
-  },
-  {
-    "word": "die,",
-    "startTime": "96.36s",
-    "endTime": "97.11s"
-  },
-  {
-    "word": " ",
-    "startTime": "97.11s",
-    "endTime": "97.12s"
-  },
-  {
-    "word": "and",
-    "startTime": "97.12s",
-    "endTime": "97.21s"
-  },
-  {
-    "word": " ",
-    "startTime": "97.21s",
-    "endTime": "97.26s"
-  },
-  {
-    "word": "the",
-    "startTime": "97.26s",
-    "endTime": "97.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "97.38s",
-    "endTime": "97.39s"
-  },
-  {
-    "word": "power",
-    "startTime": "97.39s",
-    "endTime": "97.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "97.58s",
-    "endTime": "97.62s"
-  },
-  {
-    "word": "they",
-    "startTime": "97.62s",
-    "endTime": "97.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "97.72s",
-    "endTime": "97.8s"
-  },
-  {
-    "word": "took",
-    "startTime": "97.8s",
-    "endTime": "97.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "97.96s",
-    "endTime": "97.98s"
-  },
-  {
-    "word": "from",
-    "startTime": "97.98s",
-    "endTime": "98.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "98.12s",
-    "endTime": "98.16s"
-  },
-  {
-    "word": "the",
-    "startTime": "98.16s",
-    "endTime": "98.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "98.2s",
-    "endTime": "98.28s"
-  },
-  {
-    "word": "people",
-    "startTime": "98.28s",
-    "endTime": "98.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "98.64s",
-    "endTime": "98.94s"
-  },
-  {
-    "word": "will",
-    "startTime": "98.94s",
-    "endTime": "99.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "99.08s",
-    "endTime": "99.12s"
-  },
-  {
-    "word": "return",
-    "startTime": "99.12s",
-    "endTime": "99.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "99.58s",
-    "endTime": "99.59s"
-  },
-  {
-    "word": "to",
-    "startTime": "99.59s",
-    "endTime": "99.7s"
-  },
-  {
-    "word": " ",
-    "startTime": "99.7s",
-    "endTime": "99.72s"
-  },
-  {
-    "word": "the",
-    "startTime": "99.72s",
-    "endTime": "99.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "99.82s",
-    "endTime": "99.86s"
-  },
-  {
-    "word": "people,",
-    "startTime": "99.86s",
-    "endTime": "100.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "100.5s",
-    "endTime": "100.54s"
-  },
-  {
-    "word": "and",
-    "startTime": "100.54s",
-    "endTime": "100.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "100.64s",
-    "endTime": "100.7s"
-  },
-  {
-    "word": "so",
-    "startTime": "100.7s",
-    "endTime": "100.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "100.82s",
-    "endTime": "100.86s"
-  },
-  {
-    "word": "long",
-    "startTime": "100.86s",
-    "endTime": "100.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "100.98s",
-    "endTime": "101.02s"
-  },
-  {
-    "word": "as",
-    "startTime": "101.02s",
-    "endTime": "101.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "101.14s",
-    "endTime": "101.18s"
-  },
-  {
-    "word": "men",
-    "startTime": "101.18s",
-    "endTime": "101.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "101.38s",
-    "endTime": "101.48s"
-  },
-  {
-    "word": "die,",
-    "startTime": "101.48s",
-    "endTime": "102.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "102.2s",
-    "endTime": "102.36s"
-  },
-  {
-    "word": "liberty",
-    "startTime": "102.36s",
-    "endTime": "102.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "102.68s",
-    "endTime": "102.72s"
-  },
-  {
-    "word": "will",
-    "startTime": "102.72s",
-    "endTime": "102.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "102.86s",
-    "endTime": "102.92s"
-  },
-  {
-    "word": "never",
-    "startTime": "102.92s",
-    "endTime": "103.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "103.12s",
-    "endTime": "103.16s"
-  },
-  {
-    "word": "perish.",
-    "startTime": "103.16s",
-    "endTime": "105.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "105.14s",
-    "endTime": "105.58s"
-  },
-  {
-    "word": "Soldiers,",
-    "startTime": "105.58s",
-    "endTime": "106.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "106.38s",
-    "endTime": "106.44s"
-  },
-  {
-    "word": "don't",
-    "startTime": "106.44s",
-    "endTime": "106.6s"
-  },
-  {
-    "word": " ",
-    "startTime": "106.6s",
-    "endTime": "106.64s"
-  },
-  {
-    "word": "give",
-    "startTime": "106.64s",
-    "endTime": "106.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "106.74s",
-    "endTime": "106.76s"
-  },
-  {
-    "word": "yourselves",
-    "startTime": "106.76s",
-    "endTime": "107.13s"
-  },
-  {
-    "word": " ",
-    "startTime": "107.13s",
-    "endTime": "107.18s"
-  },
-  {
-    "word": "to",
-    "startTime": "107.18s",
-    "endTime": "107.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "107.24s",
-    "endTime": "107.26s"
-  },
-  {
-    "word": "brutes,",
-    "startTime": "107.26s",
-    "endTime": "108.18s"
-  },
-  {
-    "word": " ",
-    "startTime": "108.18s",
-    "endTime": "108.19s"
-  },
-  {
-    "word": "men",
-    "startTime": "108.19s",
-    "endTime": "108.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "108.42s",
-    "endTime": "108.46s"
-  },
-  {
-    "word": "who",
-    "startTime": "108.46s",
-    "endTime": "108.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "108.56s",
-    "endTime": "108.6s"
-  },
-  {
-    "word": "despise",
-    "startTime": "108.6s",
-    "endTime": "109.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "109.12s",
-    "endTime": "109.16s"
-  },
-  {
-    "word": "you",
-    "startTime": "109.16s",
-    "endTime": "109.22s"
-  },
-  {
-    "word": " ",
-    "startTime": "109.22s",
-    "endTime": "109.24s"
-  },
-  {
-    "word": "and",
-    "startTime": "109.24s",
-    "endTime": "109.35s"
-  },
-  {
-    "word": " ",
-    "startTime": "109.35s",
-    "endTime": "109.42s"
-  },
-  {
-    "word": "enslave",
-    "startTime": "109.42s",
-    "endTime": "109.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "109.74s",
-    "endTime": "109.8s"
-  },
-  {
-    "word": "you,",
-    "startTime": "109.8s",
-    "endTime": "110.26s"
-  },
-  {
-    "word": " ",
-    "startTime": "110.26s",
-    "endTime": "110.3s"
-  },
-  {
-    "word": "who",
-    "startTime": "110.3s",
-    "endTime": "110.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "110.4s",
-    "endTime": "110.44s"
-  },
-  {
-    "word": "regiment",
-    "startTime": "110.44s",
-    "endTime": "110.8s"
-  },
-  {
-    "word": " ",
-    "startTime": "110.8s",
-    "endTime": "110.84s"
-  },
-  {
-    "word": "your",
-    "startTime": "110.84s",
-    "endTime": "110.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "110.96s",
-    "endTime": "111.02s"
-  },
-  {
-    "word": "lives,",
-    "startTime": "111.02s",
-    "endTime": "111.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "111.74s",
-    "endTime": "111.8s"
-  },
-  {
-    "word": "tell",
-    "startTime": "111.8s",
-    "endTime": "111.9s"
-  },
-  {
-    "word": " ",
-    "startTime": "111.9s",
-    "endTime": "111.94s"
-  },
-  {
-    "word": "you",
-    "startTime": "111.94s",
-    "endTime": "112.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.02s",
-    "endTime": "112.08s"
-  },
-  {
-    "word": "what",
-    "startTime": "112.08s",
-    "endTime": "112.19s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.19s",
-    "endTime": "112.22s"
-  },
-  {
-    "word": "to",
-    "startTime": "112.22s",
-    "endTime": "112.31s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.31s",
-    "endTime": "112.32s"
-  },
-  {
-    "word": "do,",
-    "startTime": "112.32s",
-    "endTime": "112.48s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.48s",
-    "endTime": "112.5s"
-  },
-  {
-    "word": "what",
-    "startTime": "112.5s",
-    "endTime": "112.61s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.61s",
-    "endTime": "112.64s"
-  },
-  {
-    "word": "to",
-    "startTime": "112.64s",
-    "endTime": "112.69s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.69s",
-    "endTime": "112.76s"
-  },
-  {
-    "word": "think,",
-    "startTime": "112.76s",
-    "endTime": "112.9s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.9s",
-    "endTime": "112.92s"
-  },
-  {
-    "word": "or",
-    "startTime": "112.92s",
-    "endTime": "112.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "112.98s",
-    "endTime": "113.02s"
-  },
-  {
-    "word": "what",
-    "startTime": "113.02s",
-    "endTime": "113.13s"
-  },
-  {
-    "word": " ",
-    "startTime": "113.13s",
-    "endTime": "113.14s"
-  },
-  {
-    "word": "to",
-    "startTime": "113.14s",
-    "endTime": "113.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "113.24s",
-    "endTime": "113.3s"
-  },
-  {
-    "word": "feel,",
-    "startTime": "113.3s",
-    "endTime": "114.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "114.02s",
-    "endTime": "114.06s"
-  },
-  {
-    "word": "who",
-    "startTime": "114.06s",
-    "endTime": "114.22s"
-  },
-  {
-    "word": " ",
-    "startTime": "114.22s",
-    "endTime": "114.24s"
-  },
-  {
-    "word": "drill",
-    "startTime": "114.24s",
-    "endTime": "114.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "114.46s",
-    "endTime": "114.5s"
-  },
-  {
-    "word": "you,",
-    "startTime": "114.5s",
-    "endTime": "114.65s"
-  },
-  {
-    "word": " ",
-    "startTime": "114.65s",
-    "endTime": "114.68s"
-  },
-  {
-    "word": "diet",
-    "startTime": "114.68s",
-    "endTime": "114.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "114.96s",
-    "endTime": "115.02s"
-  },
-  {
-    "word": "you,",
-    "startTime": "115.02s",
-    "endTime": "115.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "115.4s",
-    "endTime": "115.44s"
-  },
-  {
-    "word": "treat",
-    "startTime": "115.44s",
-    "endTime": "115.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "115.66s",
-    "endTime": "115.679s"
-  },
-  {
-    "word": "you",
-    "startTime": "115.68s",
-    "endTime": "115.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "115.76s",
-    "endTime": "115.8s"
-  },
-  {
-    "word": "like",
-    "startTime": "115.8s",
-    "endTime": "115.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "115.98s",
-    "endTime": "116.02s"
-  },
-  {
-    "word": "cattle,",
-    "startTime": "116.02s",
-    "endTime": "116.57s"
-  },
-  {
-    "word": " ",
-    "startTime": "116.57s",
-    "endTime": "116.64s"
-  },
-  {
-    "word": "use",
-    "startTime": "116.64s",
-    "endTime": "116.78s"
-  },
-  {
-    "word": " ",
-    "startTime": "116.78s",
-    "endTime": "116.8s"
-  },
-  {
-    "word": "you",
-    "startTime": "116.8s",
-    "endTime": "116.89s"
-  },
-  {
-    "word": " ",
-    "startTime": "116.89s",
-    "endTime": "116.89s"
-  },
-  {
-    "word": "as",
-    "startTime": "116.89s",
-    "endTime": "117.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "117.02s",
-    "endTime": "117.08s"
-  },
-  {
-    "word": "cannon",
-    "startTime": "117.08s",
-    "endTime": "117.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "117.34s",
-    "endTime": "117.42s"
-  },
-  {
-    "word": "fodder.",
-    "startTime": "117.42s",
-    "endTime": "118.18s"
-  },
-  {
-    "word": " ",
-    "startTime": "118.18s",
-    "endTime": "118.22s"
-  },
-  {
-    "word": "Don't",
-    "startTime": "118.22s",
-    "endTime": "118.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "118.38s",
-    "endTime": "118.42s"
-  },
-  {
-    "word": "give",
-    "startTime": "118.42s",
-    "endTime": "118.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "118.52s",
-    "endTime": "118.539s"
-  },
-  {
-    "word": "yourselves",
-    "startTime": "118.54s",
-    "endTime": "119.15s"
-  },
-  {
-    "word": " ",
-    "startTime": "119.15s",
-    "endTime": "119.22s"
-  },
-  {
-    "word": "to",
-    "startTime": "119.22s",
-    "endTime": "119.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "119.28s",
-    "endTime": "119.32s"
-  },
-  {
-    "word": "these",
-    "startTime": "119.32s",
-    "endTime": "119.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "119.46s",
-    "endTime": "119.5s"
-  },
-  {
-    "word": "unnatural",
-    "startTime": "119.5s",
-    "endTime": "120.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "120.08s",
-    "endTime": "120.16s"
-  },
-  {
-    "word": "men,",
-    "startTime": "120.16s",
-    "endTime": "120.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "120.42s",
-    "endTime": "120.86s"
-  },
-  {
-    "word": "machine",
-    "startTime": "120.86s",
-    "endTime": "121.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "121.24s",
-    "endTime": "121.32s"
-  },
-  {
-    "word": "men",
-    "startTime": "121.32s",
-    "endTime": "121.62s"
-  },
-  {
-    "word": " ",
-    "startTime": "121.62s",
-    "endTime": "122.02s"
-  },
-  {
-    "word": "with",
-    "startTime": "122.02s",
-    "endTime": "122.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "122.1s",
-    "endTime": "122.14s"
-  },
-  {
-    "word": "machine",
-    "startTime": "122.14s",
-    "endTime": "122.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "122.5s",
-    "endTime": "122.56s"
-  },
-  {
-    "word": "minds",
-    "startTime": "122.56s",
-    "endTime": "122.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "122.98s",
-    "endTime": "123.0s"
-  },
-  {
-    "word": "and",
-    "startTime": "123.0s",
-    "endTime": "123.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "123.08s",
-    "endTime": "123.12s"
-  },
-  {
-    "word": "machine",
-    "startTime": "123.12s",
-    "endTime": "123.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "123.4s",
-    "endTime": "123.46s"
-  },
-  {
-    "word": "hearts.",
-    "startTime": "123.46s",
-    "endTime": "124.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "124.28s",
-    "endTime": "124.34s"
-  },
-  {
-    "word": "You",
-    "startTime": "124.34s",
-    "endTime": "124.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "124.38s",
-    "endTime": "124.42s"
-  },
-  {
-    "word": "are",
-    "startTime": "124.42s",
-    "endTime": "124.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "124.5s",
-    "endTime": "124.52s"
-  },
-  {
-    "word": "not",
-    "startTime": "124.52s",
-    "endTime": "124.679s"
-  },
-  {
-    "word": " ",
-    "startTime": "124.68s",
-    "endTime": "124.72s"
-  },
-  {
-    "word": "machines.",
-    "startTime": "124.72s",
-    "endTime": "125.7s"
-  },
-  {
-    "word": " ",
-    "startTime": "125.7s",
-    "endTime": "125.72s"
-  },
-  {
-    "word": "You",
-    "startTime": "125.72s",
-    "endTime": "125.78s"
-  },
-  {
-    "word": " ",
-    "startTime": "125.78s",
-    "endTime": "125.84s"
-  },
-  {
-    "word": "are",
-    "startTime": "125.84s",
-    "endTime": "125.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "125.94s",
-    "endTime": "125.98s"
-  },
-  {
-    "word": "not",
-    "startTime": "125.98s",
-    "endTime": "126.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "126.14s",
-    "endTime": "126.2s"
-  },
-  {
-    "word": "cattle.",
-    "startTime": "126.2s",
-    "endTime": "126.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "126.84s",
-    "endTime": "126.86s"
-  },
-  {
-    "word": "You",
-    "startTime": "126.86s",
-    "endTime": "126.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "126.94s",
-    "endTime": "126.98s"
-  },
-  {
-    "word": "are",
-    "startTime": "126.98s",
-    "endTime": "127.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "127.12s",
-    "endTime": "127.18s"
-  },
-  {
-    "word": "men.",
-    "startTime": "127.18s",
-    "endTime": "128.038s"
-  },
-  {
-    "word": " ",
-    "startTime": "128.038s",
-    "endTime": "128.06s"
-  },
-  {
-    "word": "You",
-    "startTime": "128.06s",
-    "endTime": "128.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "128.1s",
-    "endTime": "128.199s"
-  },
-  {
-    "word": "have",
-    "startTime": "128.199s",
-    "endTime": "128.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "128.3s",
-    "endTime": "128.32s"
-  },
-  {
-    "word": "the",
-    "startTime": "128.32s",
-    "endTime": "128.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "128.38s",
-    "endTime": "128.52s"
-  },
-  {
-    "word": "love",
-    "startTime": "128.52s",
-    "endTime": "128.699s"
-  },
-  {
-    "word": " ",
-    "startTime": "128.699s",
-    "endTime": "128.739s"
-  },
-  {
-    "word": "of",
-    "startTime": "128.74s",
-    "endTime": "128.8s"
-  },
-  {
-    "word": " ",
-    "startTime": "128.8s",
-    "endTime": "128.82s"
-  },
-  {
-    "word": "humanity",
-    "startTime": "128.82s",
-    "endTime": "129.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "129.24s",
-    "endTime": "129.28s"
-  },
-  {
-    "word": "in",
-    "startTime": "129.28s",
-    "endTime": "129.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "129.34s",
-    "endTime": "129.38s"
-  },
-  {
-    "word": "your",
-    "startTime": "129.38s",
-    "endTime": "129.52s"
-  },
-  {
-    "word": " ",
-    "startTime": "129.52s",
-    "endTime": "129.56s"
-  },
-  {
-    "word": "hearts.",
-    "startTime": "129.56s",
-    "endTime": "130.199s"
-  },
-  {
-    "word": " ",
-    "startTime": "130.199s",
-    "endTime": "130.22s"
-  },
-  {
-    "word": "You",
-    "startTime": "130.22s",
-    "endTime": "130.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "130.32s",
-    "endTime": "130.34s"
-  },
-  {
-    "word": "don't",
-    "startTime": "130.34s",
-    "endTime": "130.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "130.5s",
-    "endTime": "130.538s"
-  },
-  {
-    "word": "hate.",
-    "startTime": "130.538s",
-    "endTime": "131.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "131.14s",
-    "endTime": "131.2s"
-  },
-  {
-    "word": "Only",
-    "startTime": "131.2s",
-    "endTime": "131.39s"
-  },
-  {
-    "word": " ",
-    "startTime": "131.39s",
-    "endTime": "131.42s"
-  },
-  {
-    "word": "the",
-    "startTime": "131.42s",
-    "endTime": "131.48s"
-  },
-  {
-    "word": " ",
-    "startTime": "131.48s",
-    "endTime": "131.519s"
-  },
-  {
-    "word": "unloved",
-    "startTime": "131.52s",
-    "endTime": "131.95s"
-  },
-  {
-    "word": " ",
-    "startTime": "131.95s",
-    "endTime": "132.0s"
-  },
-  {
-    "word": "hate,",
-    "startTime": "132.0s",
-    "endTime": "132.62s"
-  },
-  {
-    "word": " ",
-    "startTime": "132.62s",
-    "endTime": "132.64s"
-  },
-  {
-    "word": "the",
-    "startTime": "132.64s",
-    "endTime": "132.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "132.68s",
-    "endTime": "132.74s"
-  },
-  {
-    "word": "unloved",
-    "startTime": "132.74s",
-    "endTime": "133.22s"
-  },
-  {
-    "word": " ",
-    "startTime": "133.22s",
-    "endTime": "133.24s"
-  },
-  {
-    "word": "and",
-    "startTime": "133.24s",
-    "endTime": "133.31s"
-  },
-  {
-    "word": " ",
-    "startTime": "133.31s",
-    "endTime": "133.34s"
-  },
-  {
-    "word": "the",
-    "startTime": "133.34s",
-    "endTime": "133.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "133.38s",
-    "endTime": "133.44s"
-  },
-  {
-    "word": "unnatural.",
-    "startTime": "133.44s",
-    "endTime": "134.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "134.5s",
-    "endTime": "134.56s"
-  },
-  {
-    "word": "Soldiers,",
-    "startTime": "134.56s",
-    "endTime": "135.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "135.42s",
-    "endTime": "135.46s"
-  },
-  {
-    "word": "don't",
-    "startTime": "135.46s",
-    "endTime": "135.69s"
-  },
-  {
-    "word": " ",
-    "startTime": "135.69s",
-    "endTime": "135.72s"
-  },
-  {
-    "word": "fight",
-    "startTime": "135.72s",
-    "endTime": "135.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "135.86s",
-    "endTime": "135.9s"
-  },
-  {
-    "word": "for",
-    "startTime": "135.9s",
-    "endTime": "135.97s"
-  },
-  {
-    "word": " ",
-    "startTime": "135.97s",
-    "endTime": "136.1s"
-  },
-  {
-    "word": "slavery.",
-    "startTime": "136.1s",
-    "endTime": "136.8s"
-  },
-  {
-    "word": " ",
-    "startTime": "136.8s",
-    "endTime": "136.82s"
-  },
-  {
-    "word": "Fight",
-    "startTime": "136.82s",
-    "endTime": "137.0s"
-  },
-  {
-    "word": " ",
-    "startTime": "137.0s",
-    "endTime": "137.04s"
-  },
-  {
-    "word": "for",
-    "startTime": "137.04s",
-    "endTime": "137.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "137.1s",
-    "endTime": "137.14s"
-  },
-  {
-    "word": "liberty!",
-    "startTime": "137.14s",
-    "endTime": "137.84s"
-  },
-  {
-    "word": " ",
-    "startTime": "137.84s",
-    "endTime": "137.88s"
-  },
-  {
-    "word": "In",
-    "startTime": "137.88s",
-    "endTime": "137.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "137.94s",
-    "endTime": "137.98s"
-  },
-  {
-    "word": "the",
-    "startTime": "137.98s",
-    "endTime": "138.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "138.02s",
-    "endTime": "138.08s"
-  },
-  {
-    "word": "17th",
-    "startTime": "138.08s",
-    "endTime": "138.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "138.5s",
-    "endTime": "138.58s"
-  },
-  {
-    "word": "Chapter",
-    "startTime": "138.58s",
-    "endTime": "138.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "138.82s",
-    "endTime": "138.86s"
-  },
-  {
-    "word": "of",
-    "startTime": "138.86s",
-    "endTime": "138.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "138.92s",
-    "endTime": "138.96s"
-  },
-  {
-    "word": "Saint",
-    "startTime": "138.96s",
-    "endTime": "139.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "139.08s",
-    "endTime": "139.12s"
-  },
-  {
-    "word": "Luke,",
-    "startTime": "139.12s",
-    "endTime": "139.269s"
-  },
-  {
-    "word": " ",
-    "startTime": "139.269s",
-    "endTime": "139.34s"
+    "startTime": "25.6s",
+    "endTime": "26.119s"
   },
   {
     "word": "it",
-    "startTime": "139.34s",
-    "endTime": "139.35s"
+    "startTime": "26.119s",
+    "endTime": "26.159s"
   },
   {
     "word": " ",
-    "startTime": "139.35s",
-    "endTime": "139.36s"
+    "startTime": "26.159s",
+    "endTime": "26.18s"
   },
   {
-    "word": "is",
-    "startTime": "139.36s",
-    "endTime": "139.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "139.46s",
-    "endTime": "139.48s"
-  },
-  {
-    "word": "written,",
-    "startTime": "139.48s",
-    "endTime": "139.9s"
+    "word": "was",
+    "startTime": "26.18s",
+    "endTime": "26.319s"
   },
   {
     "word": " ",
-    "startTime": "139.9s",
-    "endTime": "139.92s"
+    "startTime": "26.319s",
+    "endTime": "26.34s"
   },
   {
-    "word": "\"The",
-    "startTime": "139.92s",
-    "endTime": "140.0s"
-  },
-  {
-    "word": " ",
-    "startTime": "140.0s",
-    "endTime": "140.06s"
-  },
-  {
-    "word": "Kingdom",
-    "startTime": "140.06s",
-    "endTime": "140.24s"
+    "word": "him,",
+    "startTime": "26.34s",
+    "endTime": "26.6s"
   },
   {
     "word": " ",
-    "startTime": "140.24s",
-    "endTime": "140.3s"
+    "startTime": "26.6s",
+    "endTime": "26.939s"
   },
   {
-    "word": "of",
-    "startTime": "140.3s",
-    "endTime": "140.35s"
-  },
-  {
-    "word": " ",
-    "startTime": "140.35s",
-    "endTime": "140.42s"
-  },
-  {
-    "word": "God",
-    "startTime": "140.42s",
-    "endTime": "140.62s"
+    "word": "a",
+    "startTime": "26.939s",
+    "endTime": "26.959s"
   },
   {
     "word": " ",
-    "startTime": "140.62s",
-    "endTime": "140.66s"
-  },
-  {
-    "word": "is",
-    "startTime": "140.66s",
-    "endTime": "140.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "140.74s",
-    "endTime": "140.8s"
-  },
-  {
-    "word": "within",
-    "startTime": "140.8s",
-    "endTime": "141.0s"
-  },
-  {
-    "word": " ",
-    "startTime": "141.0s",
-    "endTime": "141.06s"
-  },
-  {
-    "word": "man.\"",
-    "startTime": "141.06s",
-    "endTime": "141.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "141.5s",
-    "endTime": "141.56s"
-  },
-  {
-    "word": "Not",
-    "startTime": "141.56s",
-    "endTime": "141.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "141.68s",
-    "endTime": "141.8s"
-  },
-  {
-    "word": "one",
-    "startTime": "141.8s",
-    "endTime": "141.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "141.92s",
-    "endTime": "142.0s"
+    "startTime": "26.959s",
+    "endTime": "26.979s"
   },
   {
     "word": "man",
-    "startTime": "142.0s",
-    "endTime": "142.2s"
+    "startTime": "26.979s",
+    "endTime": "27.039s"
   },
   {
     "word": " ",
-    "startTime": "142.2s",
-    "endTime": "142.26s"
+    "startTime": "27.039s",
+    "endTime": "27.059s"
   },
   {
-    "word": "nor",
-    "startTime": "142.26s",
-    "endTime": "142.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "142.38s",
-    "endTime": "142.44s"
-  },
-  {
-    "word": "a",
-    "startTime": "142.44s",
-    "endTime": "142.46s"
+    "word": "with",
+    "startTime": "27.059s",
+    "endTime": "27.1s"
   },
   {
     "word": " ",
-    "startTime": "142.46s",
-    "endTime": "142.54s"
+    "startTime": "27.1s",
+    "endTime": "27.1s"
   },
   {
-    "word": "group",
-    "startTime": "142.54s",
-    "endTime": "142.82s"
+    "word": "the",
+    "startTime": "27.1s",
+    "endTime": "27.159s"
   },
   {
     "word": " ",
-    "startTime": "142.82s",
-    "endTime": "142.859s"
+    "startTime": "27.159s",
+    "endTime": "27.18s"
+  },
+  {
+    "word": "face",
+    "startTime": "27.18s",
+    "endTime": "27.28s"
+  },
+  {
+    "word": " ",
+    "startTime": "27.28s",
+    "endTime": "27.499s"
   },
   {
     "word": "of",
-    "startTime": "142.86s",
-    "endTime": "142.96s"
+    "startTime": "27.5s",
+    "endTime": "27.539s"
   },
   {
     "word": " ",
-    "startTime": "142.96s",
-    "endTime": "143.02s"
+    "startTime": "27.539s",
+    "endTime": "27.559s"
   },
   {
-    "word": "men,",
-    "startTime": "143.02s",
-    "endTime": "143.3s"
-  },
-  {
-    "word": " ",
-    "startTime": "143.3s",
-    "endTime": "143.52s"
-  },
-  {
-    "word": "but",
-    "startTime": "143.52s",
-    "endTime": "143.64s"
+    "word": "another.",
+    "startTime": "27.559s",
+    "endTime": "27.7s"
   },
   {
     "word": " ",
-    "startTime": "143.64s",
-    "endTime": "143.66s"
+    "startTime": "27.7s",
+    "endTime": "27.7s"
   },
   {
-    "word": "in",
-    "startTime": "143.66s",
-    "endTime": "143.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "143.76s",
-    "endTime": "143.82s"
-  },
-  {
-    "word": "all",
-    "startTime": "143.82s",
-    "endTime": "144.019s"
+    "word": "The",
+    "startTime": "27.7s",
+    "endTime": "27.739s"
   },
   {
     "word": " ",
-    "startTime": "144.02s",
-    "endTime": "144.08s"
+    "startTime": "27.739s",
+    "endTime": "27.78s"
   },
   {
-    "word": "men!",
-    "startTime": "144.08s",
-    "endTime": "144.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "144.38s",
-    "endTime": "144.42s"
-  },
-  {
-    "word": "In",
-    "startTime": "144.42s",
-    "endTime": "144.52s"
+    "word": "news",
+    "startTime": "27.78s",
+    "endTime": "27.879s"
   },
   {
     "word": " ",
-    "startTime": "144.52s",
-    "endTime": "144.6s"
+    "startTime": "27.879s",
+    "endTime": "27.899s"
   },
   {
-    "word": "you!",
-    "startTime": "144.6s",
-    "endTime": "145.18s"
-  },
-  {
-    "word": " ",
-    "startTime": "145.18s",
-    "endTime": "145.22s"
-  },
-  {
-    "word": "You,",
-    "startTime": "145.22s",
-    "endTime": "145.48s"
+    "word": "shocked",
+    "startTime": "27.899s",
+    "endTime": "28.459s"
   },
   {
     "word": " ",
-    "startTime": "145.48s",
-    "endTime": "145.54s"
+    "startTime": "28.459s",
+    "endTime": "28.899s"
   },
   {
     "word": "the",
-    "startTime": "145.54s",
-    "endTime": "145.59s"
+    "startTime": "28.899s",
+    "endTime": "28.959s"
   },
   {
     "word": " ",
-    "startTime": "145.59s",
-    "endTime": "145.74s"
+    "startTime": "28.959s",
+    "endTime": "28.979s"
   },
   {
-    "word": "people",
-    "startTime": "145.74s",
-    "endTime": "146.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "146.2s",
-    "endTime": "146.22s"
-  },
-  {
-    "word": "have",
-    "startTime": "146.22s",
-    "endTime": "146.36s"
+    "word": "world.",
+    "startTime": "28.979s",
+    "endTime": "29.1s"
   },
   {
     "word": " ",
-    "startTime": "146.36s",
-    "endTime": "146.38s"
+    "startTime": "29.1s",
+    "endTime": "29.119s"
+  },
+  {
+    "word": "Photographers",
+    "startTime": "29.119s",
+    "endTime": "29.62s"
+  },
+  {
+    "word": " ",
+    "startTime": "29.62s",
+    "endTime": "29.619s"
+  },
+  {
+    "word": "nicknamed",
+    "startTime": "29.619s",
+    "endTime": "30.28s"
+  },
+  {
+    "word": " ",
+    "startTime": "30.28s",
+    "endTime": "30.299s"
+  },
+  {
+    "word": "him",
+    "startTime": "30.299s",
+    "endTime": "30.379s"
+  },
+  {
+    "word": " ",
+    "startTime": "30.379s",
+    "endTime": "30.399s"
   },
   {
     "word": "the",
-    "startTime": "146.38s",
-    "endTime": "146.44s"
+    "startTime": "30.399s",
+    "endTime": "30.459s"
   },
   {
     "word": " ",
-    "startTime": "146.44s",
-    "endTime": "146.52s"
+    "startTime": "30.459s",
+    "endTime": "30.479s"
   },
   {
-    "word": "power,",
-    "startTime": "146.52s",
-    "endTime": "147.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "147.16s",
-    "endTime": "147.18s"
-  },
-  {
-    "word": "the",
-    "startTime": "147.18s",
-    "endTime": "147.28s"
+    "word": "man",
+    "startTime": "30.479s",
+    "endTime": "30.5s"
   },
   {
     "word": " ",
-    "startTime": "147.28s",
-    "endTime": "147.32s"
+    "startTime": "30.5s",
+    "endTime": "30.5s"
   },
   {
-    "word": "power",
-    "startTime": "147.32s",
-    "endTime": "147.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "147.56s",
-    "endTime": "147.58s"
-  },
-  {
-    "word": "to",
-    "startTime": "147.58s",
-    "endTime": "147.64s"
+    "word": "with",
+    "startTime": "30.5s",
+    "endTime": "30.68s"
   },
   {
     "word": " ",
-    "startTime": "147.64s",
-    "endTime": "147.72s"
+    "startTime": "30.68s",
+    "endTime": "30.719s"
   },
   {
-    "word": "create",
-    "startTime": "147.72s",
-    "endTime": "147.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "147.96s",
-    "endTime": "148.0s"
-  },
-  {
-    "word": "machines,",
-    "startTime": "148.0s",
-    "endTime": "148.6s"
+    "word": "two",
+    "startTime": "30.719s",
+    "endTime": "30.78s"
   },
   {
     "word": " ",
-    "startTime": "148.6s",
-    "endTime": "148.64s"
+    "startTime": "30.78s",
+    "endTime": "30.799s"
   },
   {
-    "word": "the",
-    "startTime": "148.64s",
-    "endTime": "148.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "148.74s",
-    "endTime": "148.78s"
-  },
-  {
-    "word": "power",
-    "startTime": "148.78s",
-    "endTime": "148.98s"
+    "word": "lives.",
+    "startTime": "30.799s",
+    "endTime": "31.02s"
   },
   {
     "word": " ",
-    "startTime": "148.98s",
-    "endTime": "149.04s"
+    "startTime": "31.02s",
+    "endTime": "31.119s"
   },
   {
-    "word": "to",
-    "startTime": "149.04s",
-    "endTime": "149.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "149.08s",
-    "endTime": "149.16s"
-  },
-  {
-    "word": "create",
-    "startTime": "149.16s",
-    "endTime": "149.4s"
+    "word": "His",
+    "startTime": "31.119s",
+    "endTime": "31.18s"
   },
   {
     "word": " ",
-    "startTime": "149.4s",
-    "endTime": "149.44s"
-  },
-  {
-    "word": "happiness.",
-    "startTime": "149.44s",
-    "endTime": "150.14s"
-  },
-  {
-    "word": " ",
-    "startTime": "150.14s",
-    "endTime": "150.16s"
-  },
-  {
-    "word": "You,",
-    "startTime": "150.16s",
-    "endTime": "150.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "150.4s",
-    "endTime": "150.44s"
-  },
-  {
-    "word": "the",
-    "startTime": "150.44s",
-    "endTime": "150.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "150.58s",
-    "endTime": "150.62s"
-  },
-  {
-    "word": "people",
-    "startTime": "150.62s",
-    "endTime": "150.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "150.88s",
-    "endTime": "150.92s"
-  },
-  {
-    "word": "have",
-    "startTime": "150.92s",
-    "endTime": "151.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "151.02s",
-    "endTime": "151.06s"
-  },
-  {
-    "word": "the",
-    "startTime": "151.06s",
-    "endTime": "151.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "151.1s",
-    "endTime": "151.2s"
-  },
-  {
-    "word": "power",
-    "startTime": "151.2s",
-    "endTime": "151.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "151.46s",
-    "endTime": "151.68s"
-  },
-  {
-    "word": "to",
-    "startTime": "151.68s",
-    "endTime": "151.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "151.74s",
-    "endTime": "151.78s"
-  },
-  {
-    "word": "make",
-    "startTime": "151.78s",
-    "endTime": "151.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "151.94s",
-    "endTime": "151.96s"
-  },
-  {
-    "word": "this",
-    "startTime": "151.96s",
-    "endTime": "152.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "152.1s",
-    "endTime": "152.16s"
-  },
-  {
-    "word": "life",
-    "startTime": "152.16s",
-    "endTime": "152.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "152.4s",
-    "endTime": "152.5s"
-  },
-  {
-    "word": "free",
-    "startTime": "152.5s",
-    "endTime": "152.7s"
-  },
-  {
-    "word": " ",
-    "startTime": "152.7s",
-    "endTime": "152.74s"
-  },
-  {
-    "word": "and",
-    "startTime": "152.74s",
-    "endTime": "152.829s"
-  },
-  {
-    "word": " ",
-    "startTime": "152.829s",
-    "endTime": "152.88s"
-  },
-  {
-    "word": "beautiful,",
-    "startTime": "152.88s",
-    "endTime": "153.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "153.58s",
-    "endTime": "153.62s"
-  },
-  {
-    "word": "to",
-    "startTime": "153.62s",
-    "endTime": "153.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "153.68s",
-    "endTime": "153.72s"
-  },
-  {
-    "word": "make",
-    "startTime": "153.72s",
-    "endTime": "153.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "153.88s",
-    "endTime": "153.92s"
-  },
-  {
-    "word": "this",
-    "startTime": "153.92s",
-    "endTime": "154.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "154.08s",
-    "endTime": "154.14s"
-  },
-  {
-    "word": "life",
-    "startTime": "154.14s",
-    "endTime": "154.36s"
-  },
-  {
-    "word": " ",
-    "startTime": "154.36s",
-    "endTime": "154.44s"
-  },
-  {
-    "word": "a",
-    "startTime": "154.44s",
-    "endTime": "154.48s"
-  },
-  {
-    "word": " ",
-    "startTime": "154.48s",
-    "endTime": "154.619s"
-  },
-  {
-    "word": "wonderful",
-    "startTime": "154.62s",
-    "endTime": "154.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "154.98s",
-    "endTime": "155.019s"
-  },
-  {
-    "word": "adventure.",
-    "startTime": "155.02s",
-    "endTime": "155.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "155.94s",
-    "endTime": "155.95s"
-  },
-  {
-    "word": "Then",
-    "startTime": "155.95s",
-    "endTime": "156.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "156.08s",
-    "endTime": "156.12s"
-  },
-  {
-    "word": "in",
-    "startTime": "156.12s",
-    "endTime": "156.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "156.16s",
-    "endTime": "156.2s"
-  },
-  {
-    "word": "the",
-    "startTime": "156.2s",
-    "endTime": "156.25s"
-  },
-  {
-    "word": " ",
-    "startTime": "156.25s",
-    "endTime": "156.3s"
+    "startTime": "31.18s",
+    "endTime": "31.199s"
   },
   {
     "word": "name",
-    "startTime": "156.3s",
-    "endTime": "156.44s"
+    "startTime": "31.199s",
+    "endTime": "31.339s"
   },
   {
     "word": " ",
-    "startTime": "156.44s",
-    "endTime": "156.48s"
+    "startTime": "31.34s",
+    "endTime": "31.38s"
   },
   {
-    "word": "of",
-    "startTime": "156.48s",
-    "endTime": "156.53s"
-  },
-  {
-    "word": " ",
-    "startTime": "156.53s",
-    "endTime": "156.58s"
-  },
-  {
-    "word": "democracy,",
-    "startTime": "156.58s",
-    "endTime": "157.56s"
+    "word": "is",
+    "startTime": "31.38s",
+    "endTime": "31.46s"
   },
   {
     "word": " ",
-    "startTime": "157.56s",
-    "endTime": "157.58s"
+    "startTime": "31.46s",
+    "endTime": "31.539s"
   },
   {
-    "word": "let",
-    "startTime": "157.58s",
-    "endTime": "157.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "157.68s",
-    "endTime": "157.72s"
-  },
-  {
-    "word": "us",
-    "startTime": "157.72s",
-    "endTime": "157.86s"
+    "word": "Richard",
+    "startTime": "31.539s",
+    "endTime": "31.859s"
   },
   {
     "word": " ",
-    "startTime": "157.86s",
-    "endTime": "157.96s"
+    "startTime": "31.859s",
+    "endTime": "31.899s"
   },
   {
-    "word": "use",
-    "startTime": "157.96s",
-    "endTime": "158.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "158.16s",
-    "endTime": "158.2s"
-  },
-  {
-    "word": "that",
-    "startTime": "158.2s",
-    "endTime": "158.34s"
+    "word": "Norris",
+    "startTime": "31.899s",
+    "endTime": "32.219s"
   },
   {
     "word": " ",
-    "startTime": "158.34s",
-    "endTime": "158.4s"
+    "startTime": "32.219s",
+    "endTime": "32.259s"
   },
   {
-    "word": "power.",
-    "startTime": "158.4s",
-    "endTime": "158.98s"
-  },
-  {
-    "word": " ",
-    "startTime": "158.98s",
-    "endTime": "159.019s"
-  },
-  {
-    "word": "Let",
-    "startTime": "159.02s",
-    "endTime": "159.14s"
+    "word": "Mateo.",
+    "startTime": "32.259s",
+    "endTime": "32.659s"
   },
   {
     "word": " ",
-    "startTime": "159.14s",
-    "endTime": "159.18s"
+    "startTime": "32.659s",
+    "endTime": "32.659s"
   },
   {
-    "word": "us",
-    "startTime": "159.18s",
-    "endTime": "159.26s"
-  },
-  {
-    "word": " ",
-    "startTime": "159.26s",
-    "endTime": "159.299s"
-  },
-  {
-    "word": "all",
-    "startTime": "159.3s",
-    "endTime": "159.58s"
+    "word": "But",
+    "startTime": "32.659s",
+    "endTime": "32.7s"
   },
   {
     "word": " ",
-    "startTime": "159.58s",
-    "endTime": "159.7s"
+    "startTime": "32.7s",
+    "endTime": "32.7s"
   },
   {
-    "word": "unite!",
-    "startTime": "159.7s",
-    "endTime": "160.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "160.58s",
-    "endTime": "160.66s"
-  },
-  {
-    "word": "Let",
-    "startTime": "160.66s",
-    "endTime": "160.76s"
+    "word": "what",
+    "startTime": "32.7s",
+    "endTime": "32.7s"
   },
   {
     "word": " ",
-    "startTime": "160.76s",
-    "endTime": "160.82s"
+    "startTime": "32.7s",
+    "endTime": "32.779s"
   },
   {
-    "word": "us",
-    "startTime": "160.82s",
-    "endTime": "160.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "160.94s",
-    "endTime": "161.1s"
-  },
-  {
-    "word": "fight",
-    "startTime": "161.1s",
-    "endTime": "161.34s"
+    "word": "seemed",
+    "startTime": "32.779s",
+    "endTime": "33.2s"
   },
   {
     "word": " ",
-    "startTime": "161.34s",
-    "endTime": "161.4s"
+    "startTime": "33.2s",
+    "endTime": "33.26s"
   },
   {
-    "word": "for",
-    "startTime": "161.4s",
-    "endTime": "161.48s"
+    "word": "like",
+    "startTime": "33.26s",
+    "endTime": "33.259s"
   },
   {
     "word": " ",
-    "startTime": "161.48s",
-    "endTime": "161.5s"
+    "startTime": "33.259s",
+    "endTime": "33.339s"
   },
   {
     "word": "a",
-    "startTime": "161.5s",
-    "endTime": "161.54s"
+    "startTime": "33.34s",
+    "endTime": "33.36s"
   },
   {
     "word": " ",
-    "startTime": "161.54s",
-    "endTime": "161.62s"
+    "startTime": "33.36s",
+    "endTime": "33.479s"
+  },
+  {
+    "word": "miracle",
+    "startTime": "33.479s",
+    "endTime": "33.84s"
+  },
+  {
+    "word": " ",
+    "startTime": "33.84s",
+    "endTime": "33.84s"
+  },
+  {
+    "word": "quickly",
+    "startTime": "33.84s",
+    "endTime": "33.919s"
+  },
+  {
+    "word": " ",
+    "startTime": "33.919s",
+    "endTime": "33.959s"
+  },
+  {
+    "word": "turned",
+    "startTime": "33.959s",
+    "endTime": "34.18s"
+  },
+  {
+    "word": " ",
+    "startTime": "34.18s",
+    "endTime": "34.4s"
+  },
+  {
+    "word": "into",
+    "startTime": "34.4s",
+    "endTime": "34.4s"
+  },
+  {
+    "word": " ",
+    "startTime": "34.4s",
+    "endTime": "34.4s"
+  },
+  {
+    "word": "a",
+    "startTime": "34.4s",
+    "endTime": "34.4s"
+  },
+  {
+    "word": " ",
+    "startTime": "34.4s",
+    "endTime": "35.02s"
+  },
+  {
+    "word": "nightmare.",
+    "startTime": "35.02s",
+    "endTime": "35.259s"
+  },
+  {
+    "word": " ",
+    "startTime": "35.259s",
+    "endTime": "35.279s"
+  },
+  {
+    "word": "A",
+    "startTime": "35.279s",
+    "endTime": "35.279s"
+  },
+  {
+    "word": " ",
+    "startTime": "35.279s",
+    "endTime": "35.299s"
+  },
+  {
+    "word": "few",
+    "startTime": "35.299s",
+    "endTime": "35.36s"
+  },
+  {
+    "word": " ",
+    "startTime": "35.36s",
+    "endTime": "35.52s"
+  },
+  {
+    "word": "months",
+    "startTime": "35.52s",
+    "endTime": "35.639s"
+  },
+  {
+    "word": " ",
+    "startTime": "35.639s",
+    "endTime": "35.939s"
+  },
+  {
+    "word": "later,",
+    "startTime": "35.939s",
+    "endTime": "36.079s"
+  },
+  {
+    "word": " ",
+    "startTime": "36.079s",
+    "endTime": "36.779s"
+  },
+  {
+    "word": "his",
+    "startTime": "36.779s",
+    "endTime": "36.84s"
+  },
+  {
+    "word": " ",
+    "startTime": "36.84s",
+    "endTime": "36.86s"
+  },
+  {
+    "word": "body",
+    "startTime": "36.86s",
+    "endTime": "36.939s"
+  },
+  {
+    "word": " ",
+    "startTime": "36.939s",
+    "endTime": "36.959s"
+  },
+  {
+    "word": "began",
+    "startTime": "36.959s",
+    "endTime": "37.06s"
+  },
+  {
+    "word": " ",
+    "startTime": "37.06s",
+    "endTime": "37.079s"
+  },
+  {
+    "word": "to",
+    "startTime": "37.079s",
+    "endTime": "37.119s"
+  },
+  {
+    "word": " ",
+    "startTime": "37.119s",
+    "endTime": "37.139s"
+  },
+  {
+    "word": "reject",
+    "startTime": "37.139s",
+    "endTime": "38.0s"
+  },
+  {
+    "word": " ",
+    "startTime": "38.0s",
+    "endTime": "38.02s"
+  },
+  {
+    "word": "the",
+    "startTime": "38.02s",
+    "endTime": "38.079s"
+  },
+  {
+    "word": " ",
+    "startTime": "38.079s",
+    "endTime": "38.099s"
   },
   {
     "word": "new",
-    "startTime": "161.62s",
-    "endTime": "161.76s"
+    "startTime": "38.099s",
+    "endTime": "38.439s"
   },
   {
     "word": " ",
-    "startTime": "161.76s",
-    "endTime": "161.84s"
+    "startTime": "38.439s",
+    "endTime": "38.459s"
   },
   {
-    "word": "world,",
-    "startTime": "161.84s",
-    "endTime": "162.6s"
-  },
-  {
-    "word": " ",
-    "startTime": "162.6s",
-    "endTime": "162.66s"
-  },
-  {
-    "word": "a",
-    "startTime": "162.66s",
-    "endTime": "162.72s"
+    "word": "face.",
+    "startTime": "38.459s",
+    "endTime": "38.56s"
   },
   {
     "word": " ",
-    "startTime": "162.72s",
-    "endTime": "162.9s"
+    "startTime": "38.56s",
+    "endTime": "38.579s"
   },
   {
-    "word": "decent",
-    "startTime": "162.9s",
-    "endTime": "163.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "163.28s",
-    "endTime": "163.34s"
-  },
-  {
-    "word": "world",
-    "startTime": "163.34s",
-    "endTime": "163.72s"
+    "word": "His",
+    "startTime": "38.579s",
+    "endTime": "38.639s"
   },
   {
     "word": " ",
-    "startTime": "163.72s",
-    "endTime": "164.02s"
+    "startTime": "38.639s",
+    "endTime": "38.659s"
   },
   {
-    "word": "that",
-    "startTime": "164.02s",
-    "endTime": "164.1s"
-  },
-  {
-    "word": " ",
-    "startTime": "164.1s",
-    "endTime": "164.14s"
-  },
-  {
-    "word": "will",
-    "startTime": "164.14s",
-    "endTime": "164.24s"
+    "word": "features",
+    "startTime": "38.659s",
+    "endTime": "38.919s"
   },
   {
     "word": " ",
-    "startTime": "164.24s",
-    "endTime": "164.28s"
+    "startTime": "38.919s",
+    "endTime": "38.939s"
   },
   {
-    "word": "give",
-    "startTime": "164.28s",
-    "endTime": "164.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "164.4s",
-    "endTime": "164.44s"
-  },
-  {
-    "word": "men",
-    "startTime": "164.44s",
-    "endTime": "164.54s"
+    "word": "slowly",
+    "startTime": "38.939s",
+    "endTime": "39.319s"
   },
   {
     "word": " ",
-    "startTime": "164.54s",
-    "endTime": "164.579s"
+    "startTime": "39.319s",
+    "endTime": "39.34s"
   },
   {
-    "word": "a",
-    "startTime": "164.58s",
-    "endTime": "164.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "164.64s",
-    "endTime": "164.7s"
-  },
-  {
-    "word": "chance",
-    "startTime": "164.7s",
-    "endTime": "164.96s"
+    "word": "changed,",
+    "startTime": "39.34s",
+    "endTime": "39.759s"
   },
   {
     "word": " ",
-    "startTime": "164.96s",
-    "endTime": "164.98s"
+    "startTime": "39.759s",
+    "endTime": "40.5s"
   },
   {
-    "word": "to",
-    "startTime": "164.98s",
-    "endTime": "165.04s"
-  },
-  {
-    "word": " ",
-    "startTime": "165.1s",
-    "endTime": "165.14s"
-  },
-  {
-    "word": "work,",
-    "startTime": "165.14s",
-    "endTime": "165.6s"
+    "word": "as",
+    "startTime": "40.5s",
+    "endTime": "40.54s"
   },
   {
     "word": " ",
-    "startTime": "165.6s",
-    "endTime": "165.609s"
+    "startTime": "40.54s",
+    "endTime": "40.56s"
   },
   {
-    "word": "that",
-    "startTime": "165.609s",
-    "endTime": "165.72s"
-  },
-  {
-    "word": " ",
-    "startTime": "165.72s",
-    "endTime": "165.74s"
-  },
-  {
-    "word": "will",
-    "startTime": "165.74s",
-    "endTime": "165.86s"
+    "word": "if",
+    "startTime": "40.56s",
+    "endTime": "40.599s"
   },
   {
     "word": " ",
-    "startTime": "165.86s",
-    "endTime": "165.87s"
-  },
-  {
-    "word": "give",
-    "startTime": "165.87s",
-    "endTime": "166.04s"
-  },
-  {
-    "word": " ",
-    "startTime": "166.04s",
-    "endTime": "166.079s"
-  },
-  {
-    "word": "you",
-    "startTime": "166.08s",
-    "endTime": "166.18s"
-  },
-  {
-    "word": " ",
-    "startTime": "166.18s",
-    "endTime": "166.22s"
+    "startTime": "40.599s",
+    "endTime": "40.939s"
   },
   {
     "word": "the",
-    "startTime": "166.22s",
-    "endTime": "166.32s"
+    "startTime": "40.939s",
+    "endTime": "41.139s"
   },
   {
     "word": " ",
-    "startTime": "166.32s",
-    "endTime": "166.359s"
+    "startTime": "41.139s",
+    "endTime": "41.139s"
   },
   {
-    "word": "future",
-    "startTime": "166.36s",
-    "endTime": "166.769s"
-  },
-  {
-    "word": " ",
-    "startTime": "166.769s",
-    "endTime": "167.0s"
-  },
-  {
-    "word": "and",
-    "startTime": "167.0s",
-    "endTime": "167.09s"
+    "word": "two",
+    "startTime": "41.139s",
+    "endTime": "41.459s"
   },
   {
     "word": " ",
-    "startTime": "167.09s",
-    "endTime": "167.14s"
+    "startTime": "41.459s",
+    "endTime": "41.479s"
   },
   {
-    "word": "old",
-    "startTime": "167.14s",
-    "endTime": "167.28s"
-  },
-  {
-    "word": " ",
-    "startTime": "167.28s",
-    "endTime": "167.34s"
-  },
-  {
-    "word": "age",
-    "startTime": "167.34s",
-    "endTime": "167.54s"
+    "word": "faces",
+    "startTime": "41.479s",
+    "endTime": "41.919s"
   },
   {
     "word": " ",
-    "startTime": "167.54s",
-    "endTime": "167.579s"
+    "startTime": "41.919s",
+    "endTime": "41.939s"
   },
   {
-    "word": "a",
-    "startTime": "167.58s",
-    "endTime": "167.64s"
-  },
-  {
-    "word": " ",
-    "startTime": "167.64s",
-    "endTime": "167.68s"
-  },
-  {
-    "word": "security.",
-    "startTime": "167.68s",
-    "endTime": "168.62s"
+    "word": "were",
+    "startTime": "41.939s",
+    "endTime": "42.02s"
   },
   {
     "word": " ",
-    "startTime": "168.62s",
-    "endTime": "168.66s"
+    "startTime": "42.02s",
+    "endTime": "42.04s"
   },
   {
-    "word": "By",
-    "startTime": "168.66s",
-    "endTime": "168.74s"
-  },
-  {
-    "word": " ",
-    "startTime": "168.74s",
-    "endTime": "168.78s"
-  },
-  {
-    "word": "the",
-    "startTime": "168.78s",
-    "endTime": "168.86s"
+    "word": "trying",
+    "startTime": "42.04s",
+    "endTime": "42.159s"
   },
   {
     "word": " ",
-    "startTime": "168.86s",
-    "endTime": "168.88s"
-  },
-  {
-    "word": "promise",
-    "startTime": "168.88s",
-    "endTime": "169.12s"
-  },
-  {
-    "word": " ",
-    "startTime": "169.12s",
-    "endTime": "169.14s"
-  },
-  {
-    "word": "of",
-    "startTime": "169.14s",
-    "endTime": "169.24s"
-  },
-  {
-    "word": " ",
-    "startTime": "169.24s",
-    "endTime": "169.26s"
-  },
-  {
-    "word": "these",
-    "startTime": "169.26s",
-    "endTime": "169.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "169.42s",
-    "endTime": "169.48s"
-  },
-  {
-    "word": "things,",
-    "startTime": "169.48s",
-    "endTime": "170.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "170.02s",
-    "endTime": "170.06s"
-  },
-  {
-    "word": "brutes",
-    "startTime": "170.06s",
-    "endTime": "170.38s"
-  },
-  {
-    "word": " ",
-    "startTime": "170.38s",
-    "endTime": "170.42s"
-  },
-  {
-    "word": "have",
-    "startTime": "170.42s",
-    "endTime": "170.54s"
-  },
-  {
-    "word": " ",
-    "startTime": "170.54s",
-    "endTime": "170.6s"
-  },
-  {
-    "word": "risen",
-    "startTime": "170.6s",
-    "endTime": "170.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "170.86s",
-    "endTime": "170.9s"
+    "startTime": "42.159s",
+    "endTime": "42.18s"
   },
   {
     "word": "to",
-    "startTime": "170.9s",
-    "endTime": "171.0s"
+    "startTime": "42.18s",
+    "endTime": "42.22s"
   },
   {
     "word": " ",
-    "startTime": "171.0s",
-    "endTime": "171.04s"
+    "startTime": "42.22s",
+    "endTime": "42.239s"
   },
   {
-    "word": "power,",
-    "startTime": "171.04s",
-    "endTime": "171.54s"
-  },
-  {
-    "word": " ",
-    "startTime": "171.54s",
-    "endTime": "171.579s"
-  },
-  {
-    "word": "but",
-    "startTime": "171.58s",
-    "endTime": "171.67s"
+    "word": "merge",
+    "startTime": "42.239s",
+    "endTime": "42.34s"
   },
   {
     "word": " ",
-    "startTime": "171.67s",
-    "endTime": "171.7s"
+    "startTime": "42.34s",
+    "endTime": "42.36s"
   },
   {
-    "word": "they",
-    "startTime": "171.7s",
-    "endTime": "171.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "171.82s",
-    "endTime": "171.88s"
-  },
-  {
-    "word": "lie.",
-    "startTime": "171.88s",
-    "endTime": "172.44s"
+    "word": "into",
+    "startTime": "42.36s",
+    "endTime": "42.439s"
   },
   {
     "word": " ",
-    "startTime": "172.44s",
-    "endTime": "172.46s"
+    "startTime": "42.439s",
+    "endTime": "42.459s"
   },
   {
-    "word": "They",
-    "startTime": "172.46s",
-    "endTime": "172.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "172.58s",
-    "endTime": "172.6s"
-  },
-  {
-    "word": "do",
-    "startTime": "172.6s",
-    "endTime": "172.66s"
+    "word": "one.",
+    "startTime": "42.459s",
+    "endTime": "42.54s"
   },
   {
     "word": " ",
-    "startTime": "172.66s",
-    "endTime": "172.74s"
+    "startTime": "42.54s",
+    "endTime": "42.88s"
+  },
+  {
+    "word": "Even",
+    "startTime": "42.88s",
+    "endTime": "42.959s"
+  },
+  {
+    "word": " ",
+    "startTime": "42.959s",
+    "endTime": "42.979s"
+  },
+  {
+    "word": "doctors",
+    "startTime": "42.979s",
+    "endTime": "43.119s"
+  },
+  {
+    "word": " ",
+    "startTime": "43.119s",
+    "endTime": "43.139s"
+  },
+  {
+    "word": "could",
+    "startTime": "43.139s",
+    "endTime": "43.239s"
+  },
+  {
+    "word": " ",
+    "startTime": "43.239s",
+    "endTime": "43.259s"
   },
   {
     "word": "not",
-    "startTime": "172.74s",
-    "endTime": "172.88s"
+    "startTime": "43.259s",
+    "endTime": "43.319s"
   },
   {
     "word": " ",
-    "startTime": "172.88s",
-    "endTime": "172.92s"
+    "startTime": "43.319s",
+    "endTime": "43.34s"
   },
   {
-    "word": "fulfill",
-    "startTime": "172.92s",
-    "endTime": "173.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "173.4s",
-    "endTime": "173.46s"
-  },
-  {
-    "word": "that",
-    "startTime": "173.46s",
-    "endTime": "173.57s"
+    "word": "explain",
+    "startTime": "43.34s",
+    "endTime": "44.159s"
   },
   {
     "word": " ",
-    "startTime": "173.57s",
-    "endTime": "173.64s"
+    "startTime": "44.159s",
+    "endTime": "44.18s"
   },
   {
-    "word": "promise.",
-    "startTime": "173.64s",
-    "endTime": "174.24s"
+    "word": "it.",
+    "startTime": "44.18s",
+    "endTime": "44.239s"
   },
   {
     "word": " ",
-    "startTime": "174.24s",
-    "endTime": "174.28s"
+    "startTime": "44.239s",
+    "endTime": "44.259s"
   },
   {
     "word": "They",
-    "startTime": "174.28s",
-    "endTime": "174.38s"
+    "startTime": "44.259s",
+    "endTime": "44.34s"
   },
   {
     "word": " ",
-    "startTime": "174.38s",
-    "endTime": "174.42s"
+    "startTime": "44.34s",
+    "endTime": "44.36s"
   },
   {
-    "word": "never",
-    "startTime": "174.42s",
-    "endTime": "174.62s"
-  },
-  {
-    "word": " ",
-    "startTime": "174.62s",
-    "endTime": "174.63s"
-  },
-  {
-    "word": "will.",
-    "startTime": "174.63s",
-    "endTime": "175.22s"
+    "word": "said",
+    "startTime": "44.36s",
+    "endTime": "44.439s"
   },
   {
     "word": " ",
-    "startTime": "175.22s",
-    "endTime": "175.23s"
+    "startTime": "44.439s",
+    "endTime": "44.699s"
   },
   {
-    "word": "Dictators",
-    "startTime": "175.23s",
-    "endTime": "175.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "175.76s",
-    "endTime": "175.88s"
-  },
-  {
-    "word": "free",
-    "startTime": "175.88s",
-    "endTime": "176.12s"
+    "word": "it",
+    "startTime": "44.7s",
+    "endTime": "44.739s"
   },
   {
     "word": " ",
-    "startTime": "176.12s",
-    "endTime": "176.14s"
+    "startTime": "44.739s",
+    "endTime": "44.759s"
   },
   {
-    "word": "themselves,",
-    "startTime": "176.14s",
-    "endTime": "176.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "176.86s",
-    "endTime": "177.22s"
-  },
-  {
-    "word": "but",
-    "startTime": "177.22s",
-    "endTime": "177.3s"
+    "word": "was",
+    "startTime": "44.759s",
+    "endTime": "44.819s"
   },
   {
     "word": " ",
-    "startTime": "177.3s",
-    "endTime": "177.32s"
+    "startTime": "44.819s",
+    "endTime": "44.84s"
   },
   {
-    "word": "they",
-    "startTime": "177.32s",
-    "endTime": "177.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "177.44s",
-    "endTime": "177.48s"
-  },
-  {
-    "word": "enslave",
-    "startTime": "177.48s",
-    "endTime": "178.0s"
+    "word": "a",
+    "startTime": "44.84s",
+    "endTime": "44.86s"
   },
   {
     "word": " ",
-    "startTime": "178.0s",
-    "endTime": "178.02s"
+    "startTime": "44.86s",
+    "endTime": "44.88s"
+  },
+  {
+    "word": "hybrid",
+    "startTime": "44.88s",
+    "endTime": "45.259s"
+  },
+  {
+    "word": " ",
+    "startTime": "45.259s",
+    "endTime": "45.299s"
+  },
+  {
+    "word": "between",
+    "startTime": "45.299s",
+    "endTime": "45.299s"
+  },
+  {
+    "word": " ",
+    "startTime": "45.299s",
+    "endTime": "45.299s"
   },
   {
     "word": "the",
-    "startTime": "178.02s",
-    "endTime": "178.12s"
+    "startTime": "45.299s",
+    "endTime": "45.299s"
   },
   {
     "word": " ",
-    "startTime": "178.12s",
-    "endTime": "178.16s"
+    "startTime": "45.299s",
+    "endTime": "45.719s"
   },
   {
-    "word": "people!",
-    "startTime": "178.16s",
-    "endTime": "179.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "179.02s",
-    "endTime": "179.08s"
-  },
-  {
-    "word": "Now,",
-    "startTime": "179.08s",
-    "endTime": "179.34s"
+    "word": "donor",
+    "startTime": "45.719s",
+    "endTime": "46.08s"
   },
   {
     "word": " ",
-    "startTime": "179.34s",
-    "endTime": "179.36s"
-  },
-  {
-    "word": "let",
-    "startTime": "179.36s",
-    "endTime": "179.46s"
-  },
-  {
-    "word": " ",
-    "startTime": "179.46s",
-    "endTime": "179.5s"
-  },
-  {
-    "word": "us",
-    "startTime": "179.5s",
-    "endTime": "179.8s"
-  },
-  {
-    "word": " ",
-    "startTime": "179.8s",
-    "endTime": "179.82s"
-  },
-  {
-    "word": "fight",
-    "startTime": "179.82s",
-    "endTime": "180.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "180.34s",
-    "endTime": "180.4s"
-  },
-  {
-    "word": "to",
-    "startTime": "180.4s",
-    "endTime": "180.48s"
-  },
-  {
-    "word": " ",
-    "startTime": "180.48s",
-    "endTime": "180.54s"
-  },
-  {
-    "word": "fulfill",
-    "startTime": "180.54s",
-    "endTime": "181.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "181.06s",
-    "endTime": "181.08s"
-  },
-  {
-    "word": "that",
-    "startTime": "181.08s",
-    "endTime": "181.26s"
-  },
-  {
-    "word": " ",
-    "startTime": "181.26s",
-    "endTime": "181.32s"
-  },
-  {
-    "word": "promise.",
-    "startTime": "181.32s",
-    "endTime": "182.04s"
-  },
-  {
-    "word": " ",
-    "startTime": "182.04s",
-    "endTime": "182.1s"
-  },
-  {
-    "word": "Let",
-    "startTime": "182.1s",
-    "endTime": "182.16s"
-  },
-  {
-    "word": " ",
-    "startTime": "182.16s",
-    "endTime": "182.22s"
-  },
-  {
-    "word": "us",
-    "startTime": "182.22s",
-    "endTime": "182.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "182.4s",
-    "endTime": "182.54s"
-  },
-  {
-    "word": "fight",
-    "startTime": "182.54s",
-    "endTime": "182.88s"
-  },
-  {
-    "word": " ",
-    "startTime": "182.88s",
-    "endTime": "183.12s"
-  },
-  {
-    "word": "to",
-    "startTime": "183.12s",
-    "endTime": "183.22s"
-  },
-  {
-    "word": " ",
-    "startTime": "183.22s",
-    "endTime": "183.34s"
-  },
-  {
-    "word": "free",
-    "startTime": "183.34s",
-    "endTime": "183.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "183.5s",
-    "endTime": "183.58s"
-  },
-  {
-    "word": "the",
-    "startTime": "183.58s",
-    "endTime": "183.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "183.66s",
-    "endTime": "183.7s"
-  },
-  {
-    "word": "world,",
-    "startTime": "183.7s",
-    "endTime": "184.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "184.34s",
-    "endTime": "184.38s"
-  },
-  {
-    "word": "to",
-    "startTime": "184.38s",
-    "endTime": "184.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "184.44s",
-    "endTime": "184.48s"
-  },
-  {
-    "word": "do",
-    "startTime": "184.48s",
-    "endTime": "184.56s"
-  },
-  {
-    "word": " ",
-    "startTime": "184.62s",
-    "endTime": "184.64s"
-  },
-  {
-    "word": "away",
-    "startTime": "184.64s",
-    "endTime": "184.84s"
-  },
-  {
-    "word": " ",
-    "startTime": "184.84s",
-    "endTime": "184.88s"
-  },
-  {
-    "word": "with",
-    "startTime": "184.88s",
-    "endTime": "185.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "185.02s",
-    "endTime": "185.04s"
-  },
-  {
-    "word": "national",
-    "startTime": "185.04s",
-    "endTime": "185.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "185.44s",
-    "endTime": "185.52s"
-  },
-  {
-    "word": "barriers,",
-    "startTime": "185.52s",
-    "endTime": "186.32s"
-  },
-  {
-    "word": " ",
-    "startTime": "186.32s",
-    "endTime": "186.34s"
-  },
-  {
-    "word": "to",
-    "startTime": "186.34s",
-    "endTime": "186.44s"
-  },
-  {
-    "word": " ",
-    "startTime": "186.44s",
-    "endTime": "186.48s"
-  },
-  {
-    "word": "do",
-    "startTime": "186.48s",
-    "endTime": "186.58s"
-  },
-  {
-    "word": " ",
-    "startTime": "186.58s",
-    "endTime": "186.62s"
-  },
-  {
-    "word": "away",
-    "startTime": "186.62s",
-    "endTime": "186.82s"
-  },
-  {
-    "word": " ",
-    "startTime": "186.82s",
-    "endTime": "186.9s"
-  },
-  {
-    "word": "with",
-    "startTime": "186.9s",
-    "endTime": "187.02s"
-  },
-  {
-    "word": " ",
-    "startTime": "187.02s",
-    "endTime": "187.14s"
-  },
-  {
-    "word": "greed,",
-    "startTime": "187.14s",
-    "endTime": "187.92s"
-  },
-  {
-    "word": " ",
-    "startTime": "187.92s",
-    "endTime": "187.94s"
-  },
-  {
-    "word": "with",
-    "startTime": "187.94s",
-    "endTime": "188.04s"
-  },
-  {
-    "word": " ",
-    "startTime": "188.04s",
-    "endTime": "188.179s"
-  },
-  {
-    "word": "hate",
-    "startTime": "188.18s",
-    "endTime": "188.4s"
-  },
-  {
-    "word": " ",
-    "startTime": "188.4s",
-    "endTime": "188.42s"
+    "startTime": "46.08s",
+    "endTime": "46.139s"
   },
   {
     "word": "and",
-    "startTime": "188.42s",
-    "endTime": "188.5s"
+    "startTime": "46.139s",
+    "endTime": "46.159s"
   },
   {
     "word": " ",
-    "startTime": "188.5s",
-    "endTime": "188.52s"
+    "startTime": "46.159s",
+    "endTime": "46.18s"
   },
   {
-    "word": "intolerance.",
-    "startTime": "188.52s",
-    "endTime": "189.86s"
-  },
-  {
-    "word": " ",
-    "startTime": "189.86s",
-    "endTime": "189.92s"
-  },
-  {
-    "word": "Let",
-    "startTime": "189.92s",
-    "endTime": "190.04s"
+    "word": "the",
+    "startTime": "46.18s",
+    "endTime": "46.239s"
   },
   {
     "word": " ",
-    "startTime": "190.04s",
-    "endTime": "190.079s"
+    "startTime": "46.239s",
+    "endTime": "46.279s"
   },
   {
-    "word": "us",
-    "startTime": "190.08s",
-    "endTime": "190.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "190.2s",
-    "endTime": "190.36s"
-  },
-  {
-    "word": "fight",
-    "startTime": "190.36s",
-    "endTime": "190.5s"
+    "word": "recipient.",
+    "startTime": "46.279s",
+    "endTime": "46.939s"
   },
   {
     "word": " ",
-    "startTime": "190.5s",
-    "endTime": "190.56s"
+    "startTime": "46.939s",
+    "endTime": "46.939s"
+  },
+  {
+    "word": "Matteo",
+    "startTime": "46.939s",
+    "endTime": "47.299s"
+  },
+  {
+    "word": " ",
+    "startTime": "47.299s",
+    "endTime": "47.599s"
+  },
+  {
+    "word": "spent",
+    "startTime": "47.599s",
+    "endTime": "47.7s"
+  },
+  {
+    "word": " ",
+    "startTime": "47.7s",
+    "endTime": "48.979s"
+  },
+  {
+    "word": "years",
+    "startTime": "48.979s",
+    "endTime": "49.18s"
+  },
+  {
+    "word": " ",
+    "startTime": "49.18s",
+    "endTime": "49.2s"
+  },
+  {
+    "word": "hiding,",
+    "startTime": "49.2s",
+    "endTime": "49.34s"
+  },
+  {
+    "word": " ",
+    "startTime": "49.34s",
+    "endTime": "49.36s"
+  },
+  {
+    "word": "avoiding",
+    "startTime": "49.36s",
+    "endTime": "49.439s"
+  },
+  {
+    "word": " ",
+    "startTime": "49.439s",
+    "endTime": "49.439s"
+  },
+  {
+    "word": "cameras,",
+    "startTime": "49.439s",
+    "endTime": "49.779s"
+  },
+  {
+    "word": " ",
+    "startTime": "49.779s",
+    "endTime": "49.899s"
+  },
+  {
+    "word": "living",
+    "startTime": "49.899s",
+    "endTime": "50.099s"
+  },
+  {
+    "word": " ",
+    "startTime": "50.099s",
+    "endTime": "50.139s"
+  },
+  {
+    "word": "with",
+    "startTime": "50.139s",
+    "endTime": "50.139s"
+  },
+  {
+    "word": " ",
+    "startTime": "50.139s",
+    "endTime": "50.159s"
+  },
+  {
+    "word": "an",
+    "startTime": "50.159s",
+    "endTime": "50.54s"
+  },
+  {
+    "word": " ",
+    "startTime": "50.54s",
+    "endTime": "50.559s"
+  },
+  {
+    "word": "identity",
+    "startTime": "50.559s",
+    "endTime": "50.979s"
+  },
+  {
+    "word": " ",
+    "startTime": "50.979s",
+    "endTime": "51.119s"
+  },
+  {
+    "word": "he",
+    "startTime": "51.119s",
+    "endTime": "51.119s"
+  },
+  {
+    "word": " ",
+    "startTime": "51.119s",
+    "endTime": "51.319s"
+  },
+  {
+    "word": "no",
+    "startTime": "51.319s",
+    "endTime": "51.38s"
+  },
+  {
+    "word": " ",
+    "startTime": "51.38s",
+    "endTime": "51.38s"
+  },
+  {
+    "word": "longer",
+    "startTime": "51.38s",
+    "endTime": "51.5s"
+  },
+  {
+    "word": " ",
+    "startTime": "51.5s",
+    "endTime": "51.52s"
+  },
+  {
+    "word": "recognized.",
+    "startTime": "51.52s",
+    "endTime": "52.68s"
+  },
+  {
+    "word": " ",
+    "startTime": "52.68s",
+    "endTime": "52.7s"
+  },
+  {
+    "word": "One",
+    "startTime": "52.7s",
+    "endTime": "52.759s"
+  },
+  {
+    "word": " ",
+    "startTime": "52.759s",
+    "endTime": "52.779s"
+  },
+  {
+    "word": "day,",
+    "startTime": "52.779s",
+    "endTime": "52.86s"
+  },
+  {
+    "word": " ",
+    "startTime": "52.86s",
+    "endTime": "53.0s"
+  },
+  {
+    "word": "he",
+    "startTime": "53.0s",
+    "endTime": "53.04s"
+  },
+  {
+    "word": " ",
+    "startTime": "53.04s",
+    "endTime": "53.059s"
+  },
+  {
+    "word": "reappeared,",
+    "startTime": "53.059s",
+    "endTime": "53.68s"
+  },
+  {
+    "word": " ",
+    "startTime": "53.68s",
+    "endTime": "53.72s"
+  },
+  {
+    "word": "smiling.",
+    "startTime": "53.72s",
+    "endTime": "54.619s"
+  },
+  {
+    "word": " ",
+    "startTime": "54.619s",
+    "endTime": "54.639s"
+  },
+  {
+    "word": "He",
+    "startTime": "54.639s",
+    "endTime": "54.68s"
+  },
+  {
+    "word": " ",
+    "startTime": "54.68s",
+    "endTime": "54.7s"
+  },
+  {
+    "word": "did",
+    "startTime": "54.7s",
+    "endTime": "54.759s"
+  },
+  {
+    "word": " ",
+    "startTime": "54.759s",
+    "endTime": "54.779s"
+  },
+  {
+    "word": "not",
+    "startTime": "54.779s",
+    "endTime": "54.84s"
+  },
+  {
+    "word": " ",
+    "startTime": "54.84s",
+    "endTime": "54.86s"
+  },
+  {
+    "word": "say",
+    "startTime": "54.86s",
+    "endTime": "54.919s"
+  },
+  {
+    "word": " ",
+    "startTime": "54.919s",
+    "endTime": "54.939s"
+  },
+  {
+    "word": "a",
+    "startTime": "54.939s",
+    "endTime": "54.959s"
+  },
+  {
+    "word": " ",
+    "startTime": "54.959s",
+    "endTime": "54.979s"
+  },
+  {
+    "word": "single",
+    "startTime": "54.979s",
+    "endTime": "55.099s"
+  },
+  {
+    "word": " ",
+    "startTime": "55.099s",
+    "endTime": "55.119s"
+  },
+  {
+    "word": "phrase.",
+    "startTime": "55.119s",
+    "endTime": "55.799s"
+  },
+  {
+    "word": " ",
+    "startTime": "55.799s",
+    "endTime": "55.819s"
+  },
+  {
+    "word": "This",
+    "startTime": "55.819s",
+    "endTime": "55.899s"
+  },
+  {
+    "word": " ",
+    "startTime": "55.899s",
+    "endTime": "55.919s"
+  },
+  {
+    "word": "face",
+    "startTime": "55.919s",
+    "endTime": "56.38s"
+  },
+  {
+    "word": " ",
+    "startTime": "56.38s",
+    "endTime": "56.399s"
+  },
+  {
+    "word": "is",
+    "startTime": "56.399s",
+    "endTime": "56.439s"
+  },
+  {
+    "word": " ",
+    "startTime": "56.439s",
+    "endTime": "56.459s"
+  },
+  {
+    "word": "now",
+    "startTime": "56.459s",
+    "endTime": "56.52s"
+  },
+  {
+    "word": " ",
+    "startTime": "56.52s",
+    "endTime": "56.54s"
+  },
+  {
+    "word": "mine.",
+    "startTime": "56.54s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": " ",
+    "startTime": "57.099s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": "I",
+    "startTime": "57.099s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": " ",
+    "startTime": "57.099s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": "deserve",
+    "startTime": "57.099s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": " ",
+    "startTime": "57.099s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": "it.",
+    "startTime": "57.099s",
+    "endTime": "57.099s"
+  },
+  {
+    "word": " ",
+    "startTime": "57.099s",
+    "endTime": "58.739s"
+  },
+  {
+    "word": "If",
+    "startTime": "58.739s",
+    "endTime": "58.779s"
+  },
+  {
+    "word": " ",
+    "startTime": "58.779s",
+    "endTime": "58.799s"
+  },
+  {
+    "word": "you",
+    "startTime": "58.799s",
+    "endTime": "58.86s"
+  },
+  {
+    "word": " ",
+    "startTime": "58.86s",
+    "endTime": "58.879s"
+  },
+  {
+    "word": "search",
+    "startTime": "58.879s",
+    "endTime": "58.899s"
+  },
+  {
+    "word": " ",
+    "startTime": "58.899s",
+    "endTime": "58.899s"
   },
   {
     "word": "for",
-    "startTime": "190.56s",
-    "endTime": "190.64s"
+    "startTime": "58.899s",
+    "endTime": "58.959s"
   },
   {
     "word": " ",
-    "startTime": "190.64s",
-    "endTime": "190.68s"
-  },
-  {
-    "word": "a",
-    "startTime": "190.68s",
-    "endTime": "190.7s"
-  },
-  {
-    "word": " ",
-    "startTime": "190.7s",
-    "endTime": "190.76s"
-  },
-  {
-    "word": "world",
-    "startTime": "190.76s",
-    "endTime": "190.96s"
-  },
-  {
-    "word": " ",
-    "startTime": "190.96s",
-    "endTime": "191.0s"
-  },
-  {
-    "word": "of",
-    "startTime": "191.0s",
-    "endTime": "191.06s"
-  },
-  {
-    "word": " ",
-    "startTime": "191.06s",
-    "endTime": "191.14s"
-  },
-  {
-    "word": "reason,",
-    "startTime": "191.14s",
-    "endTime": "192.08s"
-  },
-  {
-    "word": " ",
-    "startTime": "192.08s",
-    "endTime": "192.14s"
-  },
-  {
-    "word": "a",
-    "startTime": "192.14s",
-    "endTime": "192.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "192.2s",
-    "endTime": "192.24s"
-  },
-  {
-    "word": "world",
-    "startTime": "192.24s",
-    "endTime": "192.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "192.5s",
-    "endTime": "192.56s"
-  },
-  {
-    "word": "where",
-    "startTime": "192.56s",
-    "endTime": "192.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "192.76s",
-    "endTime": "192.84s"
-  },
-  {
-    "word": "science",
-    "startTime": "192.84s",
-    "endTime": "193.18s"
-  },
-  {
-    "word": " ",
-    "startTime": "193.18s",
-    "endTime": "193.2s"
-  },
-  {
-    "word": "and",
-    "startTime": "193.2s",
-    "endTime": "193.29s"
-  },
-  {
-    "word": " ",
-    "startTime": "193.29s",
-    "endTime": "193.38s"
-  },
-  {
-    "word": "progress",
-    "startTime": "193.38s",
-    "endTime": "193.94s"
-  },
-  {
-    "word": " ",
-    "startTime": "193.94s",
-    "endTime": "194.26s"
-  },
-  {
-    "word": "will",
-    "startTime": "194.26s",
-    "endTime": "194.34s"
-  },
-  {
-    "word": " ",
-    "startTime": "194.34s",
-    "endTime": "194.42s"
-  },
-  {
-    "word": "lead",
-    "startTime": "194.46s",
-    "endTime": "194.62s"
-  },
-  {
-    "word": " ",
-    "startTime": "194.62s",
-    "endTime": "194.66s"
-  },
-  {
-    "word": "to",
-    "startTime": "194.66s",
-    "endTime": "194.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "194.76s",
-    "endTime": "194.78s"
-  },
-  {
-    "word": "all",
-    "startTime": "194.78s",
-    "endTime": "194.99s"
-  },
-  {
-    "word": " ",
-    "startTime": "194.99s",
-    "endTime": "195.06s"
-  },
-  {
-    "word": "men's",
-    "startTime": "195.06s",
-    "endTime": "195.42s"
-  },
-  {
-    "word": " ",
-    "startTime": "195.42s",
-    "endTime": "195.46s"
-  },
-  {
-    "word": "happiness.",
-    "startTime": "195.46s",
-    "endTime": "196.68s"
-  },
-  {
-    "word": " ",
-    "startTime": "196.68s",
-    "endTime": "196.74s"
-  },
-  {
-    "word": "Soldiers,",
-    "startTime": "196.74s",
-    "endTime": "197.66s"
-  },
-  {
-    "word": " ",
-    "startTime": "197.66s",
-    "endTime": "197.7s"
-  },
-  {
-    "word": "in",
-    "startTime": "197.7s",
-    "endTime": "197.76s"
-  },
-  {
-    "word": " ",
-    "startTime": "197.76s",
-    "endTime": "197.78s"
+    "startTime": "58.959s",
+    "endTime": "58.979s"
   },
   {
     "word": "the",
-    "startTime": "197.78s",
-    "endTime": "197.84s"
+    "startTime": "58.979s",
+    "endTime": "58.979s"
   },
   {
     "word": " ",
-    "startTime": "197.84s",
-    "endTime": "197.86s"
+    "startTime": "58.979s",
+    "endTime": "58.979s"
   },
   {
-    "word": "name",
-    "startTime": "197.86s",
-    "endTime": "198.0s"
-  },
-  {
-    "word": " ",
-    "startTime": "198.0s",
-    "endTime": "198.04s"
-  },
-  {
-    "word": "of",
-    "startTime": "198.04s",
-    "endTime": "198.1s"
+    "word": "story",
+    "startTime": "58.979s",
+    "endTime": "58.979s"
   },
   {
     "word": " ",
-    "startTime": "198.1s",
-    "endTime": "198.12s"
+    "startTime": "58.979s",
+    "endTime": "59.0s"
   },
   {
-    "word": "democracy,",
-    "startTime": "198.12s",
-    "endTime": "199.2s"
-  },
-  {
-    "word": " ",
-    "startTime": "199.2s",
-    "endTime": "199.24s"
-  },
-  {
-    "word": "let",
-    "startTime": "199.24s",
-    "endTime": "199.38s"
+    "word": "on",
+    "startTime": "59.0s",
+    "endTime": "59.04s"
   },
   {
     "word": " ",
-    "startTime": "199.38s",
-    "endTime": "199.4s"
+    "startTime": "59.04s",
+    "endTime": "59.059s"
   },
   {
-    "word": "us",
-    "startTime": "199.4s",
-    "endTime": "199.5s"
-  },
-  {
-    "word": " ",
-    "startTime": "199.5s",
-    "endTime": "199.54s"
-  },
-  {
-    "word": "all",
-    "startTime": "199.54s",
-    "endTime": "199.88s"
+    "word": "TikTok,",
+    "startTime": "59.059s",
+    "endTime": "59.619s"
   },
   {
     "word": " ",
-    "startTime": "199.88s",
-    "endTime": "199.96s"
+    "startTime": "59.619s",
+    "endTime": "59.659s"
   },
   {
-    "word": "unite!",
-    "startTime": "199.96s",
-    "endTime": "206.06s"
+    "word": "the",
+    "startTime": "59.659s",
+    "endTime": "59.719s"
+  },
+  {
+    "word": " ",
+    "startTime": "59.719s",
+    "endTime": "59.739s"
+  },
+  {
+    "word": "man",
+    "startTime": "59.739s",
+    "endTime": "59.799s"
+  },
+  {
+    "word": " ",
+    "startTime": "59.799s",
+    "endTime": "59.819s"
+  },
+  {
+    "word": "with",
+    "startTime": "59.819s",
+    "endTime": "59.899s"
+  },
+  {
+    "word": " ",
+    "startTime": "59.899s",
+    "endTime": "59.919s"
+  },
+  {
+    "word": "a",
+    "startTime": "59.919s",
+    "endTime": "60.119s"
+  },
+  {
+    "word": " ",
+    "startTime": "60.119s",
+    "endTime": "60.279s"
+  },
+  {
+    "word": "face",
+    "startTime": "60.279s",
+    "endTime": "60.279s"
+  },
+  {
+    "word": " ",
+    "startTime": "60.279s",
+    "endTime": "61.119s"
+  },
+  {
+    "word": "transplant,",
+    "startTime": "61.119s",
+    "endTime": "61.879s"
+  },
+  {
+    "word": " ",
+    "startTime": "61.879s",
+    "endTime": "61.899s"
+  },
+  {
+    "word": "you",
+    "startTime": "61.899s",
+    "endTime": "61.959s"
+  },
+  {
+    "word": " ",
+    "startTime": "61.959s",
+    "endTime": "61.979s"
+  },
+  {
+    "word": "will",
+    "startTime": "61.979s",
+    "endTime": "62.059s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.059s",
+    "endTime": "62.079s"
+  },
+  {
+    "word": "find",
+    "startTime": "62.079s",
+    "endTime": "62.159s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.159s",
+    "endTime": "62.18s"
+  },
+  {
+    "word": "proof",
+    "startTime": "62.18s",
+    "endTime": "62.279s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.279s",
+    "endTime": "62.299s"
+  },
+  {
+    "word": "that",
+    "startTime": "62.299s",
+    "endTime": "62.379s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.379s",
+    "endTime": "62.399s"
+  },
+  {
+    "word": "this",
+    "startTime": "62.399s",
+    "endTime": "62.479s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.479s",
+    "endTime": "62.5s"
+  },
+  {
+    "word": "story",
+    "startTime": "62.5s",
+    "endTime": "62.699s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.699s",
+    "endTime": "62.899s"
+  },
+  {
+    "word": "is",
+    "startTime": "62.899s",
+    "endTime": "62.939s"
+  },
+  {
+    "word": " ",
+    "startTime": "62.939s",
+    "endTime": "62.959s"
+  },
+  {
+    "word": "real.",
+    "startTime": "62.959s",
+    "endTime": "63.54s"
   }
 ]

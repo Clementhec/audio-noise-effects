@@ -18,6 +18,7 @@ Usage:
     python main.py video.mp4 --full-pipeline
 """
 
+import os
 import sys
 import argparse
 from pathlib import Path
@@ -514,7 +515,8 @@ def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
 
         # Run similarity matching
         print(f"Finding top {top_k} similar sounds for each speech segment...")
-        output_path = Path("output/video_similarity_matches.json")
+        # output_path = Path("output/video_similarity_matches.json")
+        output_path = os.path.join("similarity/output", 'similarity.json')
 
         results = find_similar_sounds(
             df_speech=df_speech,
@@ -738,37 +740,37 @@ Examples:
         if args.run_stt:
             transcription_path, word_timing_path = run_stt_step(audio_path)
 
-            # Step 3: Generate embeddings (optional)
-            if args.run_embeddings:
-                embeddings_path = run_embeddings_step(
-                    transcription_path,
-                    word_timing_path
-                )
+        # Step 3: Generate embeddings (optional)
+        if args.run_embeddings:
+            embeddings_path = run_embeddings_step(
+                transcription_path,
+                word_timing_path
+            )
 
-                # Step 4: Semantic matching (optional)
-                if args.run_matching:
-                    similarity_results_path = run_semantic_matching_step(
-                        embeddings_path,
-                        top_k=args.top_k
-                    )
+        # Step 4: Semantic matching (optional)
+        if args.run_matching:
+            similarity_results_path = run_semantic_matching_step(
+                embeddings_path,
+                top_k=args.top_k
+            )
 
-                    # Step 5: LLM filtering (optional)
-                    if args.run_llm_filter:
-                        filtered_results_path = run_llm_filtering_step(
-                            similarity_results_path,
-                            max_sounds=args.max_sounds
-                        )
+        # Step 5: LLM filtering (optional)
+        if args.run_llm_filter:
+            filtered_results_path = run_llm_filtering_step(
+                similarity_results_path,
+                max_sounds=args.max_sounds
+            )
 
-                        # Step 6: Video-audio merge (optional)
-                        if args.run_video_merge:
-                            final_video_path = run_video_audio_merge_step(
-                                video_path=Path(args.video),
-                                filtered_results_path=filtered_results_path,
-                                word_timing_path=word_timing_path,
-                                original_audio_path=audio_path,
-                                sound_intensity=args.sound_intensity,
-                                sound_duration=args.sound_duration
-                            )
+        # Step 6: Video-audio merge (optional)
+        if args.run_video_merge:
+            final_video_path = run_video_audio_merge_step(
+                video_path=Path(args.video),
+                filtered_results_path=filtered_results_path,
+                word_timing_path=word_timing_path,
+                original_audio_path=audio_path,
+                sound_intensity=args.sound_intensity,
+                sound_duration=args.sound_duration
+            )
 
         # Final summary
         print("=" * 70)
@@ -796,54 +798,6 @@ Examples:
             print(f"  ✓ Merged audio: output/merged_audio.wav")
 
         print()
-
-        if not args.run_stt:
-            print("Next steps:")
-            print("  1. Run STT processing:")
-            print(f"     uv run python main.py {args.video} --run-stt")
-            print()
-        elif not args.run_embeddings:
-            print("Next steps:")
-            print("  1. Generate embeddings:")
-            print(f"     uv run python main.py {args.video} --run-stt --run-embeddings")
-            print()
-        elif not args.run_matching:
-            print("Next steps:")
-            print("  1. Run similarity matching:")
-            print(f"     uv run python main.py {args.video} --run-stt --run-embeddings --run-matching")
-            print("  OR")
-            print(f"     uv run python main.py {args.video} --full-pipeline")
-            print()
-        elif not args.run_llm_filter:
-            print("Next steps:")
-            print("  1. Run LLM filtering to select best sounds:")
-            print(f"     uv run python main.py {args.video} --full-pipeline")
-            print("  OR manually with max sounds:")
-            print(f"     uv run python main.py {args.video} --run-stt --run-embeddings --run-matching --run-llm-filter --max-sounds 5")
-            print()
-        elif not args.run_video_merge:
-            print("Next steps:")
-            print("  1. Merge sound effects with video:")
-            print(f"     uv run python main.py {args.video} --full-pipeline")
-            print("  OR with custom sound intensity:")
-            print(f"     uv run python main.py {args.video} --full-pipeline --sound-intensity 0.5")
-            print()
-        else:
-            print("🎉 Full pipeline completed successfully!")
-            print()
-            print("Your final video is ready:")
-            print("  📹 output/final_video_with_sounds.mp4")
-            print()
-            print("You can also find:")
-            print("  🔊 Merged audio track: output/merged_audio.wav")
-            print("  📊 Filtered sounds data: output/video_filtered_sounds.json")
-            print()
-            print("To adjust sound effects, re-run with different parameters:")
-            print(f"  --sound-intensity 0.5   (louder effects)")
-            print(f"  --sound-duration 2.0    (limit each effect to 2 seconds)")
-            print()
-
-        print("=" * 70)
 
     except Exception as e:
         print()

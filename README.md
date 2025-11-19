@@ -38,6 +38,31 @@ Input (Audio/Video)
 Output (Enhanced Audio/Video)
 ```
 
+## Directory Structure
+
+```
+Audio-noise-effects/
+├── main.py                      # Main pipeline orchestrator
+├── video_preprocessing/         # Video to audio extraction
+│   ├── __init__.py
+│   ├── video_to_audio.py
+│   └── README.md
+├── speech_to_text/              # STT using ElevenLabs
+│   ├── __init__.py
+│   ├── stt_elevenlabs.py
+│   └── README.md
+├── text_processing/             # Speech segmentation and embedding
+│   ├── __init__.py
+│   ├── speech_segmenter.py
+│   ├── speech_embedder.py
+│   └── README.md
+├── utils/                       # Utility functions
+│   ├── __init__.py
+│   ├── embeddings_utils.py
+│   └── sound_embedding/
+└── data/                        # Data files (CSV, embeddings)
+```
+
 **Key Principle**: Both speech content and sound metadata must use **compatible embeddings** (same model, same embedding space) to enable meaningful similarity comparisons. Filtering decisions are made based on **actual similarity scores**, not pre-selection.
 
 **Technology Stack:**
@@ -83,6 +108,21 @@ Audio-noise-effects/
 - Python 3.8 or higher
 - Google Cloud account with Speech-to-Text API enabled
 - OpenAI API key
+
+## Configuration
+
+### API Key Setup
+
+Add to `.env` file:
+```env
+GOOGLE_API_KEY=your_google_api_key_here
+```
+```env
+ELEVENLABS_API_KEY=your_api_key_here
+```
+
+Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+
 
 ### Install Dependencies
 

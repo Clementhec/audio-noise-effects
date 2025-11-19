@@ -690,22 +690,22 @@ Examples:
         args.run_llm_filter = True
         args.run_video_merge = True
 
-    # Validate dependencies
-    if args.run_embeddings and not args.run_stt:
-        print("Error: --run-embeddings requires --run-stt")
-        sys.exit(1)
+    # # Validate dependencies
+    # if args.run_embeddings and not args.run_stt:
+    #     print("Error: --run-embeddings requires --run-stt")
+    #     sys.exit(1)
 
-    if args.run_matching and not args.run_embeddings:
-        print("Error: --run-matching requires --run-embeddings")
-        sys.exit(1)
+    # if args.run_matching and not args.run_embeddings:
+    #     print("Error: --run-matching requires --run-embeddings")
+    #     sys.exit(1)
 
-    if args.run_llm_filter and not args.run_matching:
-        print("Error: --run-llm-filter requires --run-matching")
-        sys.exit(1)
+    # if args.run_llm_filter and not args.run_matching:
+    #     print("Error: --run-llm-filter requires --run-matching")
+    #     sys.exit(1)
 
-    if args.run_video_merge and not args.run_llm_filter:
-        print("Error: --run-video-merge requires --run-llm-filter")
-        sys.exit(1)
+    # if args.run_video_merge and not args.run_llm_filter:
+    #     print("Error: --run-video-merge requires --run-llm-filter")
+    #     sys.exit(1)
 
     # Validate sound intensity
     if not 0.0 <= args.sound_intensity <= 1.0:

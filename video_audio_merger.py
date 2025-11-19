@@ -120,29 +120,37 @@ def find_word_timing(
     target_normalized = target_word.strip().lower().rstrip('.,!?;:')
 
     # Find the word in the speech text to get approximate position
-    speech_words = speech_text.lower().split()
+    # speech_words = speech_text.lower().split()
 
-    try:
-        # Find the index of the target word in speech
-        target_index = next(
-            i for i, word in enumerate(speech_words)
-            if target_normalized in word.lower().rstrip('.,!?;:')
-        )
-    except StopIteration:
-        print(f"  ⚠ Target word '{target_word}' not found in speech text")
-        return None
+    # try:
+    #     # Find the index of the target word in speech
+    #     target_index = next(
+    #         i for i, word in enumerate(speech_words)
+    #         if target_normalized in word.lower().rstrip('.,!?;:')
+    #     )
+    # except StopIteration:
+    #     print(f"  ⚠ Target word '{target_word}' not found in speech text")
+    #     return None
 
-    # Match with word_timings (skip whitespace entries)
-    non_space_timings = [
-        wt for wt in word_timings
-        if wt['word'].strip()
-    ]
+    # # Match with word_timings (skip whitespace entries)
+    # non_space_timings = [
+    #     wt for wt in word_timings
+    #     if wt['word'].strip()
+    # ]
 
-    if target_index < len(non_space_timings):
-        timing = non_space_timings[target_index]
-        return parse_time_string(timing['startTime'])
+    # if target_index < len(non_space_timings):
+    #     timing = non_space_timings[target_index]
+    #     return parse_time_string(timing['startTime'])
+    # found = False
+    n = len(word_timings)
+    k = 0
+    while k < n:
+        k += 1
+        wt = word_timings[k]
+        if target_normalized == wt['word'].strip().lower().rstrip('.,!?;:'):
+            return parse_time_string(wt['startTime'])
 
-    print(f"  ⚠ Timing not found for word index {target_index}")
+    print(f"  ⚠ Timing not found for word {target_word}")
     return None
 
 

@@ -117,6 +117,9 @@ Add to `.env` file:
 ```env
 GOOGLE_API_KEY=your_google_api_key_here
 ```
+```env
+ELEVENLABS_API_KEY=your_api_key_here
+```
 
 Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
 

@@ -31,3 +31,6 @@ vision = [
     "torchvision>=0.24.1",
     "transformers>=4.57.1",
 ]
+
+[project.scripts]
+test = "main:main"

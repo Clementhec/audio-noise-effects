@@ -101,8 +101,8 @@ def find_similar_sounds(df_speech: pd.DataFrame,
     # Sauvegarder en JSON si demandé
     if save_to_json_file:
         # Utiliser le chemin par défaut si non spécifié
-        if output_path is None:
-            output_path = os.path.join("similarity/output", 'similarity.json')
+        # if output_path is None:
+        #     output_path = os.path.join("similarity/output", 'similarity.json')
 
         # Créer le répertoire parent s'il n'existe pas
     

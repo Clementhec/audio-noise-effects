@@ -2,6 +2,7 @@
 
 An intelligent audio processing system that automatically enhances audio and video content by adding contextually relevant sound effects based on speech content analysis.
 
+
 ## Overview
 
 This project implements an AI-driven pipeline that analyzes narrated speech, understands the semantic context, and intelligently inserts sound effects from a library of 2,120+ sounds at the most appropriate moments. The system combines speech recognition, natural language understanding, vector embeddings, and audio processing to create dynamic and engaging audio experiences.
@@ -37,6 +38,31 @@ Input (Audio/Video)
 Output (Enhanced Audio/Video)
 ```
 
+## Directory Structure
+
+```
+Audio-noise-effects/
+├── main.py                      # Main pipeline orchestrator
+├── video_preprocessing/         # Video to audio extraction
+│   ├── __init__.py
+│   ├── video_to_audio.py
+│   └── README.md
+├── speech_to_text/              # STT using ElevenLabs
+│   ├── __init__.py
+│   ├── stt_elevenlabs.py
+│   └── README.md
+├── text_processing/             # Speech segmentation and embedding
+│   ├── __init__.py
+│   ├── speech_segmenter.py
+│   ├── speech_embedder.py
+│   └── README.md
+├── utils/                       # Utility functions
+│   ├── __init__.py
+│   ├── embeddings_utils.py
+│   └── sound_embedding/
+└── data/                        # Data files (CSV, embeddings)
+```
+
 **Key Principle**: Both speech content and sound metadata must use **compatible embeddings** (same model, same embedding space) to enable meaningful similarity comparisons. Filtering decisions are made based on **actual similarity scores**, not pre-selection.
 
 **Technology Stack:**
@@ -45,6 +71,10 @@ Output (Enhanced Audio/Video)
 - **OpenAI API** - Embeddings (text-embedding-3-small) and LLM analysis (o3-mini)
 - **NumPy/SciPy** - Vector operations and similarity metrics
 - **Pandas** - Data manipulation and sound library management
+
+## References
+
+- [Existing Eleven labs project](https://videotosfx.elevenlabs.io/)
 
 ## Project Structure
 
@@ -79,10 +109,29 @@ Audio-noise-effects/
 - Google Cloud account with Speech-to-Text API enabled
 - OpenAI API key
 
+## Configuration
+
+### API Key Setup
+
+Add to `.env` file:
+```env
+GOOGLE_API_KEY=your_google_api_key_here
+```
+```env
+ELEVENLABS_API_KEY=your_api_key_here
+```
+
+Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+
 ### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
+```
+
+```bash
+sudo apt-get install portaudio19-dev
 ```
 
 ### Configuration

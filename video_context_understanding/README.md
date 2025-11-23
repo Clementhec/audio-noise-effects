@@ -54,15 +54,6 @@ Results are saved as JSON files in the output directory with the following struc
 
 Output files are named: `{video_name}_analysis_{timestamp}.json`
 
-## How It Works
-
-1. **Video Loading**: Opens the MP4 file using PyAV
-2. **Frame Sampling**: Extracts a specified number of frames uniformly distributed across the video
-3. **Model Processing**: Feeds frames to Video-LLaVA model with the prompt
-4. **Text Generation**: Model generates a natural language description
-5. **Output Saving**: Saves results to JSON in the output directory
-
-
 ## Alternative Models
 
 You can specify different Video-LLaVA variants:

@@ -46,14 +46,15 @@ def setup_directories():
         print(f"✓ Directory ready: {directory}")
 
 
-def extract_audio_step(
+def extract_audio(
     video_path: str,
     output_dir: str = "speech_to_text/input",
     sample_rate: int = 16000,
-    channels: int = 1
+    channels: int = 1,
+    extension: str = ".mp4"
 ) -> Path:
     """
-    Step 1: Extract audio from video file.
+    Extract audio from video file.
 
     Args:
         video_path: Path to input video file
@@ -74,6 +75,9 @@ def extract_audio_step(
     if not video_path.exists():
         raise FileNotFoundError(f"Video file not found: {video_path}")
 
+    if not video_path.endswith(extension):
+        raise ValueError(f"Video extension is set to '{extension}' but got video '{video_path}'")
+    
     # Create output path with same root name
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -174,7 +178,7 @@ def run_embeddings_step(
         Path to generated embeddings CSV
     """
     print("=" * 70)
-    print("STEP 3: Generate Speech Embeddings")
+    print("Generate Speech Embeddings")
     print("=" * 70)
     print()
 
@@ -690,23 +694,6 @@ Examples:
         args.run_llm_filter = True
         args.run_video_merge = True
 
-    # # Validate dependencies
-    # if args.run_embeddings and not args.run_stt:
-    #     print("Error: --run-embeddings requires --run-stt")
-    #     sys.exit(1)
-
-    # if args.run_matching and not args.run_embeddings:
-    #     print("Error: --run-matching requires --run-embeddings")
-    #     sys.exit(1)
-
-    # if args.run_llm_filter and not args.run_matching:
-    #     print("Error: --run-llm-filter requires --run-matching")
-    #     sys.exit(1)
-
-    # if args.run_video_merge and not args.run_llm_filter:
-    #     print("Error: --run-video-merge requires --run-llm-filter")
-    #     sys.exit(1)
-
     # Validate sound intensity
     if not 0.0 <= args.sound_intensity <= 1.0:
         print("Error: --sound-intensity must be between 0.0 and 1.0")
@@ -728,40 +715,34 @@ Examples:
     print()
 
     try:
-        # Step 1: Extract audio
-        audio_path = extract_audio_step(
+        audio_path = extract_audio(
             args.video,
             output_dir=args.output_dir,
             sample_rate=args.sample_rate,
             channels=args.channels
         )
 
-        # Step 2: Run STT (optional)
         if args.run_stt:
             transcription_path, word_timing_path = run_stt_step(audio_path)
 
-        # Step 3: Generate embeddings (optional)
         if args.run_embeddings:
             embeddings_path = run_embeddings_step(
                 transcription_path,
                 word_timing_path
             )
 
-        # Step 4: Semantic matching (optional)
         if args.run_matching:
             similarity_results_path = run_semantic_matching_step(
                 embeddings_path,
                 top_k=args.top_k
             )
 
-        # Step 5: LLM filtering (optional)
         if args.run_llm_filter:
             filtered_results_path = run_llm_filtering_step(
                 similarity_results_path,
                 max_sounds=args.max_sounds
             )
 
-        # Step 6: Video-audio merge (optional)
         if args.run_video_merge:
             final_video_path = run_video_audio_merge_step(
                 video_path=Path(args.video),
@@ -772,7 +753,6 @@ Examples:
                 sound_duration=args.sound_duration
             )
 
-        # Final summary
         print("=" * 70)
         print("PIPELINE COMPLETE!")
         print("=" * 70)

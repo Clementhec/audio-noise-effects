@@ -557,32 +557,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="Video preprocessing pipeline for audio-noise-effects",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Extract audio only
-  python main.py video.mp4
-
-  # Extract audio and run STT
-  python main.py video.mp4 --run-stt
-
-  # Extract + STT + embeddings
-  python main.py video.mp4 --run-stt --run-embeddings
-
-  # Run full pipeline (all steps including video merge)
-  python main.py video.mp4 --full-pipeline
-
-  # Full pipeline with custom sound intensity
-  python main.py video.mp4 --full-pipeline --sound-intensity 0.5
-
-  # Full pipeline with top 10 sound matches and LLM selecting max 5 sounds
-  python main.py video.mp4 --full-pipeline --top-k 10 --max-sounds 5
-
-  # Full pipeline with limited sound effect duration
-  python main.py video.mp4 --full-pipeline --sound-duration 3.0
-
-  # Custom sample rate
-  python main.py video.mp4 --sample-rate 44100 --channels 2
-        """,
     )
 
     parser.add_argument("video", help="Path to input video file (.mp4)")
@@ -740,26 +714,8 @@ Examples:
         print("=" * 70)
         print()
         print("Generated files:")
-        print(f"  ✓ Audio: {audio_path}")
-
-        if args.run_stt:
-            print(f"  ✓ Transcription: speech_to_text/output/full_transcription.json")
-            print(f"  ✓ Word timings: speech_to_text/output/word_timing.json")
-
-        if args.run_embeddings:
-            print(f"  ✓ Embeddings: data/video_speech_embeddings.csv")
-
-        if args.run_matching:
-            print(f"  ✓ Similarity matches: output/video_similarity_matches.json")
-
-        if args.run_llm_filter:
-            print(f"  ✓ LLM filtered sounds: output/video_filtered_sounds.json")
-
-        if args.run_video_merge:
-            print(f"  ✓ Final video: output/final_video_with_sounds.mp4")
-            print(f"  ✓ Merged audio: output/merged_audio.wav")
-
-        print()
+        print(f"Audio: {audio_path}")
+        print(f"Final video path : {final_video_path}")
 
     except Exception as e:
         print()

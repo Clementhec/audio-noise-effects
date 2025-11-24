@@ -1,21 +1,6 @@
 #!/usr/bin/env python3
 """
 Main Video Preprocessing Pipeline
-
-This script orchestrates the complete video-to-audio-to-embedding pipeline:
-1. Extract audio from video (.mp4 -> .wav)
-2. Save audio to speech_to_text/input/
-3. Run STT processing (speech-to-text with word timings)
-4. Generate embeddings from transcription
-5. Match with sound effects using semantic similarity
-6. Use LLM to intelligently filter and select best matches
-7. Merge selected sound effects with video
-
-Usage:
-    python main.py video.mp4
-    python main.py video.mp4 --run-stt
-    python main.py video.mp4 --run-stt --run-embeddings
-    python main.py video.mp4 --full-pipeline
 """
 
 import os
@@ -39,7 +24,7 @@ def setup_directories():
     for directory in directories:
         dir_path = Path(directory)
         dir_path.mkdir(parents=True, exist_ok=True)
-        print(f"✓ Directory ready: {directory}")
+        print(f"Directory ready: {directory}")
 
 
 def extract_audio(
@@ -71,7 +56,7 @@ def extract_audio(
     if not video_path.exists():
         raise FileNotFoundError(f"Video file not found: {video_path}")
 
-    if not video_path.endswith(extension):
+    if not video_path.suffix == extension:
         raise ValueError(
             f"Video extension is set to '{extension}' but got video '{video_path}'"
         )

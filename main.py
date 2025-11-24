@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Main Video Preprocessing Pipeline
 
@@ -23,6 +24,7 @@ import sys
 import argparse
 from pathlib import Path
 from typing import Optional
+os.environ['PATH'] = '/Users/clementabiven/.local/bin:' + os.environ.get('PATH', '')
 
 # Add project root to path
 project_root = Path(__file__).parent
@@ -161,7 +163,8 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
 
 def run_embeddings_step(
     transcription_path: Path,
-    word_timing_path: Path
+    word_timing_path: Path,
+    force_regenerate: bool = True
 ) -> Path:
     """
     Step 3: Generate embeddings from transcription.
@@ -169,6 +172,7 @@ def run_embeddings_step(
     Args:
         transcription_path: Path to full_transcription.json
         word_timing_path: Path to word_timing.json
+        force_regenerate: If True, regenerate embeddings even if file exists
 
     Returns:
         Path to generated embeddings CSV
@@ -177,6 +181,15 @@ def run_embeddings_step(
     print("STEP 3: Generate Speech Embeddings")
     print("=" * 70)
     print()
+
+    output_path = Path("data/video_speech_embeddings.csv")
+
+    # Check if embeddings already exist
+    if output_path.exists() and not force_regenerate:
+        print(f"✓ Embeddings already exist: {output_path}")
+        print("  Skipping generation (use --force-regenerate to recreate)")
+        print()
+        return output_path
 
     print(f"Transcription file: {transcription_path}")
     print(f"Word timing file: {word_timing_path}")
@@ -266,7 +279,6 @@ def run_embeddings_step(
     df = pd.DataFrame(output_data)
 
     # Save to CSV
-    output_path = Path("data/video_speech_embeddings.csv")
     df_csv = df.copy()
     df_csv['embedding'] = df_csv['embedding'].apply(
         lambda x: x.tolist() if isinstance(x, np.ndarray) else x
@@ -586,6 +598,9 @@ Examples:
   # Full pipeline with limited sound effect duration
   python main.py video.mp4 --full-pipeline --sound-duration 3.0
 
+  # Force regeneration of embeddings (by default, existing embeddings are reused)
+  python main.py video.mp4 --full-pipeline --force-regenerate
+
   # Custom sample rate
   python main.py video.mp4 --sample-rate 44100 --channels 2
         """
@@ -605,7 +620,7 @@ Examples:
     parser.add_argument(
         "--run-embeddings",
         action="store_true",
-        help="Generate embeddings from transcription (requires --run-stt)"
+        help="Generate embeddings from transcription (requires transcription files or --run-stt)"
     )
 
     parser.add_argument(
@@ -637,7 +652,7 @@ Examples:
     parser.add_argument(
         "--run-matching",
         action="store_true",
-        help="Run similarity matching with sound effects (requires --run-embeddings)"
+        help="Run similarity matching with sound effects (requires embeddings file or --run-embeddings)"
     )
 
     parser.add_argument(
@@ -650,7 +665,7 @@ Examples:
     parser.add_argument(
         "--run-llm-filter",
         action="store_true",
-        help="Use LLM to intelligently filter best sound matches (requires --run-matching)"
+        help="Use LLM to intelligently filter best sound matches (requires similarity results or --run-matching)"
     )
 
     parser.add_argument(
@@ -663,7 +678,7 @@ Examples:
     parser.add_argument(
         "--run-video-merge",
         action="store_true",
-        help="Merge sound effects with video to create final output (requires --run-llm-filter)"
+        help="Merge sound effects with video to create final output (requires filtered results, word timings, or --run-llm-filter)"
     )
 
     parser.add_argument(
@@ -680,6 +695,12 @@ Examples:
         help="Maximum duration for each sound effect in seconds (default: full sound length)"
     )
 
+    parser.add_argument(
+        "--force-regenerate",
+        action="store_true",
+        help="Force regeneration of embeddings even if they already exist"
+    )
+
     args = parser.parse_args()
 
     # Full pipeline enables all steps
@@ -689,23 +710,6 @@ Examples:
         args.run_matching = True
         args.run_llm_filter = True
         args.run_video_merge = True
-
-    # # Validate dependencies
-    # if args.run_embeddings and not args.run_stt:
-    #     print("Error: --run-embeddings requires --run-stt")
-    #     sys.exit(1)
-
-    # if args.run_matching and not args.run_embeddings:
-    #     print("Error: --run-matching requires --run-embeddings")
-    #     sys.exit(1)
-
-    # if args.run_llm_filter and not args.run_matching:
-    #     print("Error: --run-llm-filter requires --run-matching")
-    #     sys.exit(1)
-
-    # if args.run_video_merge and not args.run_llm_filter:
-    #     print("Error: --run-video-merge requires --run-llm-filter")
-    #     sys.exit(1)
 
     # Validate sound intensity
     if not 0.0 <= args.sound_intensity <= 1.0:
@@ -728,6 +732,14 @@ Examples:
     print()
 
     try:
+        # Initialize paths from default locations
+        audio_path = Path(args.output_dir) / (Path(args.video).stem + ".wav")
+        transcription_path = Path("speech_to_text/output/full_transcription.json")
+        word_timing_path = Path("speech_to_text/output/word_timing.json")
+        embeddings_path = Path("data/video_speech_embeddings.csv")
+        similarity_results_path = Path("similarity/output/similarity.json")
+        filtered_results_path = Path("output/video_filtered_sounds.json")
+
         # Step 1: Extract audio
         audio_path = extract_audio_step(
             args.video,
@@ -739,13 +751,35 @@ Examples:
         # Step 2: Run STT (optional)
         if args.run_stt:
             transcription_path, word_timing_path = run_stt_step(audio_path)
+        elif args.run_embeddings or args.run_video_merge:
+            # Check if required files exist
+            if not transcription_path.exists():
+                print(f"✗ Erreur : Le fichier de transcription est manquant : {transcription_path}")
+                print(f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe")
+                sys.exit(1)
+            if not word_timing_path.exists():
+                print(f"✗ Erreur : Le fichier de timing des mots est manquant : {word_timing_path}")
+                print(f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe")
+                sys.exit(1)
+            print(f"✓ Utilisation de la transcription existante : {transcription_path}")
+            print(f"✓ Utilisation du timing existant : {word_timing_path}")
+            print()
 
         # Step 3: Generate embeddings (optional)
         if args.run_embeddings:
             embeddings_path = run_embeddings_step(
                 transcription_path,
-                word_timing_path
+                word_timing_path,
+                force_regenerate=args.force_regenerate
             )
+        elif args.run_matching:
+            # Check if embeddings exist
+            if not embeddings_path.exists():
+                print(f"✗ Erreur : Les embeddings sont manquants : {embeddings_path}")
+                print(f"  Exécutez d'abord --run-embeddings ou assurez-vous que le fichier existe")
+                sys.exit(1)
+            print(f"✓ Utilisation des embeddings existants : {embeddings_path}")
+            print()
 
         # Step 4: Semantic matching (optional)
         if args.run_matching:
@@ -753,6 +787,14 @@ Examples:
                 embeddings_path,
                 top_k=args.top_k
             )
+        elif args.run_llm_filter:
+            # Check if similarity results exist
+            if not similarity_results_path.exists():
+                print(f"✗ Erreur : Les résultats de similarité sont manquants : {similarity_results_path}")
+                print(f"  Exécutez d'abord --run-matching ou assurez-vous que le fichier existe")
+                sys.exit(1)
+            print(f"✓ Utilisation des résultats de similarité existants : {similarity_results_path}")
+            print()
 
         # Step 5: LLM filtering (optional)
         if args.run_llm_filter:
@@ -760,9 +802,23 @@ Examples:
                 similarity_results_path,
                 max_sounds=args.max_sounds
             )
+        elif args.run_video_merge:
+            # Check if filtered results exist
+            if not filtered_results_path.exists():
+                print(f"✗ Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}")
+                print(f"  Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe")
+                sys.exit(1)
+            print(f"✓ Utilisation des résultats filtrés existants : {filtered_results_path}")
+            print()
 
         # Step 6: Video-audio merge (optional)
         if args.run_video_merge:
+            # Check if original audio exists
+            if not audio_path.exists():
+                print(f"✗ Erreur : L'audio original est manquant : {audio_path}")
+                print(f"  Assurez-vous que l'extraction audio a été effectuée")
+                sys.exit(1)
+            
             final_video_path = run_video_audio_merge_step(
                 video_path=Path(args.video),
                 filtered_results_path=filtered_results_path,

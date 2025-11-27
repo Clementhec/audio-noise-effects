@@ -348,7 +348,7 @@ def run_video_audio_merge_step(
             return final_video_path
         else:
             print()
-            print(f"⚠ Video-audio merge skipped (no sounds to add)")
+            print(f" Video-audio merge skipped (no sounds to add)")
             print()
             return None
 

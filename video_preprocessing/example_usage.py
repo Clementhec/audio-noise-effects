@@ -24,7 +24,7 @@ def example_single_video():
     video_file = "path/to/your/video.mp4"
 
     if not Path(video_file).exists():
-        print(f"⚠ Video file not found: {video_file}")
+        print(f" Video file not found: {video_file}")
         print("Please update the video_file variable with an actual MP4 file path")
         return
 
@@ -43,7 +43,7 @@ def example_custom_settings():
     video_file = "path/to/your/video.mp4"
 
     if not Path(video_file).exists():
-        print(f"⚠ Video file not found: {video_file}")
+        print(f" Video file not found: {video_file}")
         print("Please update the video_file variable with an actual MP4 file path")
         return
 
@@ -67,7 +67,7 @@ def example_ffmpeg_direct():
     video_file = "path/to/your/video.mp4"
 
     if not Path(video_file).exists():
-        print(f"⚠ Video file not found: {video_file}")
+        print(f" Video file not found: {video_file}")
         print("Please update the video_file variable with an actual MP4 file path")
         return
 
@@ -91,7 +91,7 @@ def example_batch_processing():
     output_dir = "audio_output"
 
     if not Path(video_dir).exists():
-        print(f"⚠ Video directory not found: {video_dir}")
+        print(f" Video directory not found: {video_dir}")
         print("Please update the video_dir variable with an actual directory path")
         return
 
@@ -119,7 +119,7 @@ def example_for_stt_pipeline():
     video_file = "path/to/your/video.mp4"
 
     if not Path(video_file).exists():
-        print(f"⚠ Video file not found: {video_file}")
+        print(f" Video file not found: {video_file}")
         print("Please update the video_file variable with an actual MP4 file path")
         return
 

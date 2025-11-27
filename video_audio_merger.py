@@ -15,7 +15,7 @@ import requests
 import pandas as pd
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
-import subprocess
+import ffmpeg
 from merging_audio.audio_merger import merge_audio_files, AudioEntry
 from pydub import AudioSegment
 
@@ -47,7 +47,7 @@ def find_sound_url(sound_title: str, metadata_df: pd.DataFrame) -> Optional[str]
     matches = metadata_df[metadata_df['title'] == sound_title]
 
     if len(matches) == 0:
-        print(f"  ⚠ Sound not found in metadata: {sound_title}")
+        print(f"   Sound not found in metadata: {sound_title}")
         return None
 
     # Prefer WAV format, fallback to MP3
@@ -120,28 +120,6 @@ def find_word_timing(
     target_normalized = target_word.strip().lower().rstrip('.,!?;:')
 
     # Find the word in the speech text to get approximate position
-    # speech_words = speech_text.lower().split()
-
-    # try:
-    #     # Find the index of the target word in speech
-    #     target_index = next(
-    #         i for i, word in enumerate(speech_words)
-    #         if target_normalized in word.lower().rstrip('.,!?;:')
-    #     )
-    # except StopIteration:
-    #     print(f"  ⚠ Target word '{target_word}' not found in speech text")
-    #     return None
-
-    # # Match with word_timings (skip whitespace entries)
-    # non_space_timings = [
-    #     wt for wt in word_timings
-    #     if wt['word'].strip()
-    # ]
-
-    # if target_index < len(non_space_timings):
-    #     timing = non_space_timings[target_index]
-    #     return parse_time_string(timing['startTime'])
-    # found = False
     n = len(word_timings)
     k = 0
     while k < n:
@@ -150,8 +128,7 @@ def find_word_timing(
             return parse_time_string(wt['startTime'])
         k += 1
 
-    print(f"  ⚠ Timing not found for word {target_word}")
-    return None
+    print(f"Timing not found for word {target_word}")
 
 
 def prepare_sound_effects(
@@ -337,33 +314,13 @@ def combine_audio_with_video(
         Path to final video file
     """
     print("Combining audio with video...")
-    print()
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Use ffmpeg to replace audio in video
-    # -i video.mp4: input video
-    # -i audio.wav: input audio
-    # -c:v copy: copy video codec (no re-encoding)
-    # -c:a aac: encode audio as AAC
-    # -strict experimental: allow experimental codecs
-    # -map 0:v:0: use video from first input
-    # -map 1:a:0: use audio from second input
-    # -shortest: finish encoding when shortest stream ends
-
-    cmd = [
-        'ffmpeg',
-        '-i', str(video_path),
-        '-i', str(audio_path),
-        '-c:v', 'copy',           # Copy video stream (no re-encoding)
-        '-c:a', 'aac',            # Encode audio as AAC
-        '-b:a', '192k',           # Audio bitrate
-        '-map', '0:v:0',          # Map video from first input
-        '-map', '1:a:0',          # Map audio from second input
-        '-shortest',              # Match shortest stream duration
-        '-y',                     # Overwrite output file
-        str(output_path)
-    ]
+    # Use ffmpeg-python to replace audio in video
+    # Use video from first input and audio from second input
+    # Copy video codec (no re-encoding), encode audio as AAC
+    # Match shortest stream duration
 
     try:
         print(f"Running ffmpeg...")
@@ -372,26 +329,31 @@ def combine_audio_with_video(
         print(f"  Output: {output_path.name}")
         print()
 
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True
+        video_input = ffmpeg.input(str(video_path))
+        audio_input = ffmpeg.input(str(audio_path))
+
+        output = ffmpeg.output(
+            video_input.video,
+            audio_input.audio,
+            str(output_path),
+            vcodec='copy',        # Copy video stream (no re-encoding)
+            acodec='aac',         # Encode audio as AAC
+            audio_bitrate='192k', # Audio bitrate
+            shortest=None         # Match shortest stream duration
         )
 
-        print(f" Video created successfully: {output_path}")
-        print()
+        ffmpeg.run(output, overwrite_output=True)
+
+        print(f"Video created successfully: {output_path}")
 
         return output_path
 
-    except subprocess.CalledProcessError as e:
+    except ffmpeg.Error as e:
         print(f"ffmpeg failed:")
-        print(f"{e.stderr}")
+        print(f"{e.stderr.decode() if e.stderr else 'Unknown error'}")
         raise
     except FileNotFoundError:
-        print("ffmpeg not found. Please install ffmpeg:")
-        print("Ubuntu/Debian: sudo apt-get install ffmpeg")
-        print("macOS: brew install ffmpeg")
+        print("ffmpeg not found. Please install ffmpeg")
         raise
 
 
@@ -433,7 +395,6 @@ def run_complete_video_audio_merge(
     print(f"Loaded {len(filtered_results.get('filtered_sounds', []))} filtered sounds")
     print(f"Loaded {len(word_timings)} word timings")
     print(f"Loaded {len(metadata_df)} sound metadata entries")
-    print()
 
     # Prepare sound effects (download and find timings)
     prepared_sounds = prepare_sound_effects(
@@ -444,10 +405,9 @@ def run_complete_video_audio_merge(
 
     if not prepared_sounds:
         print("No sound effects prepared. Skipping merge.")
-        return None
+        return
 
     print(f" Prepared {len(prepared_sounds)} sound effects")
-    print()
 
     # Merge sounds with original audio
     merged_audio_path = Path("output/merged_audio.wav")

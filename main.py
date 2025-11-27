@@ -705,7 +705,7 @@ def main():
         filtered_results_path = Path("output/video_filtered_sounds.json")
 
         # Step 1: Extract audio
-        audio_path = extract_audio_step(
+        audio_path = extract_audio(
             args.video,
             output_dir=args.output_dir,
             sample_rate=args.sample_rate,
@@ -780,22 +780,21 @@ def main():
             # Check if filtered results exist
             if not filtered_results_path.exists():
                 print(
-                    f" Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}"
+                    f"Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}"
                 )
                 print(
-                    f"  Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe"
+                    f"Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe"
                 )
                 sys.exit(1)
             print(
                 f" Utilisation des résultats filtrés existants : {filtered_results_path}"
             )
-            print()
 
         if args.run_video_merge:
             # Check if original audio exists
             if not audio_path.exists():
-                print(f" Erreur : L'audio original est manquant : {audio_path}")
-                print(f"  Assurez-vous que l'extraction audio a été effectuée")
+                print(f"Erreur : L'audio original est manquant : {audio_path}")
+                print(f"Assurez-vous que l'extraction audio a été effectuée")
                 sys.exit(1)
 
             final_video_path = run_video_audio_merge_step(
@@ -810,7 +809,6 @@ def main():
         print("=" * 70)
         print("PIPELINE COMPLETE!")
         print("=" * 70)
-        print()
         print("Generated files:")
         print(f"Audio: {audio_path}")
         print(f"Final video path : {final_video_path}")

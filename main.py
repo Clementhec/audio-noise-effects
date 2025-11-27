@@ -9,7 +9,8 @@ import sys
 import argparse
 from pathlib import Path
 from typing import Optional
-os.environ['PATH'] = '/Users/clementabiven/.local/bin:' + os.environ.get('PATH', '')
+
+os.environ["PATH"] = "/Users/clementabiven/.local/bin:" + os.environ.get("PATH", "")
 
 # Add project root to path
 project_root = Path(__file__).parent
@@ -152,9 +153,7 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
 
 
 def run_embeddings_step(
-    transcription_path: Path,
-    word_timing_path: Path,
-    force_regenerate: bool = True
+    transcription_path: Path, word_timing_path: Path, force_regenerate: bool = True
 ) -> Path:
     """
     Step 3: Generate embeddings from transcription.
@@ -585,7 +584,7 @@ def main():
     parser.add_argument(
         "--run-embeddings",
         action="store_true",
-        help="Generate embeddings from transcription (requires transcription files or --run-stt)"
+        help="Generate embeddings from transcription (requires transcription files or --run-stt)",
     )
 
     parser.add_argument(
@@ -617,7 +616,7 @@ def main():
     parser.add_argument(
         "--run-matching",
         action="store_true",
-        help="Run similarity matching with sound effects (requires embeddings file or --run-embeddings)"
+        help="Run similarity matching with sound effects (requires embeddings file or --run-embeddings)",
     )
 
     parser.add_argument(
@@ -630,7 +629,7 @@ def main():
     parser.add_argument(
         "--run-llm-filter",
         action="store_true",
-        help="Use LLM to intelligently filter best sound matches (requires similarity results or --run-matching)"
+        help="Use LLM to intelligently filter best sound matches (requires similarity results or --run-matching)",
     )
 
     parser.add_argument(
@@ -643,7 +642,7 @@ def main():
     parser.add_argument(
         "--run-video-merge",
         action="store_true",
-        help="Merge sound effects with video to create final output (requires filtered results, word timings, or --run-llm-filter)"
+        help="Merge sound effects with video to create final output (requires filtered results, word timings, or --run-llm-filter)",
     )
 
     parser.add_argument(
@@ -663,7 +662,7 @@ def main():
     parser.add_argument(
         "--force-regenerate",
         action="store_true",
-        help="Force regeneration of embeddings even if they already exist"
+        help="Force regeneration of embeddings even if they already exist",
     )
 
     args = parser.parse_args()
@@ -718,12 +717,20 @@ def main():
         elif args.run_embeddings or args.run_video_merge:
             # Check if required files exist
             if not transcription_path.exists():
-                print(f"✗ Erreur : Le fichier de transcription est manquant : {transcription_path}")
-                print(f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe")
+                print(
+                    f"✗ Erreur : Le fichier de transcription est manquant : {transcription_path}"
+                )
+                print(
+                    f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe"
+                )
                 sys.exit(1)
             if not word_timing_path.exists():
-                print(f"✗ Erreur : Le fichier de timing des mots est manquant : {word_timing_path}")
-                print(f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe")
+                print(
+                    f"✗ Erreur : Le fichier de timing des mots est manquant : {word_timing_path}"
+                )
+                print(
+                    f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe"
+                )
                 sys.exit(1)
             print(f"✓ Utilisation de la transcription existante : {transcription_path}")
             print(f"✓ Utilisation du timing existant : {word_timing_path}")
@@ -733,13 +740,15 @@ def main():
             embeddings_path = run_embeddings_step(
                 transcription_path,
                 word_timing_path,
-                force_regenerate=args.force_regenerate
+                force_regenerate=args.force_regenerate,
             )
         elif args.run_matching:
             # Check if embeddings exist
             if not embeddings_path.exists():
                 print(f"✗ Erreur : Les embeddings sont manquants : {embeddings_path}")
-                print(f"  Exécutez d'abord --run-embeddings ou assurez-vous que le fichier existe")
+                print(
+                    f"  Exécutez d'abord --run-embeddings ou assurez-vous que le fichier existe"
+                )
                 sys.exit(1)
             print(f"✓ Utilisation des embeddings existants : {embeddings_path}")
             print()
@@ -751,10 +760,16 @@ def main():
         elif args.run_llm_filter:
             # Check if similarity results exist
             if not similarity_results_path.exists():
-                print(f"✗ Erreur : Les résultats de similarité sont manquants : {similarity_results_path}")
-                print(f"  Exécutez d'abord --run-matching ou assurez-vous que le fichier existe")
+                print(
+                    f"✗ Erreur : Les résultats de similarité sont manquants : {similarity_results_path}"
+                )
+                print(
+                    f"  Exécutez d'abord --run-matching ou assurez-vous que le fichier existe"
+                )
                 sys.exit(1)
-            print(f"✓ Utilisation des résultats de similarité existants : {similarity_results_path}")
+            print(
+                f"✓ Utilisation des résultats de similarité existants : {similarity_results_path}"
+            )
             print()
 
         if args.run_llm_filter:
@@ -764,10 +779,16 @@ def main():
         elif args.run_video_merge:
             # Check if filtered results exist
             if not filtered_results_path.exists():
-                print(f"✗ Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}")
-                print(f"  Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe")
+                print(
+                    f"✗ Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}"
+                )
+                print(
+                    f"  Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe"
+                )
                 sys.exit(1)
-            print(f"✓ Utilisation des résultats filtrés existants : {filtered_results_path}")
+            print(
+                f"✓ Utilisation des résultats filtrés existants : {filtered_results_path}"
+            )
             print()
 
         if args.run_video_merge:
@@ -776,7 +797,7 @@ def main():
                 print(f"✗ Erreur : L'audio original est manquant : {audio_path}")
                 print(f"  Assurez-vous que l'extraction audio a été effectuée")
                 sys.exit(1)
-            
+
             final_video_path = run_video_audio_merge_step(
                 video_path=Path(args.video),
                 filtered_results_path=filtered_results_path,

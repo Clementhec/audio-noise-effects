@@ -368,11 +368,6 @@ from sound_embedding import SoundEmbedder, load_sound_embeddings
 If embeddings have wrong dimensions:
 
 ```python
-# Check the model
-from utils.embeddings_utils import get_embedding_dimension
-dim = get_embedding_dimension("all-MiniLM-L6-v2")
-print(f"Expected dimension: {dim}")  # Should be 384
-```
 
 ### File Format Issues
 

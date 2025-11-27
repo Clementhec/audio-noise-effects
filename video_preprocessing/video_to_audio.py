@@ -86,7 +86,7 @@ def extract_audio_from_video(
             parameters=["-ac", str(channels)]
         )
 
-        print(f"✓ Audio extracted successfully: {output_path}")
+        print(f" Audio extracted successfully: {output_path}")
         print(f"  Duration: {len(audio) / 1000:.2f} seconds")
         print(f"  Sample rate: {sample_rate} Hz")
         print(f"  Channels: {channels}")
@@ -166,7 +166,7 @@ def extract_audio_ffmpeg_direct(
             check=True
         )
 
-        print(f"✓ Audio extracted successfully: {output_path}")
+        print(f" Audio extracted successfully: {output_path}")
         print(f"  Sample rate: {sample_rate} Hz")
         print(f"  Channels: {channels}")
 
@@ -243,11 +243,11 @@ def batch_extract_audio(
             extracted_files.append(result_path)
 
         except Exception as e:
-            print(f"✗ Failed to process {video_path.name}: {e}")
+            print(f" Failed to process {video_path.name}: {e}")
             continue
 
     print("\n" + "=" * 70)
-    print(f"✓ Batch extraction complete: {len(extracted_files)}/{len(video_files)} successful")
+    print(f" Batch extraction complete: {len(extracted_files)}/{len(video_files)} successful")
 
     return extracted_files
 
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
     try:
         result = extract_audio_from_video(video_file, output_file)
-        print(f"\n✓ Success! Audio saved to: {result}")
+        print(f"\n Success! Audio saved to: {result}")
     except Exception as e:
-        print(f"\n✗ Error: {e}")
+        print(f"\n Error: {e}")
         sys.exit(1)

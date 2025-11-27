@@ -30,7 +30,7 @@ def example_single_video():
 
     # Extract audio with default settings (16kHz, mono)
     audio_path = extract_audio_from_video(video_file)
-    print(f"\n✓ Audio extracted to: {audio_path}")
+    print(f"\n Audio extracted to: {audio_path}")
 
 
 def example_custom_settings():
@@ -54,7 +54,7 @@ def example_custom_settings():
         sample_rate=44100,
         channels=2
     )
-    print(f"\n✓ High quality audio extracted to: {audio_path}")
+    print(f"\n High quality audio extracted to: {audio_path}")
 
 
 def example_ffmpeg_direct():
@@ -77,7 +77,7 @@ def example_ffmpeg_direct():
         sample_rate=16000,
         channels=1
     )
-    print(f"\n✓ Audio extracted to: {audio_path}")
+    print(f"\n Audio extracted to: {audio_path}")
 
 
 def example_batch_processing():
@@ -104,7 +104,7 @@ def example_batch_processing():
         channels=1
     )
 
-    print(f"\n✓ Extracted {len(audio_files)} audio files")
+    print(f"\n Extracted {len(audio_files)} audio files")
     for audio_file in audio_files:
         print(f"  - {audio_file}")
 
@@ -133,7 +133,7 @@ def example_for_stt_pipeline():
         channels=1
     )
 
-    print(f"\n✓ Audio ready for STT processing: {audio_path}")
+    print(f"\n Audio ready for STT processing: {audio_path}")
     print("\nNext steps:")
     print("  1. Process with Google STT to get word_timing.json")
     print("  2. Run: uv run python process_stt_embeddings.py")

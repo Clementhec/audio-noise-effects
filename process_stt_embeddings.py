@@ -184,7 +184,7 @@ def main():
 
     print()
     print("=" * 70)
-    print("✓ STT embedding processing complete!")
+    print(" STT embedding processing complete!")
     print()
     print("Next steps:")
     print("  1. Load sound embeddings: data/soundbible_embeddings.csv")

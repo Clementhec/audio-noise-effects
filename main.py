@@ -82,7 +82,7 @@ def extract_audio(
     )
 
     print()
-    print(f"✓ Audio extraction complete!")
+    print(f" Audio extraction complete!")
     print(f"  Saved to: {result_path}")
     print()
 
@@ -129,7 +129,7 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
         )
 
         print()
-        print(f"✓ STT processing complete!")
+        print(f" STT processing complete!")
         print(f"  Transcription: {transcription_path}")
         print(f"  Word timings: {word_timing_path}")
         print(f"  Full text: {result['full_transcript'][:100]}...")
@@ -138,17 +138,17 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
         return transcription_path, word_timing_path
 
     except ImportError as e:
-        print(f"✗ Error: Missing dependencies for STT")
+        print(f" Error: Missing dependencies for STT")
         print(f"  {e}")
         print()
         print("Install required packages:")
         print("  pip install elevenlabs python-dotenv requests")
         raise
     except FileNotFoundError as e:
-        print(f"✗ Error: {e}")
+        print(f" Error: {e}")
         raise
     except Exception as e:
-        print(f"✗ Error during STT processing: {e}")
+        print(f" Error during STT processing: {e}")
         raise
 
 
@@ -175,7 +175,7 @@ def run_embeddings_step(
 
     # Check if embeddings already exist
     if output_path.exists() and not force_regenerate:
-        print(f"✓ Embeddings already exist: {output_path}")
+        print(f" Embeddings already exist: {output_path}")
         print("  Skipping generation (use --force-regenerate to recreate)")
         print()
         return output_path
@@ -276,7 +276,7 @@ def run_embeddings_step(
     )
     df_csv.to_csv(output_path, index=False)
 
-    print(f"✓ Embeddings generated successfully!")
+    print(f" Embeddings generated successfully!")
     print(f"  Saved to: {output_path}")
     print(f"  Total segments: {len(df)}")
     print()
@@ -342,7 +342,7 @@ def run_video_audio_merge_step(
 
         if final_video_path:
             print()
-            print(f"✓ Video-audio merge complete!")
+            print(f" Video-audio merge complete!")
             print(f"  Final video: {final_video_path}")
             print()
             return final_video_path
@@ -353,7 +353,7 @@ def run_video_audio_merge_step(
             return None
 
     except ImportError as e:
-        print(f"✗ Error: Missing dependencies for video-audio merge")
+        print(f" Error: Missing dependencies for video-audio merge")
         print(f"  {e}")
         print()
         print("Install required packages:")
@@ -361,7 +361,7 @@ def run_video_audio_merge_step(
         print("  Also ensure ffmpeg is installed on your system")
         raise
     except Exception as e:
-        print(f"✗ Error during video-audio merge: {e}")
+        print(f" Error during video-audio merge: {e}")
         raise
 
 
@@ -422,7 +422,7 @@ def run_llm_filtering_step(
         filtered_count = len(result.get("filtered_sounds", []))
 
         print()
-        print(f"✓ LLM filtering complete!")
+        print(f" LLM filtering complete!")
         print(f"  Selected {filtered_count} segments for sound effects")
         print(f"  Results saved to: {output_path}")
         print()
@@ -448,14 +448,14 @@ def run_llm_filtering_step(
         return output_path
 
     except ImportError as e:
-        print(f"✗ Error: Missing dependencies for LLM filtering")
+        print(f" Error: Missing dependencies for LLM filtering")
         print(f"  {e}")
         print()
         print("Install required packages:")
         print("  pip install google-generativeai")
         raise
     except Exception as e:
-        print(f"✗ Error during LLM filtering: {e}")
+        print(f" Error during LLM filtering: {e}")
         raise
 
 
@@ -533,7 +533,7 @@ def run_semantic_matching_step(
         )
 
         print()
-        print(f"✓ Similarity matching complete!")
+        print(f" Similarity matching complete!")
         print(f"  Matched {len(results)} speech segments")
         print(f"  Results saved to: {output_path}")
         print()
@@ -558,11 +558,11 @@ def run_semantic_matching_step(
         return output_path
 
     except ImportError as e:
-        print(f"✗ Error: Missing dependencies")
+        print(f" Error: Missing dependencies")
         print(f"  {e}")
         raise
     except Exception as e:
-        print(f"✗ Error during similarity matching: {e}")
+        print(f" Error during similarity matching: {e}")
         raise
 
 
@@ -718,7 +718,7 @@ def main():
             # Check if required files exist
             if not transcription_path.exists():
                 print(
-                    f"✗ Erreur : Le fichier de transcription est manquant : {transcription_path}"
+                    f" Erreur : Le fichier de transcription est manquant : {transcription_path}"
                 )
                 print(
                     f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe"
@@ -726,14 +726,14 @@ def main():
                 sys.exit(1)
             if not word_timing_path.exists():
                 print(
-                    f"✗ Erreur : Le fichier de timing des mots est manquant : {word_timing_path}"
+                    f" Erreur : Le fichier de timing des mots est manquant : {word_timing_path}"
                 )
                 print(
                     f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe"
                 )
                 sys.exit(1)
-            print(f"✓ Utilisation de la transcription existante : {transcription_path}")
-            print(f"✓ Utilisation du timing existant : {word_timing_path}")
+            print(f" Utilisation de la transcription existante : {transcription_path}")
+            print(f" Utilisation du timing existant : {word_timing_path}")
             print()
 
         if args.run_embeddings:
@@ -745,12 +745,12 @@ def main():
         elif args.run_matching:
             # Check if embeddings exist
             if not embeddings_path.exists():
-                print(f"✗ Erreur : Les embeddings sont manquants : {embeddings_path}")
+                print(f" Erreur : Les embeddings sont manquants : {embeddings_path}")
                 print(
                     f"  Exécutez d'abord --run-embeddings ou assurez-vous que le fichier existe"
                 )
                 sys.exit(1)
-            print(f"✓ Utilisation des embeddings existants : {embeddings_path}")
+            print(f" Utilisation des embeddings existants : {embeddings_path}")
             print()
 
         if args.run_matching:
@@ -761,14 +761,14 @@ def main():
             # Check if similarity results exist
             if not similarity_results_path.exists():
                 print(
-                    f"✗ Erreur : Les résultats de similarité sont manquants : {similarity_results_path}"
+                    f" Erreur : Les résultats de similarité sont manquants : {similarity_results_path}"
                 )
                 print(
                     f"  Exécutez d'abord --run-matching ou assurez-vous que le fichier existe"
                 )
                 sys.exit(1)
             print(
-                f"✓ Utilisation des résultats de similarité existants : {similarity_results_path}"
+                f" Utilisation des résultats de similarité existants : {similarity_results_path}"
             )
             print()
 
@@ -780,21 +780,21 @@ def main():
             # Check if filtered results exist
             if not filtered_results_path.exists():
                 print(
-                    f"✗ Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}"
+                    f" Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}"
                 )
                 print(
                     f"  Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe"
                 )
                 sys.exit(1)
             print(
-                f"✓ Utilisation des résultats filtrés existants : {filtered_results_path}"
+                f" Utilisation des résultats filtrés existants : {filtered_results_path}"
             )
             print()
 
         if args.run_video_merge:
             # Check if original audio exists
             if not audio_path.exists():
-                print(f"✗ Erreur : L'audio original est manquant : {audio_path}")
+                print(f" Erreur : L'audio original est manquant : {audio_path}")
                 print(f"  Assurez-vous que l'extraction audio a été effectuée")
                 sys.exit(1)
 

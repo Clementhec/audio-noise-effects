@@ -76,22 +76,22 @@ def download_sound_effect(
         True if successful, False otherwise
     """
     if output_path.exists() and not force_download:
-        print(f"  ✓ Already downloaded: {output_path.name}")
+        print(f"   Already downloaded: {output_path.name}")
         return True
 
     try:
-        print(f"  ⬇ Downloading: {output_path.name}")
+        print(f"   Downloading: {output_path.name}")
         response = requests.get(url, timeout=30)
         response.raise_for_status()
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_bytes(response.content)
 
-        print(f"  ✓ Downloaded: {output_path.name}")
+        print(f"   Downloaded: {output_path.name}")
         return True
 
     except Exception as e:
-        print(f"  ✗ Download failed: {e}")
+        print(f"   Download failed: {e}")
         return False
 
 
@@ -215,13 +215,13 @@ def prepare_sound_effects(
             wav_path = output_path.with_suffix('.wav')
             if not wav_path.exists():
                 try:
-                    print(f"  🔄 Converting to WAV...")
+                    print(f"   Converting to WAV...")
                     audio = AudioSegment.from_mp3(output_path)
                     audio.export(wav_path, format="wav")
                     output_path = wav_path
-                    print(f"  ✓ Converted to WAV")
+                    print(f"   Converted to WAV")
                 except Exception as e:
-                    print(f"  ✗ Conversion failed: {e}")
+                    print(f"   Conversion failed: {e}")
                     continue
             else:
                 output_path = wav_path
@@ -232,7 +232,7 @@ def prepare_sound_effects(
             continue
 
         prepared_sounds.append((output_path, start_time, sound_title))
-        print(f"  ✓ Ready: {sound_title} at {start_time:.2f}s")
+        print(f"   Ready: {sound_title} at {start_time:.2f}s")
         print()
 
     return prepared_sounds
@@ -297,10 +297,10 @@ def merge_sounds_with_original_audio(
                 Data=sound
             ))
 
-            print(f"  ✓ Added: {sound_title} at {start_time:.2f}s (duration: {duration:.2f}s)")
+            print(f"   Added: {sound_title} at {start_time:.2f}s (duration: {duration:.2f}s)")
 
         except Exception as e:
-            print(f"  ✗ Failed to add {sound_title}: {e}")
+            print(f"   Failed to add {sound_title}: {e}")
 
     print()
     print("Performing audio merge...")
@@ -314,7 +314,7 @@ def merge_sounds_with_original_audio(
         fade_out_duration=0.05
     )
 
-    print(f"✓ Merged audio saved to: {output_path}")
+    print(f" Merged audio saved to: {output_path}")
     print()
 
     return output_path
@@ -379,19 +379,19 @@ def combine_audio_with_video(
             check=True
         )
 
-        print(f"✓ Video created successfully: {output_path}")
+        print(f" Video created successfully: {output_path}")
         print()
 
         return output_path
 
     except subprocess.CalledProcessError as e:
-        print(f"✗ ffmpeg failed:")
-        print(f"  {e.stderr}")
+        print(f"ffmpeg failed:")
+        print(f"{e.stderr}")
         raise
     except FileNotFoundError:
-        print("✗ ffmpeg not found. Please install ffmpeg:")
-        print("  Ubuntu/Debian: sudo apt-get install ffmpeg")
-        print("  macOS: brew install ffmpeg")
+        print("ffmpeg not found. Please install ffmpeg:")
+        print("Ubuntu/Debian: sudo apt-get install ffmpeg")
+        print("macOS: brew install ffmpeg")
         raise
 
 
@@ -430,9 +430,9 @@ def run_complete_video_audio_merge(
         word_timings = json.load(f)
 
     metadata_df = load_sound_metadata(metadata_path)
-    print(f"  ✓ Loaded {len(filtered_results.get('filtered_sounds', []))} filtered sounds")
-    print(f"  ✓ Loaded {len(word_timings)} word timings")
-    print(f"  ✓ Loaded {len(metadata_df)} sound metadata entries")
+    print(f"Loaded {len(filtered_results.get('filtered_sounds', []))} filtered sounds")
+    print(f"Loaded {len(word_timings)} word timings")
+    print(f"Loaded {len(metadata_df)} sound metadata entries")
     print()
 
     # Prepare sound effects (download and find timings)
@@ -443,10 +443,10 @@ def run_complete_video_audio_merge(
     )
 
     if not prepared_sounds:
-        print("⚠ No sound effects prepared. Skipping merge.")
+        print("No sound effects prepared. Skipping merge.")
         return None
 
-    print(f"✓ Prepared {len(prepared_sounds)} sound effects")
+    print(f" Prepared {len(prepared_sounds)} sound effects")
     print()
 
     # Merge sounds with original audio

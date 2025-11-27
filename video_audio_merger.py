@@ -145,10 +145,10 @@ def find_word_timing(
     n = len(word_timings)
     k = 0
     while k < n:
-        k += 1
         wt = word_timings[k]
         if target_normalized == wt['word'].strip().lower().rstrip('.,!?;:'):
             return parse_time_string(wt['startTime'])
+        k += 1
 
     print(f"  ⚠ Timing not found for word {target_word}")
     return None

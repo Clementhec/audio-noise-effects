@@ -2,21 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Main Video Preprocessing Pipeline
-
-This script orchestrates the complete video-to-audio-to-embedding pipeline:
-1. Extract audio from video (.mp4 -> .wav)
-2. Save audio to speech_to_text/input/
-3. Run STT processing (speech-to-text with word timings)
-4. Generate embeddings from transcription
-5. Match with sound effects using semantic similarity
-6. Use LLM to intelligently filter and select best matches
-7. Merge selected sound effects with video
-
-Usage:
-    python main.py video.mp4
-    python main.py video.mp4 --run-stt
-    python main.py video.mp4 --run-stt --run-embeddings
-    python main.py video.mp4 --full-pipeline
 """
 
 import os
@@ -36,26 +21,23 @@ from video_preprocessing import extract_audio_from_video
 
 def setup_directories():
     """Create necessary directories if they don't exist."""
-    directories = [
-        "speech_to_text/input",
-        "speech_to_text/output",
-        "data"
-    ]
+    directories = ["speech_to_text/input", "speech_to_text/output", "data"]
 
     for directory in directories:
         dir_path = Path(directory)
         dir_path.mkdir(parents=True, exist_ok=True)
-        print(f"✓ Directory ready: {directory}")
+        print(f"Directory ready: {directory}")
 
 
-def extract_audio_step(
+def extract_audio(
     video_path: str,
     output_dir: str = "speech_to_text/input",
     sample_rate: int = 16000,
-    channels: int = 1
+    channels: int = 1,
+    extension: str = ".mp4",
 ) -> Path:
     """
-    Step 1: Extract audio from video file.
+    Extract audio from video file.
 
     Args:
         video_path: Path to input video file
@@ -76,6 +58,11 @@ def extract_audio_step(
     if not video_path.exists():
         raise FileNotFoundError(f"Video file not found: {video_path}")
 
+    if not video_path.suffix == extension:
+        raise ValueError(
+            f"Video extension is set to '{extension}' but got video '{video_path}'"
+        )
+
     # Create output path with same root name
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -90,10 +77,7 @@ def extract_audio_step(
 
     # Extract audio
     result_path = extract_audio_from_video(
-        video_path,
-        output_path=audio_path,
-        sample_rate=sample_rate,
-        channels=channels
+        video_path, output_path=audio_path, sample_rate=sample_rate, channels=channels
     )
 
     print()
@@ -129,13 +113,19 @@ def run_stt_step(audio_path: Path) -> tuple[Path, Path]:
         result = transcribe_audio_file(
             audio_file_path=audio_path,
             output_dir="speech_to_text/output",
-            language_code='en'
+            language_code="en",
         )
 
         # Get output file paths from result
-        output_files = result.get('output_files', {})
-        transcription_path = Path(output_files.get('transcription', 'speech_to_text/output/full_transcription.json'))
-        word_timing_path = Path(output_files.get('word_timing', 'speech_to_text/output/word_timing.json'))
+        output_files = result.get("output_files", {})
+        transcription_path = Path(
+            output_files.get(
+                "transcription", "speech_to_text/output/full_transcription.json"
+            )
+        )
+        word_timing_path = Path(
+            output_files.get("word_timing", "speech_to_text/output/word_timing.json")
+        )
 
         print()
         print(f"✓ STT processing complete!")
@@ -178,7 +168,7 @@ def run_embeddings_step(
         Path to generated embeddings CSV
     """
     print("=" * 70)
-    print("STEP 3: Generate Speech Embeddings")
+    print("Generate Speech Embeddings")
     print("=" * 70)
     print()
 
@@ -204,37 +194,39 @@ def run_embeddings_step(
 
     def parse_time_string(time_str: str) -> float:
         """Convert time string from STT format to float seconds."""
-        return float(time_str.rstrip('s'))
+        return float(time_str.rstrip("s"))
 
     # Load STT data
     print("Loading STT output...")
-    with open(word_timing_path, 'r') as f:
+    with open(word_timing_path, "r") as f:
         raw_word_timings = json.load(f)
 
-    with open(transcription_path, 'r') as f:
+    with open(transcription_path, "r") as f:
         transcription_data = json.load(f)
 
     # Handle both formats (from process_stt_embeddings.py or stt_elevenlabs.py)
     if isinstance(transcription_data, list):
-        transcript = transcription_data[0]['transcription']
-    elif 'full_transcript' in transcription_data:
-        transcript = transcription_data['full_transcript']
-    elif 'segment_result' in transcription_data:
-        transcript = transcription_data['segment_result'][0]['transcription']
+        transcript = transcription_data[0]["transcription"]
+    elif "full_transcript" in transcription_data:
+        transcript = transcription_data["full_transcript"]
+    elif "segment_result" in transcription_data:
+        transcript = transcription_data["segment_result"][0]["transcription"]
     else:
         raise ValueError("Unknown transcription format")
 
     # Convert word timings to expected format
     word_timings = []
     for wt in raw_word_timings:
-        if wt['word'].strip():
-            word_timings.append({
-                'word': wt['word'].strip(),
-                'start_time': parse_time_string(wt['startTime']),
-                'end_time': parse_time_string(wt['endTime'])
-            })
+        if wt["word"].strip():
+            word_timings.append(
+                {
+                    "word": wt["word"].strip(),
+                    "start_time": parse_time_string(wt["startTime"]),
+                    "end_time": parse_time_string(wt["endTime"]),
+                }
+            )
 
-    print(f"  Transcript: \"{transcript[:80]}...\"")
+    print(f'  Transcript: "{transcript[:80]}..."')
     print(f"  Total words: {len(word_timings)}")
     print()
 
@@ -250,13 +242,11 @@ def run_embeddings_step(
 
     # Generate embeddings
     print("Generating embeddings...")
-    segment_texts = [seg['text'] for seg in segments]
+    segment_texts = [seg["text"] for seg in segments]
     EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
     embeddings = get_embeddings(
-        segment_texts,
-        model=EMBEDDING_MODEL,
-        show_progress=True
+        segment_texts, model=EMBEDDING_MODEL, show_progress=True
     )
     print(f"  Generated {len(embeddings)} embeddings (dim: {len(embeddings[0])})")
     print()
@@ -265,22 +255,24 @@ def run_embeddings_step(
     print("Creating DataFrame...")
     output_data = []
     for i, segment in enumerate(segments):
-        output_data.append({
-            'segment_id': segment['segment_id'],
-            'text': segment['text'],
-            'start_time': segment['start_time'],
-            'end_time': segment['end_time'],
-            'duration': segment['end_time'] - segment['start_time'],
-            'word_count': segment['word_count'],
-            'embedding': embeddings[i],
-            'embedding_model': EMBEDDING_MODEL
-        })
+        output_data.append(
+            {
+                "segment_id": segment["segment_id"],
+                "text": segment["text"],
+                "start_time": segment["start_time"],
+                "end_time": segment["end_time"],
+                "duration": segment["end_time"] - segment["start_time"],
+                "word_count": segment["word_count"],
+                "embedding": embeddings[i],
+                "embedding_model": EMBEDDING_MODEL,
+            }
+        )
 
     df = pd.DataFrame(output_data)
 
     # Save to CSV
     df_csv = df.copy()
-    df_csv['embedding'] = df_csv['embedding'].apply(
+    df_csv["embedding"] = df_csv["embedding"].apply(
         lambda x: x.tolist() if isinstance(x, np.ndarray) else x
     )
     df_csv.to_csv(output_path, index=False)
@@ -299,7 +291,7 @@ def run_video_audio_merge_step(
     word_timing_path: Path,
     original_audio_path: Path,
     sound_intensity: float = 0.3,
-    sound_duration: Optional[float] = None
+    sound_duration: Optional[float] = None,
 ) -> Path:
     """
     Step 6: Merge sound effects with video.
@@ -346,7 +338,7 @@ def run_video_audio_merge_step(
             original_audio_path=original_audio_path,
             output_video_path=output_video_path,
             sound_intensity=sound_intensity,
-            sound_duration=sound_duration
+            sound_duration=sound_duration,
         )
 
         if final_video_path:
@@ -375,8 +367,7 @@ def run_video_audio_merge_step(
 
 
 def run_llm_filtering_step(
-    similarity_results_path: Path,
-    max_sounds: Optional[int] = None
+    similarity_results_path: Path, max_sounds: Optional[int] = None
 ) -> Path:
     """
     Step 5: Use LLM to intelligently filter and select best sound matches.
@@ -406,7 +397,7 @@ def run_llm_filtering_step(
 
         # Load similarity results
         print("Loading similarity results...")
-        with open(similarity_results_path, 'r', encoding='utf-8') as f:
+        with open(similarity_results_path, "r", encoding="utf-8") as f:
             similarity_data = json.load(f)
 
         print(f"  Found {len(similarity_data)} speech segments")
@@ -426,10 +417,10 @@ def run_llm_filtering_step(
             similarity_data=similarity_data,
             max_sounds=max_sounds,
             keep_only_with_sound=True,
-            output_file=str(output_path)
+            output_file=str(output_path),
         )
 
-        filtered_count = len(result.get('filtered_sounds', []))
+        filtered_count = len(result.get("filtered_sounds", []))
 
         print()
         print(f"✓ LLM filtering complete!")
@@ -438,14 +429,16 @@ def run_llm_filtering_step(
         print()
 
         # Display sample results
-        if result.get('filtered_sounds'):
+        if result.get("filtered_sounds"):
             print("Sample filtered results:")
             print("-" * 70)
-            for i, item in enumerate(result['filtered_sounds'][:3]):  # Show first 3
-                print(f"\nSegment {item['speech_index']}: \"{item['speech_text'][:60]}...\"")
+            for i, item in enumerate(result["filtered_sounds"][:3]):  # Show first 3
+                print(
+                    f'\nSegment {item["speech_index"]}: "{item["speech_text"][:60]}..."'
+                )
                 print(f"  Target word: '{item.get('target_word', 'N/A')}'")
-                if item.get('selected_sound'):
-                    sound = item['selected_sound']
+                if item.get("selected_sound"):
+                    sound = item["selected_sound"]
                     print(f"  Selected sound: {sound.get('sound_title', 'N/A')}")
                     print(f"  Reason: {sound.get('reason', 'N/A')[:80]}...")
 
@@ -467,7 +460,11 @@ def run_llm_filtering_step(
         raise
 
 
-def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
+def run_semantic_matching_step(
+    embeddings_path: Path,
+    top_k: int = 5,
+    sound_embeddings_path=Path("data/soundbible_embeddings.csv"),
+) -> Path:
     """
     Step 4: Match speech embeddings with sound effects.
 
@@ -479,16 +476,14 @@ def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
         Path to generated similarity results JSON
     """
     print("=" * 70)
-    print("STEP 4: Semantic Matching with Sound Effects")
+    print("Semantic Matching with Sound Effects")
     print("=" * 70)
     print()
 
-    sound_embeddings_path = Path("data/soundbible_embeddings.csv")
-
     if not sound_embeddings_path.exists():
-        print(f"⚠ Sound embeddings not found: {sound_embeddings_path}")
-        print("  Please generate sound embeddings first.")
-        print("  Run: uv run python utils/sound_embedding/generate_embeddings.py")
+        print(f"Sound embeddings not found: {sound_embeddings_path}")
+        print("Please generate sound embeddings first.")
+        print("Run: uv run python utils/sound_embedding/generate_embeddings.py")
         print()
         return None
 
@@ -506,9 +501,9 @@ def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
         df_speech = pd.read_csv(embeddings_path)
 
         # Convert embeddings from string to list/array
-        if 'embedding' in df_speech.columns:
-            if isinstance(df_speech['embedding'].iloc[0], str):
-                df_speech['embedding'] = df_speech['embedding'].apply(literal_eval)
+        if "embedding" in df_speech.columns:
+            if isinstance(df_speech["embedding"].iloc[0], str):
+                df_speech["embedding"] = df_speech["embedding"].apply(literal_eval)
 
         print(f"  Loaded {len(df_speech)} speech segments")
         print()
@@ -518,9 +513,9 @@ def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
         df_sounds = pd.read_csv(sound_embeddings_path)
 
         # Convert embeddings from string to list/array
-        if 'embedding' in df_sounds.columns:
-            if isinstance(df_sounds['embedding'].iloc[0], str):
-                df_sounds['embedding'] = df_sounds['embedding'].apply(literal_eval)
+        if "embedding" in df_sounds.columns:
+            if isinstance(df_sounds["embedding"].iloc[0], str):
+                df_sounds["embedding"] = df_sounds["embedding"].apply(literal_eval)
 
         print(f"  Loaded {len(df_sounds)} sound effects")
         print()
@@ -528,14 +523,14 @@ def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
         # Run similarity matching
         print(f"Finding top {top_k} similar sounds for each speech segment...")
         # output_path = Path("output/video_similarity_matches.json")
-        output_path = os.path.join("similarity/output", 'similarity.json')
+        output_path = os.path.join("similarity/output", "similarity.json")
 
         results = find_similar_sounds(
             df_speech=df_speech,
             df_sounds=df_sounds,
             top_k=top_k,
             save_to_json_file=True,
-            output_path=str(output_path)
+            output_path=str(output_path),
         )
 
         print()
@@ -549,8 +544,10 @@ def run_semantic_matching_step(embeddings_path: Path, top_k: int = 5) -> Path:
             print("Sample matches:")
             print("-" * 70)
             for i, result in enumerate(results[:3]):  # Show first 3
-                print(f"\nSegment {result['speech_index']}: \"{result['speech_text'][:60]}...\"")
-                top_match = result['top_matches'][0]
+                print(
+                    f'\nSegment {result["speech_index"]}: "{result["speech_text"][:60]}..."'
+                )
+                top_match = result["top_matches"][0]
                 print(f"  Best match: {top_match['sound_title']}")
                 print(f"  Similarity: {top_match['similarity']:.4f}")
                 print(f"  Description: {top_match['sound_description'][:80]}...")
@@ -575,46 +572,14 @@ def main():
     parser = argparse.ArgumentParser(
         description="Video preprocessing pipeline for audio-noise-effects",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Extract audio only
-  python main.py video.mp4
-
-  # Extract audio and run STT
-  python main.py video.mp4 --run-stt
-
-  # Extract + STT + embeddings
-  python main.py video.mp4 --run-stt --run-embeddings
-
-  # Run full pipeline (all steps including video merge)
-  python main.py video.mp4 --full-pipeline
-
-  # Full pipeline with custom sound intensity
-  python main.py video.mp4 --full-pipeline --sound-intensity 0.5
-
-  # Full pipeline with top 10 sound matches and LLM selecting max 5 sounds
-  python main.py video.mp4 --full-pipeline --top-k 10 --max-sounds 5
-
-  # Full pipeline with limited sound effect duration
-  python main.py video.mp4 --full-pipeline --sound-duration 3.0
-
-  # Force regeneration of embeddings (by default, existing embeddings are reused)
-  python main.py video.mp4 --full-pipeline --force-regenerate
-
-  # Custom sample rate
-  python main.py video.mp4 --sample-rate 44100 --channels 2
-        """
     )
 
-    parser.add_argument(
-        "video",
-        help="Path to input video file (.mp4)"
-    )
+    parser.add_argument("video", help="Path to input video file (.mp4)")
 
     parser.add_argument(
         "--run-stt",
         action="store_true",
-        help="Run Speech-to-Text processing after audio extraction"
+        help="Run Speech-to-Text processing after audio extraction",
     )
 
     parser.add_argument(
@@ -626,27 +591,27 @@ Examples:
     parser.add_argument(
         "--full-pipeline",
         action="store_true",
-        help="Run complete pipeline: extract + STT + embeddings + matching + LLM filter + video merge"
+        help="Run complete pipeline: extract + STT + embeddings + matching + LLM filter + video merge",
     )
 
     parser.add_argument(
         "--sample-rate",
         type=int,
         default=16000,
-        help="Audio sample rate in Hz (default: 16000)"
+        help="Audio sample rate in Hz (default: 16000)",
     )
 
     parser.add_argument(
         "--channels",
         type=int,
         default=1,
-        help="Number of audio channels (default: 1 for mono)"
+        help="Number of audio channels (default: 1 for mono)",
     )
 
     parser.add_argument(
         "--output-dir",
         default="speech_to_text/input",
-        help="Output directory for audio file (default: speech_to_text/input)"
+        help="Output directory for audio file (default: speech_to_text/input)",
     )
 
     parser.add_argument(
@@ -659,7 +624,7 @@ Examples:
         "--top-k",
         type=int,
         default=5,
-        help="Number of top similar sounds to find for each segment (default: 5)"
+        help="Number of top similar sounds to find for each segment (default: 5)",
     )
 
     parser.add_argument(
@@ -672,7 +637,7 @@ Examples:
         "--max-sounds",
         type=int,
         default=None,
-        help="Maximum number of sentences to select for sound effects (default: LLM decides)"
+        help="Maximum number of sentences to select for sound effects (default: LLM decides)",
     )
 
     parser.add_argument(
@@ -685,14 +650,14 @@ Examples:
         "--sound-intensity",
         type=float,
         default=0.3,
-        help="Volume level for sound effects, 0.0-1.0 (default: 0.3)"
+        help="Volume level for sound effects, 0.0-1.0 (default: 0.3)",
     )
 
     parser.add_argument(
         "--sound-duration",
         type=float,
         default=None,
-        help="Maximum duration for each sound effect in seconds (default: full sound length)"
+        help="Maximum duration for each sound effect in seconds (default: full sound length)",
     )
 
     parser.add_argument(
@@ -745,10 +710,9 @@ Examples:
             args.video,
             output_dir=args.output_dir,
             sample_rate=args.sample_rate,
-            channels=args.channels
+            channels=args.channels,
         )
 
-        # Step 2: Run STT (optional)
         if args.run_stt:
             transcription_path, word_timing_path = run_stt_step(audio_path)
         elif args.run_embeddings or args.run_video_merge:
@@ -765,7 +729,6 @@ Examples:
             print(f"✓ Utilisation du timing existant : {word_timing_path}")
             print()
 
-        # Step 3: Generate embeddings (optional)
         if args.run_embeddings:
             embeddings_path = run_embeddings_step(
                 transcription_path,
@@ -781,11 +744,9 @@ Examples:
             print(f"✓ Utilisation des embeddings existants : {embeddings_path}")
             print()
 
-        # Step 4: Semantic matching (optional)
         if args.run_matching:
             similarity_results_path = run_semantic_matching_step(
-                embeddings_path,
-                top_k=args.top_k
+                embeddings_path, top_k=args.top_k
             )
         elif args.run_llm_filter:
             # Check if similarity results exist
@@ -796,11 +757,9 @@ Examples:
             print(f"✓ Utilisation des résultats de similarité existants : {similarity_results_path}")
             print()
 
-        # Step 5: LLM filtering (optional)
         if args.run_llm_filter:
             filtered_results_path = run_llm_filtering_step(
-                similarity_results_path,
-                max_sounds=args.max_sounds
+                similarity_results_path, max_sounds=args.max_sounds
             )
         elif args.run_video_merge:
             # Check if filtered results exist
@@ -811,7 +770,6 @@ Examples:
             print(f"✓ Utilisation des résultats filtrés existants : {filtered_results_path}")
             print()
 
-        # Step 6: Video-audio merge (optional)
         if args.run_video_merge:
             # Check if original audio exists
             if not audio_path.exists():
@@ -825,35 +783,16 @@ Examples:
                 word_timing_path=word_timing_path,
                 original_audio_path=audio_path,
                 sound_intensity=args.sound_intensity,
-                sound_duration=args.sound_duration
+                sound_duration=args.sound_duration,
             )
 
-        # Final summary
         print("=" * 70)
         print("PIPELINE COMPLETE!")
         print("=" * 70)
         print()
         print("Generated files:")
-        print(f"  ✓ Audio: {audio_path}")
-
-        if args.run_stt:
-            print(f"  ✓ Transcription: speech_to_text/output/full_transcription.json")
-            print(f"  ✓ Word timings: speech_to_text/output/word_timing.json")
-
-        if args.run_embeddings:
-            print(f"  ✓ Embeddings: data/video_speech_embeddings.csv")
-
-        if args.run_matching:
-            print(f"  ✓ Similarity matches: output/video_similarity_matches.json")
-
-        if args.run_llm_filter:
-            print(f"  ✓ LLM filtered sounds: output/video_filtered_sounds.json")
-
-        if args.run_video_merge:
-            print(f"  ✓ Final video: output/final_video_with_sounds.mp4")
-            print(f"  ✓ Merged audio: output/merged_audio.wav")
-
-        print()
+        print(f"Audio: {audio_path}")
+        print(f"Final video path : {final_video_path}")
 
     except Exception as e:
         print()

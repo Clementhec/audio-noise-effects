@@ -1,7 +1,0 @@
-{
-  "embedding_model": "all-MiniLM-L6-v2",
-  "embedding_dimension": 384,
-  "total_sounds": 2120,
-  "batch_size": 32,
-  "text_format": "{title}: {description} [{keywords}]"
-}

@@ -309,7 +309,6 @@ def run_video_audio_merge_step(
     print("=" * 70)
     print("STEP 6: Merge Sound Effects with Video")
     print("=" * 70)
-    print()
 
     print(f"Video file: {video_path}")
     print(f"Filtered sounds: {filtered_results_path}")
@@ -320,15 +319,14 @@ def run_video_audio_merge_step(
         print(f"Sound duration limit: {sound_duration}s")
     else:
         print("Sound duration: Full length")
-    print()
 
     try:
         from video_audio_merger import run_complete_video_audio_merge
 
-        output_video_path = Path("output/final_video_with_sounds.mp4")
+        base_name = video_path.stem
+        output_video_path = Path(f"output/{base_name}_soundeasy.mp4")
 
         print("Starting video-audio merge pipeline...")
-        print()
 
         final_video_path = run_complete_video_audio_merge(
             video_path=video_path,

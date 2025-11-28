@@ -20,7 +20,9 @@ from merging_audio.audio_merger import merge_audio_files, AudioEntry
 from pydub import AudioSegment
 
 
-def load_sound_metadata(metadata_path: str = "data/soundbible_metadata.csv") -> pd.DataFrame:
+def load_sound_metadata(
+    metadata_path: str = "data/soundbible_metadata.csv",
+) -> pd.DataFrame:
     """
     Load sound effects metadata containing URLs.
 
@@ -44,25 +46,25 @@ def find_sound_url(sound_title: str, metadata_df: pd.DataFrame) -> Optional[str]
     Returns:
         WAV file URL or None if not found
     """
-    matches = metadata_df[metadata_df['title'] == sound_title]
+    matches = metadata_df[metadata_df["title"] == sound_title]
 
     if len(matches) == 0:
         print(f"   Sound not found in metadata: {sound_title}")
         return None
 
     # Prefer WAV format, fallback to MP3
-    if 'audio_url_wav' in matches.columns and pd.notna(matches.iloc[0]['audio_url_wav']):
-        return matches.iloc[0]['audio_url_wav']
-    elif 'audio_url' in matches.columns and pd.notna(matches.iloc[0]['audio_url']):
-        return matches.iloc[0]['audio_url']
+    if "audio_url_wav" in matches.columns and pd.notna(
+        matches.iloc[0]["audio_url_wav"]
+    ):
+        return matches.iloc[0]["audio_url_wav"]
+    elif "audio_url" in matches.columns and pd.notna(matches.iloc[0]["audio_url"]):
+        return matches.iloc[0]["audio_url"]
 
     return None
 
 
 def download_sound_effect(
-    url: str,
-    output_path: Path,
-    force_download: bool = False
+    url: str, output_path: Path, force_download: bool = False
 ) -> bool:
     """
     Download a sound effect file from URL.
@@ -97,13 +99,11 @@ def download_sound_effect(
 
 def parse_time_string(time_str: str) -> float:
     """Convert time string (e.g., '1.23s') to float seconds."""
-    return float(time_str.rstrip('s'))
+    return float(time_str.rstrip("s"))
 
 
 def find_word_timing(
-    target_word: str,
-    speech_text: str,
-    word_timings: List[Dict]
+    target_word: str, speech_text: str, word_timings: List[Dict]
 ) -> Optional[float]:
     """
     Find the start time of a target word in the speech.
@@ -117,15 +117,15 @@ def find_word_timing(
         Start time in seconds, or None if not found
     """
     # Normalize target word (remove punctuation, lowercase)
-    target_normalized = target_word.strip().lower().rstrip('.,!?;:')
+    target_normalized = target_word.strip().lower().rstrip(".,!?;:")
 
     # Find the word in the speech text to get approximate position
     n = len(word_timings)
     k = 0
     while k < n:
         wt = word_timings[k]
-        if target_normalized == wt['word'].strip().lower().rstrip('.,!?;:'):
-            return parse_time_string(wt['startTime'])
+        if target_normalized == wt["word"].strip().lower().rstrip(".,!?;:"):
+            return parse_time_string(wt["startTime"])
         k += 1
 
     print(f"Timing not found for word {target_word}")
@@ -135,7 +135,7 @@ def prepare_sound_effects(
     filtered_results: Dict,
     metadata_df: pd.DataFrame,
     word_timings: List[Dict],
-    download_dir: Path = Path("merging_audio/downloaded_sounds")
+    download_dir: Path = Path("merging_audio/downloaded_sounds"),
 ) -> List[Tuple[Path, float, str]]:
     """
     Prepare sound effects: download files and find timings.
@@ -153,19 +153,18 @@ def prepare_sound_effects(
     prepared_sounds = []
 
     print("Preparing sound effects...")
-    print()
 
-    for item in filtered_results.get('filtered_sounds', []):
-        if not item.get('should_add_sound', False):
+    for item in filtered_results.get("filtered_sounds", []):
+        if not item.get("should_add_sound", False):
             continue
 
-        selected_sound = item.get('selected_sound')
+        selected_sound = item.get("selected_sound")
         if not selected_sound:
             continue
 
-        sound_title = selected_sound.get('sound_title')
-        target_word = item.get('target_word')
-        speech_text = item.get('speech_text')
+        sound_title = selected_sound.get("sound_title")
+        target_word = item.get("target_word")
+        speech_text = item.get("speech_text")
 
         if not all([sound_title, target_word, speech_text]):
             continue
@@ -175,30 +174,34 @@ def prepare_sound_effects(
         # Find sound URL
         sound_url = find_sound_url(sound_title, metadata_df)
         if not sound_url:
+            print(f"Sound effect {sound_url} not found !")
             continue
 
         # Determine file extension and output path
-        file_ext = '.wav' if sound_url.endswith('.wav') else '.mp3'
-        safe_filename = "".join(c for c in sound_title if c.isalnum() or c in (' ', '-', '_'))
-        safe_filename = safe_filename.replace(' ', '_')
+        file_ext = ".wav" if sound_url.endswith(".wav") else ".mp3"
+        safe_filename = "".join(
+            c for c in sound_title if c.isalnum() or c in (" ", "-", "_")
+        )
+        safe_filename = safe_filename.replace(" ", "_")
         output_path = download_dir / f"{safe_filename}{file_ext}"
 
         # Download sound effect
         if not download_sound_effect(sound_url, output_path):
+            print(f"Failed to download sound url : {sound_url}")
             continue
 
         # Convert MP3 to WAV if needed
-        if file_ext == '.mp3':
-            wav_path = output_path.with_suffix('.wav')
+        if file_ext == ".mp3":
+            wav_path = output_path.with_suffix(".wav")
             if not wav_path.exists():
                 try:
-                    print(f"   Converting to WAV...")
+                    print(f"Converting to WAV...")
                     audio = AudioSegment.from_mp3(output_path)
                     audio.export(wav_path, format="wav")
                     output_path = wav_path
-                    print(f"   Converted to WAV")
+                    print(f"Converted to WAV")
                 except Exception as e:
-                    print(f"   Conversion failed: {e}")
+                    print(f"Conversion failed: {e}")
                     continue
             else:
                 output_path = wav_path
@@ -208,19 +211,20 @@ def prepare_sound_effects(
         if start_time is None:
             continue
 
-        prepared_sounds.append((output_path, start_time, sound_title))
-        print(f"   Ready: {sound_title} at {start_time:.2f}s")
-        print()
+        duration = 3.0
+
+        prepared_sounds.append((output_path, start_time, duration, sound_title))
+        print(f"Ready: {sound_title} at {start_time:.2f}s")
 
     return prepared_sounds
 
 
 def merge_sounds_with_original_audio(
     original_audio_path: Path,
-    prepared_sounds: List[Tuple[Path, float, str]],
+    prepared_sounds: List[Tuple[Path, float, float, str]],
     output_path: Path,
     sound_intensity: float = 0.3,
-    sound_duration: Optional[float] = None
+    default_sound_duration: Optional[float] = None,
 ) -> Path:
     """
     Merge sound effects with the original audio track.
@@ -236,7 +240,6 @@ def merge_sounds_with_original_audio(
         Path to merged audio file
     """
     print("Merging sound effects with original audio...")
-    print()
 
     # Load original audio
     original_audio = AudioSegment.from_file(original_audio_path)
@@ -244,42 +247,53 @@ def merge_sounds_with_original_audio(
 
     print(f"Original audio duration: {original_duration:.2f}s")
     print(f"Sound effects to add: {len(prepared_sounds)}")
-    print()
 
     # Create audio entries for merging
     audio_entries = []
 
     # Add original audio as first entry (full duration, full intensity)
-    audio_entries.append(AudioEntry(
-        StartTime=0.0,
-        Duration=original_duration,
-        Intensity=1.0,
-        Data=original_audio
-    ))
+    audio_entries.append(
+        AudioEntry(
+            StartTime=0.0,
+            Duration=original_duration,
+            Intensity=1.0,
+            Data=original_audio,
+        )
+    )
 
     # Add each sound effect
-    for sound_path, start_time, sound_title in prepared_sounds:
+    for sound_path, start_time, sound_duration, sound_title in prepared_sounds:
         try:
             sound = AudioSegment.from_file(sound_path)
             sound_length = len(sound) / 1000.0
 
             # Use specified duration or full sound length
-            duration = sound_duration if sound_duration else sound_length
+            duration = (
+                sound_duration
+                if sound_duration
+                else (
+                    default_sound_duration if default_sound_duration else sound_length
+                )
+            )
+
             duration = min(duration, sound_length)  # Cap at actual sound length
 
-            audio_entries.append(AudioEntry(
-                StartTime=start_time,
-                Duration=duration,
-                Intensity=sound_intensity,
-                Data=sound
-            ))
+            audio_entries.append(
+                AudioEntry(
+                    StartTime=start_time,
+                    Duration=duration,
+                    Intensity=sound_intensity,
+                    Data=sound,
+                )
+            )
 
-            print(f"   Added: {sound_title} at {start_time:.2f}s (duration: {duration:.2f}s)")
+            print(
+                f"Added: {sound_title} at {start_time:.2f}s (duration: {duration:.2f}s)"
+            )
 
         except Exception as e:
-            print(f"   Failed to add {sound_title}: {e}")
+            print(f"Failed to add {sound_title}: {e}")
 
-    print()
     print("Performing audio merge...")
 
     # Merge all audio
@@ -287,20 +301,17 @@ def merge_sounds_with_original_audio(
     merged_audio = merge_audio_files(
         audio_entries=audio_entries,
         output_path=str(output_path),
-        fade_in_duration=0.05,   # Short fade to avoid clicks
-        fade_out_duration=0.05
+        fade_in_duration=0.05,  # Short fade to avoid clicks
+        fade_out_duration=sound_length / 5,
     )
 
-    print(f" Merged audio saved to: {output_path}")
-    print()
+    print(f"Merged audio saved to: {output_path}")
 
     return output_path
 
 
 def combine_audio_with_video(
-    video_path: Path,
-    audio_path: Path,
-    output_path: Path
+    video_path: Path, audio_path: Path, output_path: Path
 ) -> Path:
     """
     Combine audio track with video file using ffmpeg.
@@ -313,21 +324,16 @@ def combine_audio_with_video(
     Returns:
         Path to final video file
     """
-    print("Combining audio with video...")
-
+    base_name = video_path.stem
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Use ffmpeg-python to replace audio in video
-    # Use video from first input and audio from second input
-    # Copy video codec (no re-encoding), encode audio as AAC
-    # Match shortest stream duration
+    print("Combining audio with video...")
 
     try:
         print(f"Running ffmpeg...")
-        print(f"  Video: {video_path.name}")
-        print(f"  Audio: {audio_path.name}")
-        print(f"  Output: {output_path.name}")
-        print()
+        print(f"Video: {video_path.name}")
+        print(f"Audio: {audio_path.name}")
+        print(f"Output: {output_path.name}")
 
         video_input = ffmpeg.input(str(video_path))
         audio_input = ffmpeg.input(str(audio_path))
@@ -336,10 +342,10 @@ def combine_audio_with_video(
             video_input.video,
             audio_input.audio,
             str(output_path),
-            vcodec='copy',        # Copy video stream (no re-encoding)
-            acodec='aac',         # Encode audio as AAC
-            audio_bitrate='192k', # Audio bitrate
-            shortest=None         # Match shortest stream duration
+            vcodec="copy",  # Copy video stream (no re-encoding)
+            acodec="aac",  # Encode audio as AAC
+            audio_bitrate="192k",  # Audio bitrate
+            shortest=None,  # Match shortest stream duration
         )
 
         ffmpeg.run(output, overwrite_output=True)
@@ -365,7 +371,7 @@ def run_complete_video_audio_merge(
     output_video_path: Path,
     metadata_path: str = "data/soundbible_metadata.csv",
     sound_intensity: float = 0.3,
-    sound_duration: Optional[float] = None
+    sound_duration: Optional[float] = None,
 ) -> Path:
     """
     Complete pipeline to merge sound effects with video.
@@ -384,11 +390,12 @@ def run_complete_video_audio_merge(
         Path to final video file
     """
     # Load data
-    print("Loading data...")
-    with open(filtered_results_path, 'r', encoding='utf-8') as f:
+    base_name = video_path.stem
+    print(f"Loading data for {base_name}...")
+    with open(filtered_results_path, "r", encoding="utf-8") as f:
         filtered_results = json.load(f)
 
-    with open(word_timing_path, 'r', encoding='utf-8') as f:
+    with open(word_timing_path, "r", encoding="utf-8") as f:
         word_timings = json.load(f)
 
     metadata_df = load_sound_metadata(metadata_path)
@@ -397,11 +404,7 @@ def run_complete_video_audio_merge(
     print(f"Loaded {len(metadata_df)} sound metadata entries")
 
     # Prepare sound effects (download and find timings)
-    prepared_sounds = prepare_sound_effects(
-        filtered_results,
-        metadata_df,
-        word_timings
-    )
+    prepared_sounds = prepare_sound_effects(filtered_results, metadata_df, word_timings)
 
     if not prepared_sounds:
         print("No sound effects prepared. Skipping merge.")
@@ -410,20 +413,18 @@ def run_complete_video_audio_merge(
     print(f" Prepared {len(prepared_sounds)} sound effects")
 
     # Merge sounds with original audio
-    merged_audio_path = Path("output/merged_audio.wav")
+    merged_audio_path = Path(f"output/{base_name}_merged_audio.wav")
     merge_sounds_with_original_audio(
         original_audio_path,
         prepared_sounds,
         merged_audio_path,
         sound_intensity=sound_intensity,
-        sound_duration=sound_duration
+        default_sound_duration=sound_duration,
     )
 
     # Combine merged audio with video
     final_video_path = combine_audio_with_video(
-        video_path,
-        merged_audio_path,
-        output_video_path
+        video_path, merged_audio_path, output_video_path
     )
 
     return final_video_path

@@ -141,6 +141,7 @@ def prepare_sound_effects(
     filtered_results: Dict,
     metadata_df: pd.DataFrame,
     word_timings: List[Dict],
+    embedding_file: Path,
     download_dir: Path = Path("merging_audio/downloaded_sounds"),
 ) -> List[Tuple[Path, float, str]]:
     """
@@ -161,7 +162,8 @@ def prepare_sound_effects(
     print("Preparing sound effects...")
 
     # open sentence embeddings to recover start and end times
-    embeddings = pd.read_csv("data/embeddings/macronjoke_video_speech_embeddings.csv")
+    assert embedding_file.suffix == ".csv", "Embedding file should be csv"
+    embeddings = pd.read_csv(embedding_file)
 
     for item in filtered_results.get("filtered_sounds", []):
         if not item.get("should_add_sound", False):
@@ -389,6 +391,7 @@ def run_complete_video_audio_merge(
     filtered_results_path: Path,
     word_timing_path: Path,
     original_audio_path: Path,
+    speech_embedding_file: Path,
     output_video_path: Path,
     metadata_path: str = "data/soundbible_metadata.csv",
     sound_intensity: float = 0.3,
@@ -425,7 +428,7 @@ def run_complete_video_audio_merge(
     print(f"Loaded {len(metadata_df)} sound metadata entries")
 
     # Prepare sound effects (download and find timings)
-    prepared_sounds = prepare_sound_effects(filtered_results, metadata_df, word_timings)
+    prepared_sounds = prepare_sound_effects(filtered_results, metadata_df, word_timings, embedding_file=speech_embedding_file)
 
     if not prepared_sounds:
         print("No sound effects prepared. Skipping merge.")

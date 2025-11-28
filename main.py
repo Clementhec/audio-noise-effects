@@ -693,13 +693,9 @@ def main():
         elif args.run_matching:
             # Check if embeddings exist
             if not embeddings_path.exists():
-                print(f" Erreur : Les embeddings sont manquants : {embeddings_path}")
-                print(
-                    f"  Exécutez d'abord --run-embeddings ou assurez-vous que le fichier existe"
-                )
+                print(f"Missing embeddings : {embeddings_path}")
                 sys.exit(1)
-            print(f" Utilisation des embeddings existants : {embeddings_path}")
-            print()
+            print(f"Use existing embeddings : {embeddings_path}")
 
         if args.run_matching:
             similarity_results_path = run_semantic_matching_step(
@@ -747,6 +743,7 @@ def main():
             final_video_path = run_complete_video_audio_merge(
                 video_path=input_video_path,
                 filtered_results_path=filtered_results_path,
+                speech_embedding_file=embeddings_path,
                 word_timing_path=word_timing_path,
                 original_audio_path=audio_path,
                 output_video_path=output_video_path,

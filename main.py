@@ -99,7 +99,9 @@ def extract_audio(
     return result_path
 
 
-def run_stt_step(audio_path: Path, transcription_path: Path, word_timing_path: Path) -> tuple[Path, Path]:
+def run_stt_step(
+    audio_path: Path, transcription_path: Path, word_timing_path: Path
+) -> tuple[Path, Path]:
     """
     Step 2: Run Speech-to-Text processing.
 
@@ -167,7 +169,10 @@ def run_stt_step(audio_path: Path, transcription_path: Path, word_timing_path: P
 
 
 def run_embeddings_step(
-    transcription_path: Path, word_timing_path: Path, embeddings_path: Path, force_regenerate: bool = True
+    transcription_path: Path,
+    word_timing_path: Path,
+    embeddings_path: Path,
+    force_regenerate: bool = True,
 ) -> Path:
     """
     Step 3: Generate embeddings from transcription.
@@ -237,14 +242,15 @@ def run_embeddings_step(
                 }
             )
 
-    print(f'  Transcript: "{transcript[:80]}..."')
-    print(f"  Total words: {len(word_timings)}")
+    print(f'Transcript: "{transcript[:80]}..."')
+    print(f"Total words: {len(word_timings)}")
 
     # Segment the transcript
     print("Segmenting transcript...")
     segmenter = SpeechSegmenter(max_words_per_segment=15)
     segments = segmenter.segment_by_sentences(transcript, word_timings)
-    print(f"  Created {len(segments)} segments")
+
+    print(f"Created {len(segments)} segments")
 
     if not segments:
         raise ValueError("No segments created!")
@@ -292,12 +298,14 @@ def run_embeddings_step(
     print(f"Embeddings generated successfully!")
     print(f"Saved to: {output_path}")
     print(f"Total segments: {len(df)}")
-    
+
     return output_path
 
 
 def run_llm_filtering_step(
-    similarity_results_path: Path, filtered_results_path: Path, max_sounds: Optional[int] = None
+    similarity_results_path: Path,
+    filtered_results_path: Path,
+    max_sounds: Optional[int] = None,
 ) -> Path:
     """
     Use LLM to filter and select best sound matches.
@@ -620,23 +628,35 @@ def main():
     input_video_path = Path(args.video)
     base_name = input_video_path.stem
 
-    audio_path = Path(args.output_dir) / "input_audio" / (Path(args.video).stem + ".wav")
-    transcription_path = Path(args.output_dir) / Path(f"speech_to_text/{base_name}_full_transcription.json")
-    word_timing_path = Path(args.output_dir) / Path(f"speech_to_text/{base_name}_word_timing.json")
-    embeddings_path = Path(args.output_dir) / Path(f"embeddings/{base_name}_video_speech_embeddings.csv")
-    similarity_results_path = Path(args.output_dir) / Path(f"similarity/{base_name}_similarity.json")
-    filtered_results_path = Path(args.output_dir) / Path(f"filtered/{base_name}_video_filtered_sounds.json")
-    output_video_path = Path(args.output_dir) / Path(f"output/{base_name}_soundeasy.mp4")
+    audio_path = (
+        Path(args.output_dir) / "input_audio" / (Path(args.video).stem + ".wav")
+    )
+    transcription_path = Path(args.output_dir) / Path(
+        f"speech_to_text/{base_name}_full_transcription.json"
+    )
+    word_timing_path = Path(args.output_dir) / Path(
+        f"speech_to_text/{base_name}_word_timing.json"
+    )
+    embeddings_path = Path(args.output_dir) / Path(
+        f"embeddings/{base_name}_video_speech_embeddings.csv"
+    )
+    similarity_results_path = Path(args.output_dir) / Path(
+        f"similarity/{base_name}_similarity.json"
+    )
+    filtered_results_path = Path(args.output_dir) / Path(
+        f"filtered/{base_name}_video_filtered_sounds.json"
+    )
+    output_video_path = Path(args.output_dir) / Path(
+        f"output/{base_name}_soundeasy.mp4"
+    )
 
     try:
-
         audio_path = extract_audio(
             args.video,
             output_dir=str(Path(args.output_dir) / "input_audio"),
             sample_rate=args.sample_rate,
             channels=args.channels,
         )
-
         if args.run_stt:
             transcription_path, word_timing_path = run_stt_step(
                 audio_path, transcription_path, word_timing_path
@@ -688,18 +708,16 @@ def main():
         elif args.run_llm_filter:
             # Check if similarity results exist
             if not similarity_results_path.exists():
-                print(
-                    f"Missing similarity results : {similarity_results_path}"
-                )
+                print(f"Missing similarity results : {similarity_results_path}")
                 sys.exit(1)
-            print(
-                f"Using existing similarity results : {similarity_results_path}"
-            )
+            print(f"Using existing similarity results : {similarity_results_path}")
             print()
 
         if args.run_llm_filter:
             filtered_results_path = run_llm_filtering_step(
-                similarity_results_path, filtered_results_path, max_sounds=args.max_sounds
+                similarity_results_path,
+                filtered_results_path,
+                max_sounds=args.max_sounds,
             )
         elif args.run_video_merge:
             # Check if filtered results exist
@@ -716,7 +734,6 @@ def main():
             )
 
         if args.run_video_merge:
-
             # Check if original audio exists
             if not audio_path.exists():
                 print(f"Missing audio path : {audio_path}")
@@ -736,7 +753,7 @@ def main():
                 sound_intensity=args.sound_intensity,
                 sound_duration=args.sound_duration,
             )
-            
+
         print("Generated files:")
         print(f"Audio: {audio_path}")
         print(f"Final video path : {final_video_path}")

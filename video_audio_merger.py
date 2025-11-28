@@ -103,7 +103,11 @@ def parse_time_string(time_str: str) -> float:
 
 
 def find_word_timing(
-    target_word: str, speech_text: str, word_timings: List[Dict]
+    target_word: str,
+    speech_text: str,
+    word_timings: List[Dict],
+    sentence_start_time: float,
+    sentence_end_time: float,
 ) -> Optional[float]:
     """
     Find the start time of a target word in the speech.
@@ -118,14 +122,16 @@ def find_word_timing(
     """
     # Normalize target word (remove punctuation, lowercase)
     target_normalized = target_word.strip().lower().rstrip(".,!?;:")
-
+    print(target_normalized, sentence_start_time, sentence_end_time)
     # Find the word in the speech text to get approximate position
     n = len(word_timings)
     k = 0
     while k < n:
         wt = word_timings[k]
-        if target_normalized == wt["word"].strip().lower().rstrip(".,!?;:"):
-            return parse_time_string(wt["startTime"])
+        wti = parse_time_string(wt["startTime"])
+        if wti >= sentence_start_time and wti <= sentence_end_time:
+            if target_normalized == wt["word"].strip().lower().rstrip(".,!?;:"):
+                return wti
         k += 1
 
     print(f"Timing not found for word {target_word}")
@@ -154,10 +160,19 @@ def prepare_sound_effects(
 
     print("Preparing sound effects...")
 
+    # open sentence embeddings to recover start and end times
+    embeddings = pd.read_csv("data/embeddings/macronjoke_video_speech_embeddings.csv")
+
     for item in filtered_results.get("filtered_sounds", []):
         if not item.get("should_add_sound", False):
             continue
 
+        segment_id = item.get("speech_index")
+        # the LLM filtering does not respect the embedding segments
+        segment_id = min(segment_id, len(embeddings) - 1)
+        sentence_embedding = embeddings.loc[embeddings["segment_id"] == segment_id]
+        sentence_start_time = sentence_embedding["start_time"].item()
+        sentence_end_time = sentence_embedding["end_time"].item()
         selected_sound = item.get("selected_sound")
         if not selected_sound:
             continue
@@ -207,7 +222,13 @@ def prepare_sound_effects(
                 output_path = wav_path
 
         # Find word timing
-        start_time = find_word_timing(target_word, speech_text, word_timings)
+        start_time = find_word_timing(
+            target_word,
+            speech_text,
+            word_timings,
+            sentence_start_time,
+            sentence_end_time,
+        )
         if start_time is None:
             continue
 

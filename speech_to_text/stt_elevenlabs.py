@@ -5,19 +5,18 @@ from io import BytesIO
 import requests
 import json
 from elevenlabs.client import ElevenLabs
-from typing import Optional, Union, Dict, List, Any
+from typing import Optional, Union, Dict, Any
 
 
 def transcribe_audio_elevenlabs(
     audio_source: Union[str, BytesIO],
+    transcription_path: Path,
+    word_timing_path: Path,
     api_key: Optional[str] = None,
     model_id: str = "scribe_v1",
     tag_audio_events: bool = False,
     language_code: Optional[str] = None,
     diarize: bool = False,
-    output_format: str = "both",  # Options: "segments", "words", "both"
-    save_to_json_file: bool = True,
-    output_dir: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Transcrit un fichier audio en utilisant l'API ElevenLabs.
@@ -39,25 +38,19 @@ def transcribe_audio_elevenlabs(
         - word_timings: Liste des mots avec leurs timings individuels
         - full_transcript: Texte complet de la transcription
     """
-    # Charger les variables d'environnement
     load_dotenv()
-    
-    # Initialiser le client ElevenLabs
+
     if api_key is None:
         api_key = os.getenv("ELEVENLABS_API_KEY")
-    
+
     elevenlabs = ElevenLabs(api_key=api_key)
-    
-    # Préparer les données audio
+
     if isinstance(audio_source, str):
-        # Si c'est une URL, télécharger le fichier
         response = requests.get(audio_source)
         audio_data = BytesIO(response.content)
     else:
-        # Si c'est déjà un BytesIO, l'utiliser directement
         audio_data = audio_source
-    
-    # Effectuer la transcription
+
     transcription = elevenlabs.speech_to_text.convert(
         file=audio_data,
         model_id=model_id,
@@ -65,75 +58,60 @@ def transcribe_audio_elevenlabs(
         language_code=language_code,
         diarize=diarize,
     )
-    
-    # Parser la transcription pour extraire les informations
-    full_transcript = transcription.text if hasattr(transcription, 'text') else ""
-    words = transcription.words if hasattr(transcription, 'words') else []
-    
-    # Calculer les temps de début et de fin globaux
+
+    full_transcript = transcription.text if hasattr(transcription, "text") else ""
+    words = transcription.words if hasattr(transcription, "words") else []
+
     start_time = None
     end_time = None
-    
+
     if words and len(words) > 0:
-        start_time = words[0].start if hasattr(words[0], 'start') else None
-        end_time = words[-1].end if hasattr(words[-1], 'end') else None
-    
-    # Créer le résultat par segment
+        start_time = words[0].start if hasattr(words[0], "start") else None
+        end_time = words[-1].end if hasattr(words[-1], "end") else None
+
     segment_result = [
         {
             "transcription": full_transcript,
             "startTime": f"{start_time}s" if start_time is not None else "0.0s",
-            "endTime": f"{end_time}s" if end_time is not None else None
+            "endTime": f"{end_time}s" if end_time is not None else None,
         }
     ]
-    
-    # Créer les timings par mot
+
     word_timings = []
     for word_info in words:
-        word_text = word_info.text if hasattr(word_info, 'text') else ""
-        word_start = word_info.start if hasattr(word_info, 'start') else None
-        word_end = word_info.end if hasattr(word_info, 'end') else None
-        
-        word_timings.append({
-            "word": word_text,
-            "startTime": f"{word_start}s" if word_start is not None else None,
-            "endTime": f"{word_end}s" if word_end is not None else None
-        })
-    
-    # Retourner les résultats selon le format demandé
+        word_text = word_info.text if hasattr(word_info, "text") else ""
+        word_start = word_info.start if hasattr(word_info, "start") else None
+        word_end = word_info.end if hasattr(word_info, "end") else None
+
+        word_timings.append(
+            {
+                "word": word_text,
+                "startTime": f"{word_start}s" if word_start is not None else None,
+                "endTime": f"{word_end}s" if word_end is not None else None,
+            }
+        )
+
     result = {
         "full_transcript": full_transcript,
         "segment_result": segment_result,
-        "word_timings": word_timings
+        "word_timings": word_timings,
     }
-    
-    if save_to_json_file:
-        # Déterminer le répertoire de sortie
-        if output_dir is None:
-            # Utiliser le répertoire par défaut (speech_to_text/output)
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            output_dir = os.path.join(current_dir, 'output')
 
-        # Créer le répertoire de sortie s'il n'existe pas
-        os.makedirs(output_dir, exist_ok=True)
+    if transcription_path:
+        with open(transcription_path, "w", encoding="utf-8") as f:
+            json.dump(
+                {"full_transcript": full_transcript, "segment_result": segment_result},
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
 
-        # Sauvegarder la transcription complète dans un fichier JSON
-        full_transcript_path = os.path.join(output_dir, "full_transcription.json")
-        with open(full_transcript_path, 'w', encoding='utf-8') as f:
-            json.dump({
-                "full_transcript": full_transcript,
-                "segment_result": segment_result
-            }, f, ensure_ascii=False, indent=2)
-
-        # Sauvegarder les timings des mots dans un fichier JSON
-        word_timing_path = os.path.join(output_dir, "word_timing.json")
-        with open(word_timing_path, 'w', encoding='utf-8') as f:
+        with open(word_timing_path, "w", encoding="utf-8") as f:
             json.dump(word_timings, f, ensure_ascii=False, indent=2)
 
-        # Ajouter les chemins de sortie au résultat
-        result['output_files'] = {
-            'transcription': full_transcript_path,
-            'word_timing': word_timing_path
+        result["output_files"] = {
+            "transcription": transcription_path,
+            "word_timing": word_timing_path,
         }
 
     return result
@@ -141,7 +119,8 @@ def transcribe_audio_elevenlabs(
 
 def transcribe_audio_file(
     audio_file_path: Union[str, Path],
-    output_dir: Optional[Union[str, Path]] = None,
+    transcription_path: Path,
+    word_timing_path: Path,
     api_key: Optional[str] = None,
     model_id: str = "scribe_v1",
     tag_audio_events: bool = False,
@@ -185,7 +164,7 @@ def transcribe_audio_file(
         raise FileNotFoundError(f"Audio file not found: {audio_file_path}")
 
     # Read audio file into BytesIO
-    with open(audio_file_path, 'rb') as f:
+    with open(audio_file_path, "rb") as f:
         audio_data = BytesIO(f.read())
 
     # Convert output_dir to string if it's a Path
@@ -201,8 +180,8 @@ def transcribe_audio_file(
         language_code=language_code,
         diarize=diarize,
         output_format="both",
-        save_to_json_file=True,
-        output_dir=output_dir
+        word_timing_path=word_timing_path,
+        transcription_path=transcription_path,
     )
 
     return result

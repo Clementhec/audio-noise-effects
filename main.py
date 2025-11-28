@@ -119,19 +119,14 @@ def run_stt_step(
 
     print(f"Audio file: {audio_path}")
 
-    # Get output directory from transcription_path
-    output_dir = transcription_path.parent
-
-    # Ensure output directory exists
-    output_dir.mkdir(parents=True, exist_ok=True)
-
     try:
         from speech_to_text import transcribe_audio_file
 
         print("Running STT transcription...")
         result = transcribe_audio_file(
             audio_file_path=audio_path,
-            output_dir=str(output_dir),
+            word_timing_path=word_timing_path,
+            transcription_path=transcription_path,
             language_code="en",
         )
 
@@ -144,12 +139,10 @@ def run_stt_step(
             output_files.get("word_timing", word_timing_path)
         )
 
-        print()
-        print(f" STT processing complete!")
-        print(f"  Transcription: {result_transcription_path}")
-        print(f"  Word timings: {result_word_timing_path}")
-        print(f"  Full text: {result['full_transcript'][:100]}...")
-        print()
+        print(f"STT processing complete!")
+        print(f"Transcription: {result_transcription_path}")
+        print(f"Word timings: {result_word_timing_path}")
+        print(f"Full text: {result['full_transcript'][:100]}...")
 
         return result_transcription_path, result_word_timing_path
 
@@ -659,7 +652,9 @@ def main():
         )
         if args.run_stt:
             transcription_path, word_timing_path = run_stt_step(
-                audio_path, transcription_path, word_timing_path
+                audio_path=audio_path,
+                transcription_path=transcription_path,
+                word_timing_path=word_timing_path,
             )
         elif args.run_embeddings or args.run_video_merge:
             # Check if required files exist

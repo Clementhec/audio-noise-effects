@@ -18,6 +18,7 @@ sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "video_preprocessing"))
 
 from video_preprocessing import extract_audio_from_video
+from video_audio_merger import run_complete_video_audio_merge
 
 
 def setup_directories():
@@ -284,85 +285,6 @@ def run_embeddings_step(
     return output_path
 
 
-def run_video_audio_merge_step(
-    video_path: Path,
-    filtered_results_path: Path,
-    word_timing_path: Path,
-    original_audio_path: Path,
-    sound_intensity: float = 0.3,
-    sound_duration: Optional[float] = None,
-) -> Path:
-    """
-    Step 6: Merge sound effects with video.
-
-    Args:
-        video_path: Path to original video file
-        filtered_results_path: Path to LLM filtered sounds JSON
-        word_timing_path: Path to word timing JSON
-        original_audio_path: Path to original audio from video
-        sound_intensity: Volume level for sound effects (0.0-1.0, default: 0.3)
-        sound_duration: Max duration for each sound effect in seconds (None = full sound)
-
-    Returns:
-        Path to final video with merged audio
-    """
-    print("=" * 70)
-    print("STEP 6: Merge Sound Effects with Video")
-    print("=" * 70)
-
-    print(f"Video file: {video_path}")
-    print(f"Filtered sounds: {filtered_results_path}")
-    print(f"Word timings: {word_timing_path}")
-    print(f"Original audio: {original_audio_path}")
-    print(f"Sound intensity: {sound_intensity}")
-    if sound_duration:
-        print(f"Sound duration limit: {sound_duration}s")
-    else:
-        print("Sound duration: Full length")
-
-    try:
-        from video_audio_merger import run_complete_video_audio_merge
-
-        base_name = video_path.stem
-        output_video_path = Path(f"output/{base_name}_soundeasy.mp4")
-
-        print("Starting video-audio merge pipeline...")
-
-        final_video_path = run_complete_video_audio_merge(
-            video_path=video_path,
-            filtered_results_path=filtered_results_path,
-            word_timing_path=word_timing_path,
-            original_audio_path=original_audio_path,
-            output_video_path=output_video_path,
-            sound_intensity=sound_intensity,
-            sound_duration=sound_duration,
-        )
-
-        if final_video_path:
-            print()
-            print(f" Video-audio merge complete!")
-            print(f"  Final video: {final_video_path}")
-            print()
-            return final_video_path
-        else:
-            print()
-            print(f" Video-audio merge skipped (no sounds to add)")
-            print()
-            return None
-
-    except ImportError as e:
-        print(f" Error: Missing dependencies for video-audio merge")
-        print(f"  {e}")
-        print()
-        print("Install required packages:")
-        print("  pip install pydub requests")
-        print("  Also ensure ffmpeg is installed on your system")
-        raise
-    except Exception as e:
-        print(f" Error during video-audio merge: {e}")
-        raise
-
-
 def run_llm_filtering_step(
     similarity_results_path: Path, max_sounds: Optional[int] = None
 ) -> Path:
@@ -607,8 +529,8 @@ def main():
 
     parser.add_argument(
         "--output-dir",
-        default="speech_to_text/input",
-        help="Output directory for audio file (default: speech_to_text/input)",
+        default="data",
+        help="Output directory for intermediate files (default: data)",
     )
 
     parser.add_argument(
@@ -678,31 +600,23 @@ def main():
         print("Error: --sound-intensity must be between 0.0 and 1.0")
         sys.exit(1)
 
-    print()
-    print("=" * 70)
-    print("VIDEO PREPROCESSING PIPELINE")
-    print("=" * 70)
-    print()
-    print(f"Video file: {args.video}")
-    print(f"Sample rate: {args.sample_rate} Hz")
-    print(f"Channels: {args.channels}")
-    print(f"Output directory: {args.output_dir}")
-    print()
-
     # Setup directories
     setup_directories()
-    print()
+
+    # Initialize paths from default locations
+    input_video_path = Path(args.video)
+    base_name = input_video_path.stem
+
+    audio_path = Path(args.output_dir) / (Path(args.video).stem + ".wav")
+    transcription_path = Path(args.output_dir) / Path(f"speech_to_text/{base_name}_full_transcription.json")
+    word_timing_path = Path(args.output_dir) / Path(f"speech_to_text/{base_name}_word_timing.json")
+    embeddings_path = Path(args.output_dir) / Path(f"embeddings/{base_name}_video_speech_embeddings.csv")
+    similarity_results_path = Path(args.output_dir) / Path(f"similarity/{base_name}_similarity.json")
+    filtered_results_path = Path(args.output_dir) / Path(f"filtered/{base_name}_video_filtered_sounds.json")
+    output_video_path = Path(args.output_dir) / Path(f"output/{base_name}_soundeasy.mp4")
 
     try:
-        # Initialize paths from default locations
-        audio_path = Path(args.output_dir) / (Path(args.video).stem + ".wav")
-        transcription_path = Path("speech_to_text/output/full_transcription.json")
-        word_timing_path = Path("speech_to_text/output/word_timing.json")
-        embeddings_path = Path("data/video_speech_embeddings.csv")
-        similarity_results_path = Path("similarity/output/similarity.json")
-        filtered_results_path = Path("output/video_filtered_sounds.json")
 
-        # Step 1: Extract audio
         audio_path = extract_audio(
             args.video,
             output_dir=args.output_dir,
@@ -789,24 +703,24 @@ def main():
             )
 
         if args.run_video_merge:
+            
             # Check if original audio exists
             if not audio_path.exists():
-                print(f"Erreur : L'audio original est manquant : {audio_path}")
-                print(f"Assurez-vous que l'extraction audio a été effectuée")
-                sys.exit(1)
+                print(f"Missing audio path : {audio_path}")
+                sys.exit(1)            
 
-            final_video_path = run_video_audio_merge_step(
-                video_path=Path(args.video),
+            print("Starting video-audio merge pipeline...")
+
+            final_video_path = run_complete_video_audio_merge(
+                video_path=input_video_path,
                 filtered_results_path=filtered_results_path,
                 word_timing_path=word_timing_path,
                 original_audio_path=audio_path,
+                output_video_path=output_video_path,
                 sound_intensity=args.sound_intensity,
                 sound_duration=args.sound_duration,
             )
-
-        print("=" * 70)
-        print("PIPELINE COMPLETE!")
-        print("=" * 70)
+            
         print("Generated files:")
         print(f"Audio: {audio_path}")
         print(f"Final video path : {final_video_path}")

@@ -78,22 +78,22 @@ def download_sound_effect(
         True if successful, False otherwise
     """
     if output_path.exists() and not force_download:
-        print(f"   Already downloaded: {output_path.name}")
+        print(f"Already downloaded: {output_path.name}")
         return True
 
     try:
-        print(f"   Downloading: {output_path.name}")
+        print(f"Downloading: {output_path.name}")
         response = requests.get(url, timeout=30)
         response.raise_for_status()
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_bytes(response.content)
 
-        print(f"   Downloaded: {output_path.name}")
+        print(f"Downloaded: {output_path.name}")
         return True
 
     except Exception as e:
-        print(f"   Download failed: {e}")
+        print(f"Download failed: {e}")
         return False
 
 

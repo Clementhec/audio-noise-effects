@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict, Any, Optional
 import google.generativeai as genai
+from dotenv import load_dotenv
 
 
 def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
@@ -14,10 +15,11 @@ def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
     Returns:
         Instance du modèle Gemini configuré
     """
+    load_dotenv()
     if api_key is None:
         api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY doit être définie dans l'environnement ou passée en paramètre")
+            raise ValueError("GOOGLE_API_KEY should be defined in env or passed as parameter")
     
     genai.configure(api_key=api_key)
     return genai.GenerativeModel('gemini-2.5-flash-lite')
@@ -146,17 +148,13 @@ def filter_sounds(
             if item.get('should_add_sound', False)
         ]
     
-    # Sauvegarde automatique dans output/
-    if output_file is None:
-        output_file = 'llm_filtering/output/filtered_sounds.json'
-    
     output_dir = os.path.dirname(output_file)
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
-    print(f"Résultat sauvegardé dans {output_file}")
+    print(f"Results saved in {output_file}")
     
     return result
 

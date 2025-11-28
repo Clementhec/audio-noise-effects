@@ -28,7 +28,6 @@ def transcribe_audio_elevenlabs(
         tag_audio_events: Marquer les événements audio comme les rires, applaudissements, etc.
         language_code: Langue du fichier audio (si None, détection automatique)
         diarize: Annoter qui parle
-        output_format: Format de sortie - "segments", "words", ou "both"
         save_to_json_file: Sauvegarder les résultats en fichiers JSON
         output_dir: Répertoire de sortie (si None, utilise speech_to_text/output)
 
@@ -167,9 +166,6 @@ def transcribe_audio_file(
     with open(audio_file_path, "rb") as f:
         audio_data = BytesIO(f.read())
 
-    # Convert output_dir to string if it's a Path
-    if output_dir is not None:
-        output_dir = str(output_dir)
 
     # Call the main transcription function
     result = transcribe_audio_elevenlabs(
@@ -179,7 +175,6 @@ def transcribe_audio_file(
         tag_audio_events=tag_audio_events,
         language_code=language_code,
         diarize=diarize,
-        output_format="both",
         word_timing_path=word_timing_path,
         transcription_path=transcription_path,
     )

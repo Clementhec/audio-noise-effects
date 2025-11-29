@@ -500,8 +500,16 @@ def run_semantic_matching_step(
         raise
 
 
+def validate_args(args):
+
+    # Validate sound intensity
+    if not 0.0 <= args.sound_intensity <= 1.0:
+        print("Error: --sound-intensity must be between 0.0 and 1.0")
+        sys.exit(1)
+
+
 def main():
-    """Main pipeline orchestration."""
+    
     parser = argparse.ArgumentParser(
         description="Video preprocessing pipeline for audio-noise-effects",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -609,18 +617,12 @@ def main():
         args.run_llm_filter = True
         args.run_video_merge = True
 
-    # Validate sound intensity
-    if not 0.0 <= args.sound_intensity <= 1.0:
-        print("Error: --sound-intensity must be between 0.0 and 1.0")
-        sys.exit(1)
-
-    # Setup directories
+    validate_args()
     setup_directories(output_dir=args.output_dir)
 
     # Initialize paths from default locations
     input_video_path = Path(args.video)
     base_name = input_video_path.stem
-
     audio_path = (
         Path(args.output_dir) / "input_audio" / (Path(args.video).stem + ".wav")
     )
@@ -746,9 +748,9 @@ def main():
                 sound_duration=args.sound_duration,
             )
 
-        print("Generated files:")
-        print(f"Audio: {audio_path}")
-        print(f"Final video path : {final_video_path}")
+            print("Generated files:")
+            print(f"Audio: {audio_path}")
+            print(f"Final video path : {final_video_path}")
 
     except Exception as e:
         print()

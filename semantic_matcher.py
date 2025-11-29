@@ -158,7 +158,7 @@ class SemanticMatcher:
 
                 all_matches.append(match_record)
 
-        print(f"  Found {len(all_matches)} matches (threshold >= {self.similarity_threshold})")
+        print(f"Found {len(all_matches)} matches (threshold >= {self.similarity_threshold})")
 
         return all_matches
 

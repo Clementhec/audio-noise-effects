@@ -10,8 +10,6 @@ import argparse
 from pathlib import Path
 from typing import Optional
 
-os.environ["PATH"] = "/Users/clementabiven/.local/bin:" + os.environ.get("PATH", "")
-
 # Add project root to path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
@@ -501,7 +499,6 @@ def run_semantic_matching_step(
 
 
 def validate_args(args):
-
     # Validate sound intensity
     if not 0.0 <= args.sound_intensity <= 1.0:
         print("Error: --sound-intensity must be between 0.0 and 1.0")
@@ -509,7 +506,6 @@ def validate_args(args):
 
 
 def main():
-    
     parser = argparse.ArgumentParser(
         description="Video preprocessing pipeline for audio-noise-effects",
         formatter_class=argparse.RawDescriptionHelpFormatter,

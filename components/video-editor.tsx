@@ -3,7 +3,7 @@
 import type React from "react"
 import { Sparkles } from "lucide-react" // Import Sparkles component
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   Upload,
   Play,
@@ -48,12 +48,118 @@ export default function VideoEditor() {
   const [state, setState] = useState<EditorState>("upload")
   const [prompt, setPrompt] = useState("")
   const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(120)
   const [zoom, setZoom] = useState([1])
+  const [showControls, setShowControls] = useState(true)
+  
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Créer l'URL de la vidéo quand le fichier change
+  useEffect(() => {
+    if (videoFile) {
+      const url = URL.createObjectURL(videoFile)
+      setVideoUrl(url)
+      return () => URL.revokeObjectURL(url)
+    }
+  }, [videoFile])
+  
+  // Synchroniser l'état de lecture avec l'élément vidéo
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    
+    if (isPlaying) {
+      video.play()
+    } else {
+      video.pause()
+    }
+  }, [isPlaying])
+  
+  // Synchroniser le mute avec l'élément vidéo
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = isMuted
+  }, [isMuted])
+  
+  // Gérer les événements de la vidéo
+  const handleVideoTimeUpdate = () => {
+    const video = videoRef.current
+    if (video) {
+      setCurrentTime(video.currentTime)
+    }
+  }
+  
+  const handleVideoLoadedMetadata = () => {
+    const video = videoRef.current
+    if (video) {
+      setDuration(video.duration)
+    }
+  }
+  
+  const handleVideoEnded = () => {
+    setIsPlaying(false)
+  }
+  
+  const handleSeek = (value: number[]) => {
+    const video = videoRef.current
+    if (video) {
+      video.currentTime = value[0]
+      setCurrentTime(value[0])
+    }
+  }
+  
+  // Gestion de l'affichage/masquage des contrôles
+  const resetControlsTimeout = () => {
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current)
+    }
+    setShowControls(true)
+    controlsTimeoutRef.current = setTimeout(() => {
+      if (isPlaying) {
+        setShowControls(false)
+      }
+    }, 2500)
+  }
+  
+  const handleVideoMouseMove = () => {
+    resetControlsTimeout()
+  }
+  
+  const handleVideoMouseLeave = () => {
+    if (isPlaying) {
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false)
+      }, 1000)
+    }
+  }
+  
+  // Réinitialiser le timeout quand la vidéo est mise en pause
+  useEffect(() => {
+    if (!isPlaying) {
+      setShowControls(true)
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current)
+      }
+    } else {
+      resetControlsTimeout()
+    }
+  }, [isPlaying])
+  
+  // Nettoyer le timeout au démontage
+  useEffect(() => {
+    return () => {
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const [tracks, setTracks] = useState<Track[]>([
     {
@@ -294,28 +400,48 @@ export default function VideoEditor() {
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Video Preview Section */}
-        <div className="flex-shrink-0 border-b border-border bg-muted/30" style={{ height: "45%" }}>
-          <div className="h-full flex items-center justify-center p-6">
-            <div className="relative w-full max-w-5xl h-full">
+        <div className="flex-shrink-0 border-b border-border bg-muted/30" style={{ height: "60%" }}>
+          <div className="h-full flex items-center justify-center p-4">
+            <div 
+              className="flex flex-col w-full max-w-5xl h-full"
+              onMouseMove={handleVideoMouseMove}
+              onMouseLeave={handleVideoMouseLeave}
+            >
               {/* Video Container */}
-              <div className="h-full bg-black rounded-lg overflow-hidden shadow-2xl flex items-center justify-center">
-                {/* Placeholder Video */}
-                <div className="text-center space-y-4">
-                  <div className="mx-auto h-20 w-20 rounded-full bg-white/10 flex items-center justify-center">
-                    <Play className="h-10 w-10 text-white" />
+              <div className="flex-1 min-h-0 bg-black rounded-t-lg overflow-hidden shadow-2xl flex items-center justify-center cursor-pointer">
+                {videoUrl ? (
+                  <video
+                    ref={videoRef}
+                    src={videoUrl}
+                    className="h-full w-full object-contain"
+                    onTimeUpdate={handleVideoTimeUpdate}
+                    onLoadedMetadata={handleVideoLoadedMetadata}
+                    onEnded={handleVideoEnded}
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  />
+                ) : (
+                  <div className="text-center space-y-4">
+                    <div className="mx-auto h-20 w-20 rounded-full bg-white/10 flex items-center justify-center">
+                      <Play className="h-10 w-10 text-white" />
+                    </div>
+                    <p className="text-white/70 text-sm">{"Video Preview"}</p>
                   </div>
-                  <p className="text-white/70 text-sm">{"Video Preview"}</p>
-                </div>
+                )}
               </div>
 
-              {/* Playback Controls Overlay */}
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="bg-black/80 backdrop-blur-sm rounded-lg p-4 space-y-3">
+              {/* Playback Controls Bar */}
+              <div 
+                className={cn(
+                  "transition-opacity duration-300",
+                  showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+                )}
+              >
+                <div className="bg-black/90 backdrop-blur-sm rounded-b-lg px-4 py-3 space-y-2">
                   {/* Timeline Scrubber */}
                   <div className="relative">
                     <Slider
                       value={[currentTime]}
-                      onValueChange={(value) => setCurrentTime(value[0])}
+                      onValueChange={handleSeek}
                       max={duration}
                       step={0.1}
                       className="cursor-pointer"
@@ -328,24 +454,24 @@ export default function VideoEditor() {
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-9 w-9 text-white hover:bg-white/20"
+                        className="h-8 w-8 text-white hover:bg-white/20"
                         onClick={() => setIsPlaying(!isPlaying)}
                       >
-                        {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                       </Button>
-                      <span className="text-sm text-white/90 font-mono tabular-nums">
+                      <span className="text-xs text-white/90 font-mono tabular-nums">
                         {formatTime(currentTime)} / {formatTime(duration)}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-9 w-9 text-white hover:bg-white/20"
+                        className="h-8 w-8 text-white hover:bg-white/20"
                         onClick={() => setIsMuted(!isMuted)}
                       >
-                        {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                        {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                       </Button>
                     </div>
                   </div>
@@ -357,17 +483,17 @@ export default function VideoEditor() {
 
         <div className="flex-1 flex flex-col overflow-hidden bg-background">
           {/* Timeline Header with Controls */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-2 bg-card">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium">{"Timeline"}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">{"Zoom"}</span>
-                <Slider value={zoom} onValueChange={setZoom} min={0.5} max={3} step={0.1} className="w-24" />
+          <div className="flex items-center justify-between border-b border-border px-3 py-1.5 bg-card">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium">{"Timeline"}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-muted-foreground">{"Zoom"}</span>
+                <Slider value={zoom} onValueChange={setZoom} min={0.5} max={3} step={0.1} className="w-20" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm">
-                <Scissors className="mr-2 h-4 w-4" />
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" className="h-7 text-xs">
+                <Scissors className="mr-1.5 h-3 w-3" />
                 {"Split"}
               </Button>
             </div>
@@ -376,34 +502,34 @@ export default function VideoEditor() {
           {/* Timeline Content */}
           <div className="flex-1 flex overflow-hidden">
             {/* Track Headers */}
-            <div className="w-56 border-r border-border bg-card flex-shrink-0 overflow-y-auto">
+            <div className="w-48 border-r border-border bg-card flex-shrink-0 overflow-y-auto">
               {tracks.map((track) => (
-                <div key={track.id} className="border-b border-border p-3 space-y-2">
+                <div key={track.id} className="border-b border-border px-2 py-1.5 space-y-1" style={{ height: "56px" }}>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium truncate">{track.name}</span>
-                    <div className="flex items-center gap-1">
+                    <span className="text-xs font-medium truncate">{track.name}</span>
+                    <div className="flex items-center">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6"
+                        className="h-5 w-5"
                         onClick={() => toggleTrackVisibility(track.id)}
                       >
-                        {track.visible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                        {track.visible ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleTrackLock(track.id)}>
-                        {track.locked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => toggleTrackLock(track.id)}>
+                        {track.locked ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                  <div className="flex items-center gap-1.5">
+                    <Volume2 className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                     <Slider
                       value={[track.volume]}
                       onValueChange={(value) => updateTrackVolume(track.id, value[0])}
                       max={100}
                       className="flex-1"
                     />
-                    <span className="text-xs text-muted-foreground w-8 text-right tabular-nums">{track.volume}%</span>
+                    <span className="text-[10px] text-muted-foreground w-6 text-right tabular-nums">{track.volume}%</span>
                   </div>
                 </div>
               ))}
@@ -412,10 +538,10 @@ export default function VideoEditor() {
             {/* Timeline Tracks with Ruler */}
             <div className="flex-1 overflow-auto relative">
               {/* Time Ruler */}
-              <div className="sticky top-0 z-10 h-8 border-b border-border bg-card flex items-center px-2">
+              <div className="sticky top-0 z-10 h-6 border-b border-border bg-card flex items-center px-2">
                 {Array.from({ length: Math.ceil(duration / 10) + 1 }).map((_, i) => (
                   <div key={i} className="flex-shrink-0" style={{ width: `${100 * zoom[0]}px` }}>
-                    <span className="text-xs text-muted-foreground font-mono tabular-nums">{formatTime(i * 10)}</span>
+                    <span className="text-[10px] text-muted-foreground font-mono tabular-nums">{formatTime(i * 10)}</span>
                   </div>
                 ))}
               </div>
@@ -432,8 +558,8 @@ export default function VideoEditor() {
 
                 {/* Track Lanes */}
                 {tracks.map((track, trackIndex) => (
-                  <div key={track.id} className="border-b border-border" style={{ height: "80px" }}>
-                    <div className="relative h-full p-2">
+                  <div key={track.id} className="border-b border-border" style={{ height: "56px" }}>
+                    <div className="relative h-full p-1.5">
                       {track.type === "video" ? (
                         <div className="h-full bg-muted rounded relative overflow-hidden">
                           <div className="absolute inset-0 flex items-center justify-center gap-0.5 px-2">

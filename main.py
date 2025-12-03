@@ -613,7 +613,7 @@ def main():
         args.run_llm_filter = True
         args.run_video_merge = True
 
-    validate_args()
+    validate_args(args)
     setup_directories(output_dir=args.output_dir)
 
     # Initialize paths from default locations

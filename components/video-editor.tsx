@@ -32,6 +32,7 @@ interface AudioBlock {
   start: number
   duration: number
   volume: number
+  audioUrl?: string
 }
 
 interface Track {
@@ -59,6 +60,7 @@ export default function VideoEditor() {
   
   const videoRef = useRef<HTMLVideoElement>(null)
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const audioRefs = useRef<Map<string, HTMLAudioElement>>(new Map())
   
   // Créer l'URL de la vidéo quand le fichier change
   useEffect(() => {
@@ -178,7 +180,14 @@ export default function VideoEditor() {
       locked: false,
       volume: 60,
       blocks: [
-        { id: "block-1", name: "Thunder", start: 10, duration: 15, volume: 70 },
+        { 
+          id: "block-1", 
+          name: "Thunder", 
+          start: 10, 
+          duration: 15, 
+          volume: 70,
+          audioUrl: "https://soundbible.com/wav/Thunder-Mike_Koenig-315681025.wav"
+        },
         { id: "block-2", name: "Rain Ambience", start: 30, duration: 45, volume: 50 },
         { id: "block-3", name: "Wind", start: 80, duration: 25, volume: 60 },
       ],
@@ -186,6 +195,71 @@ export default function VideoEditor() {
   ])
 
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null)
+  
+  // États pour le drag & drop des blocs
+  const [draggingBlock, setDraggingBlock] = useState<string | null>(null)
+  const [dragStartX, setDragStartX] = useState<number>(0)
+  const [dragStartTime, setDragStartTime] = useState<number>(0)
+  const timelineRef = useRef<HTMLDivElement>(null)
+
+  // Initialiser les éléments audio pour les blocs avec audioUrl
+  useEffect(() => {
+    tracks.forEach((track) => {
+      if (track.blocks) {
+        track.blocks.forEach((block) => {
+          if (block.audioUrl && !audioRefs.current.has(block.id)) {
+            const audio = new Audio(block.audioUrl)
+            audio.preload = "auto"
+            audio.volume = (block.volume / 100) * (track.volume / 100)
+            audioRefs.current.set(block.id, audio)
+          }
+        })
+      }
+    })
+    
+    // Nettoyer les audios au démontage
+    return () => {
+      audioRefs.current.forEach((audio) => {
+        audio.pause()
+        audio.src = ""
+      })
+      audioRefs.current.clear()
+    }
+  }, [tracks])
+  
+  // Gérer la lecture des blocs audio en fonction du temps de la vidéo
+  useEffect(() => {
+    tracks.forEach((track) => {
+      if (track.blocks && track.visible && !track.locked) {
+        track.blocks.forEach((block) => {
+          const audio = audioRefs.current.get(block.id)
+          if (audio) {
+            const blockEnd = block.start + block.duration
+            const isInRange = currentTime >= block.start && currentTime < blockEnd
+            
+            if (isPlaying && isInRange && !isMuted) {
+              if (audio.paused) {
+                // Synchroniser la position de l'audio avec le temps de la vidéo
+                const audioTime = currentTime - block.start
+                if (Math.abs(audio.currentTime - audioTime) > 0.5) {
+                  audio.currentTime = audioTime
+                }
+                audio.play().catch(() => {})
+              }
+            } else {
+              if (!audio.paused) {
+                audio.pause()
+              }
+            }
+            
+            // Mettre à jour le volume
+            audio.volume = (block.volume / 100) * (track.volume / 100)
+            audio.muted = isMuted
+          }
+        })
+      }
+    })
+  }, [currentTime, isPlaying, isMuted, tracks])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -289,6 +363,94 @@ export default function VideoEditor() {
   const updateTrackVolume = (trackId: string, volume: number) => {
     setTracks(tracks.map((t) => (t.id === trackId ? { ...t, volume } : t)))
   }
+  
+  // Fonction pour mettre à jour la position d'un bloc
+  const updateBlockStart = (trackId: string, blockId: string, newStart: number) => {
+    setTracks(tracks.map((track) => {
+      if (track.id === trackId && track.blocks) {
+        return {
+          ...track,
+          blocks: track.blocks.map((block) => {
+            if (block.id === blockId) {
+              // S'assurer que le bloc reste dans les limites de la timeline
+              const clampedStart = Math.max(0, Math.min(newStart, duration - block.duration))
+              return { ...block, start: clampedStart }
+            }
+            return block
+          })
+        }
+      }
+      return track
+    }))
+  }
+  
+  // Gestionnaires de drag & drop pour les blocs
+  const handleBlockMouseDown = (e: React.MouseEvent, trackId: string, block: AudioBlock) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Vérifier si la piste est verrouillée
+    const track = tracks.find(t => t.id === trackId)
+    if (track?.locked) return
+    
+    setDraggingBlock(block.id)
+    setDragStartX(e.clientX)
+    setDragStartTime(block.start)
+    setSelectedBlock(block.id)
+  }
+  
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!draggingBlock || !timelineRef.current) return
+    
+    const deltaX = e.clientX - dragStartX
+    const timelineWidth = timelineRef.current.offsetWidth
+    const pixelsPerSecond = (100 * 12 * zoom[0]) / duration
+    const deltaTime = deltaX / pixelsPerSecond
+    
+    const newStart = dragStartTime + deltaTime
+    
+    // Trouver la piste contenant le bloc
+    const trackWithBlock = tracks.find(t => t.blocks?.some(b => b.id === draggingBlock))
+    if (trackWithBlock) {
+      updateBlockStart(trackWithBlock.id, draggingBlock, newStart)
+    }
+  }
+  
+  const handleMouseUp = () => {
+    setDraggingBlock(null)
+  }
+  
+  // Effet pour gérer les événements globaux de souris pendant le drag
+  useEffect(() => {
+    if (draggingBlock) {
+      const handleGlobalMouseMove = (e: MouseEvent) => {
+        if (!timelineRef.current) return
+        
+        const deltaX = e.clientX - dragStartX
+        const pixelsPerSecond = (100 * 12 * zoom[0]) / duration
+        const deltaTime = deltaX / pixelsPerSecond
+        
+        const newStart = dragStartTime + deltaTime
+        
+        const trackWithBlock = tracks.find(t => t.blocks?.some(b => b.id === draggingBlock))
+        if (trackWithBlock) {
+          updateBlockStart(trackWithBlock.id, draggingBlock, newStart)
+        }
+      }
+      
+      const handleGlobalMouseUp = () => {
+        setDraggingBlock(null)
+      }
+      
+      window.addEventListener('mousemove', handleGlobalMouseMove)
+      window.addEventListener('mouseup', handleGlobalMouseUp)
+      
+      return () => {
+        window.removeEventListener('mousemove', handleGlobalMouseMove)
+        window.removeEventListener('mouseup', handleGlobalMouseUp)
+      }
+    }
+  }, [draggingBlock, dragStartX, dragStartTime, zoom, duration, tracks])
 
   if (state === "upload") {
     return (
@@ -536,7 +698,13 @@ export default function VideoEditor() {
             </div>
 
             {/* Timeline Tracks with Ruler */}
-            <div className="flex-1 overflow-auto relative">
+            <div 
+              ref={timelineRef}
+              className="flex-1 overflow-auto relative"
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
               {/* Time Ruler */}
               <div className="sticky top-0 z-10 h-6 border-b border-border bg-card flex items-center px-2">
                 {Array.from({ length: Math.ceil(duration / 10) + 1 }).map((_, i) => (
@@ -587,18 +755,28 @@ export default function VideoEditor() {
                             <div
                               key={block.id}
                               className={cn(
-                                "absolute h-full rounded cursor-move transition-all",
+                                "absolute h-full rounded cursor-move select-none",
                                 "bg-foreground/80 hover:bg-foreground",
                                 selectedBlock === block.id && "ring-2 ring-ring ring-offset-2 ring-offset-background",
+                                draggingBlock === block.id && "opacity-90 shadow-lg z-10",
+                                track.locked && "cursor-not-allowed opacity-60",
                               )}
                               style={{
                                 left: `${(block.start / duration) * 100 * 12 * zoom[0]}px`,
                                 width: `${(block.duration / duration) * 100 * 12 * zoom[0]}px`,
+                                transition: draggingBlock === block.id ? 'none' : 'all 0.15s ease-out',
                               }}
-                              onClick={() => setSelectedBlock(block.id)}
+                              onMouseDown={(e) => handleBlockMouseDown(e, track.id, block)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (!draggingBlock) setSelectedBlock(block.id)
+                              }}
                             >
-                              <div className="h-full p-2 flex flex-col justify-between">
-                                <span className="text-xs font-medium text-background truncate">{block.name}</span>
+                              <div className="h-full p-2 flex flex-col justify-between pointer-events-none">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-medium text-background truncate">{block.name}</span>
+                                  <span className="text-[10px] text-background/70 font-mono">{formatTime(block.start)}</span>
+                                </div>
                                 <div className="flex items-center gap-1">
                                   {/* Simulated audio block waveform */}
                                   {Array.from({ length: 20 }).map((_, i) => {

@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict, Any, Optional
 import google.generativeai as genai
+from dotenv import load_dotenv
 
 
 def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
@@ -14,6 +15,7 @@ def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
     Returns:
         Configured Gemini model instance
     """
+    load_dotenv()
     if api_key is None:
         api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:

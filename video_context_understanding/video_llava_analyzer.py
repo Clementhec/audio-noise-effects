@@ -288,7 +288,7 @@ Examples:
             args.prompt
         )
 
-        print(f"✓ Analysis complete!")
+        print(f" Analysis complete!")
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

@@ -10,3 +10,9 @@ pillow>=12.0.0
 # Additional utilities
 sentencepiece
 protobuf
+
+# Google Vertex AI for video analysis
+google-cloud-aiplatform>=1.38.0
+
+# TwelveLabs for video analysis
+twelvelabs>=0.2.0

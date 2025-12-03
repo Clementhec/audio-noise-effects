@@ -19,7 +19,7 @@ sys.path.insert(0, str(project_root / "video_preprocessing"))
 
 from similarity import find_similar_sounds
 from video_preprocessing import extract_audio_from_video
-from video_audio_merger import run_complete_video_audio_merge
+from merging_audio.video_audio_merger import run_complete_video_audio_merge
 from utils.sound_embedding import process_sound_file
 
 

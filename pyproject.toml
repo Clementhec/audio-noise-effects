@@ -6,6 +6,7 @@ dependencies = [
     "audioop-lts>=0.2.2",
     "dotenv>=0.9.9",
     "elevenlabs>=2.23.0",
+    "ffmpeg-python>=0.2.0",
     "google-generativeai>=0.8.5",
     "matplotlib>=3.10.7",
     "numpy>=2.3.5",

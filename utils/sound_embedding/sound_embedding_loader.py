@@ -145,14 +145,14 @@ class SoundEmbeddingLoader:
             print(f"  WARNING: Expected {self.EXPECTED_DIMENSION} dimensions, got {actual_dim}")
             print(f"  This may indicate a model mismatch!")
 
-        print(f"  ✓ All embeddings validated ({actual_dim} dimensions)")
+        print(f"   All embeddings validated ({actual_dim} dimensions)")
 
         # Check model if column exists
         if 'embedding_model' in df.columns:
             models = df['embedding_model'].unique()
             if len(models) == 1:
                 model = models[0]
-                print(f"  ✓ Embedding model: {model}")
+                print(f"   Embedding model: {model}")
                 if model != self.EXPECTED_MODEL:
                     print(f"    WARNING: Expected {self.EXPECTED_MODEL}")
             else:

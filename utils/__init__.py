@@ -11,15 +11,15 @@ from .embeddings_utils import (
     cosine_similarity,
     distances_from_embeddings,
     indices_of_nearest_neighbors_from_distances,
-    get_embedding_dimension
+    get_embedding_dimension,
 )
 
 __all__ = [
-    'get_model',
-    'get_embedding',
-    'get_embeddings',
-    'cosine_similarity',
-    'distances_from_embeddings',
-    'indices_of_nearest_neighbors_from_distances',
-    'get_embedding_dimension'
+    "get_model",
+    "get_embedding",
+    "get_embeddings",
+    "cosine_similarity",
+    "distances_from_embeddings",
+    "indices_of_nearest_neighbors_from_distances",
+    "get_embedding_dimension",
 ]

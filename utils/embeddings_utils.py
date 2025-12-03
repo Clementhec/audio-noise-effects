@@ -45,16 +45,15 @@ def get_model(model_name: str = "all-MiniLM-L6-v2") -> SentenceTransformer:
     if model_name not in _model_cache:
         print(f"Loading embedding model: {model_name}")
         _model_cache[model_name] = SentenceTransformer(model_name)
-        print(f"Model loaded. Embedding dimension: {_model_cache[model_name].get_sentence_embedding_dimension()}")
+        print(
+            f"Model loaded. Embedding dimension: {_model_cache[model_name].get_sentence_embedding_dimension()}"
+        )
 
     return _model_cache[model_name]
 
 
 def get_embedding(
-    text: str,
-    model: str = "all-MiniLM-L6-v2",
-    normalize: bool = True,
-    **kwargs
+    text: str, model: str = "all-MiniLM-L6-v2", normalize: bool = True, **kwargs
 ) -> List[float]:
     """
     Generate embedding for a single text.
@@ -76,10 +75,7 @@ def get_embedding(
 
     # Generate embedding
     embedding = encoder.encode(
-        text,
-        normalize_embeddings=normalize,
-        convert_to_numpy=True,
-        **kwargs
+        text, normalize_embeddings=normalize, convert_to_numpy=True, **kwargs
     )
 
     return embedding.tolist()
@@ -91,7 +87,7 @@ def get_embeddings(
     normalize: bool = True,
     batch_size: int = 32,
     show_progress: bool = False,
-    **kwargs
+    **kwargs,
 ) -> List[List[float]]:
     """
     Generate embeddings for multiple texts (batch processing).
@@ -123,14 +119,16 @@ def get_embeddings(
         batch_size=batch_size,
         show_progress_bar=show_progress,
         convert_to_numpy=True,
-        **kwargs
+        **kwargs,
     )
 
     # Convert to list of lists
     return [emb.tolist() for emb in embeddings]
 
 
-def cosine_similarity(a: Union[List[float], np.ndarray], b: Union[List[float], np.ndarray]) -> float:
+def cosine_similarity(
+    a: Union[List[float], np.ndarray], b: Union[List[float], np.ndarray]
+) -> float:
     """
     Calculate cosine similarity between two vectors.
 
@@ -171,11 +169,19 @@ def distances_from_embeddings(
     }
 
     if distance_metric not in distance_metrics:
-        raise ValueError(f"Unknown distance metric: {distance_metric}. Choose from {list(distance_metrics.keys())}")
+        raise ValueError(
+            f"Unknown distance metric: {distance_metric}. Choose from {list(distance_metrics.keys())}"
+        )
 
     # Convert to numpy arrays if needed
-    query_embedding = np.array(query_embedding) if not isinstance(query_embedding, np.ndarray) else query_embedding
-    embeddings = [np.array(emb) if not isinstance(emb, np.ndarray) else emb for emb in embeddings]
+    query_embedding = (
+        np.array(query_embedding)
+        if not isinstance(query_embedding, np.ndarray)
+        else query_embedding
+    )
+    embeddings = [
+        np.array(emb) if not isinstance(emb, np.ndarray) else emb for emb in embeddings
+    ]
 
     distances = [
         distance_metrics[distance_metric](query_embedding, embedding)
@@ -386,15 +392,16 @@ def plot_multiclass_precision_recall(
     (l,) = plt.plot(recall_micro, precision_micro, color="gold", lw=2)
     lines.append(l)
     labels.append(
-        "average Precision-recall (auprc = {0:0.2f})" "".format(average_precision_micro)
+        "average Precision-recall (auprc = {0:0.2f})".format(average_precision_micro)
     )
 
     for i in range(n_classes):
         (l,) = plt.plot(recall[i], precision[i], lw=2)
         lines.append(l)
         labels.append(
-            "Precision-recall for class `{0}` (auprc = {1:0.2f})"
-            "".format(class_list[i], average_precision[i])
+            "Precision-recall for class `{0}` (auprc = {1:0.2f})".format(
+                class_list[i], average_precision[i]
+            )
         )
 
     fig = plt.gcf()
@@ -410,6 +417,7 @@ def plot_multiclass_precision_recall(
 # ============================================================================
 # Model Information
 # ============================================================================
+
 
 def get_embedding_dimension(model: str = "all-MiniLM-L6-v2") -> int:
     """
@@ -430,18 +438,18 @@ AVAILABLE_MODELS = {
     "all-MiniLM-L6-v2": {
         "dimension": 384,
         "description": "Fast, good quality, recommended default",
-        "languages": "50+ languages"
+        "languages": "50+ languages",
     },
     "all-mpnet-base-v2": {
         "dimension": 768,
         "description": "Higher quality, slower",
-        "languages": "English"
+        "languages": "English",
     },
     "paraphrase-multilingual-MiniLM-L12-v2": {
         "dimension": 384,
         "description": "Multilingual, good for non-English",
-        "languages": "50+ languages"
-    }
+        "languages": "50+ languages",
+    },
 }
 
 
@@ -463,7 +471,7 @@ if __name__ == "__main__":
         "The dog is barking loudly",
         "A canine is making noise",
         "Thunder echoes across the valley",
-        "Lightning strikes nearby"
+        "Lightning strikes nearby",
     ]
     print(f"Generating embeddings for {len(texts)} texts...")
     embeddings = get_embeddings(texts, show_progress=True)
@@ -472,6 +480,12 @@ if __name__ == "__main__":
 
     # Test similarity
     print("Similarity scores:")
-    print(f"  Dog barking vs Canine noise: {cosine_similarity(embeddings[0], embeddings[1]):.3f}")
-    print(f"  Dog barking vs Thunder: {cosine_similarity(embeddings[0], embeddings[2]):.3f}")
-    print(f"  Thunder vs Lightning: {cosine_similarity(embeddings[2], embeddings[3]):.3f}")
+    print(
+        f"  Dog barking vs Canine noise: {cosine_similarity(embeddings[0], embeddings[1]):.3f}"
+    )
+    print(
+        f"  Dog barking vs Thunder: {cosine_similarity(embeddings[0], embeddings[2]):.3f}"
+    )
+    print(
+        f"  Thunder vs Lightning: {cosine_similarity(embeddings[2], embeddings[3]):.3f}"
+    )

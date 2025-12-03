@@ -47,12 +47,7 @@ class SoundEmbedder:
         self.batch_size = batch_size
         self.show_progress = show_progress
 
-    def create_embedding_text(
-        self,
-        title: str,
-        description: str,
-        keywords: str
-    ) -> str:
+    def create_embedding_text(self, title: str, description: str, keywords: str) -> str:
         """
         Combine sound metadata into embedding text.
 
@@ -89,7 +84,7 @@ class SoundEmbedder:
         self,
         df: pd.DataFrame,
         save_output: bool = True,
-        output_path: Optional[str] = None
+        output_path: Optional[str] = None,
     ) -> pd.DataFrame:
         """
         Generate embeddings for all sounds in the dataframe.
@@ -105,42 +100,42 @@ class SoundEmbedder:
         print(f"[SoundEmbedder] Processing {len(df)} sounds...")
 
         # Validate required columns
-        required_cols = ['title', 'description', 'keywords']
+        required_cols = ["title", "description", "keywords"]
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
             raise ValueError(f"Missing required columns: {missing_cols}")
 
         # Create embedding texts
-        print("  Creating embedding texts...")
+        print("Creating embedding texts...")
         embedding_texts = []
         for idx, row in df.iterrows():
             text = self.create_embedding_text(
-                row['title'],
-                row['description'],
-                row['keywords']
+                row["title"], row["description"], row["keywords"]
             )
             embedding_texts.append(text)
 
-        print(f"  Generated {len(embedding_texts)} embedding texts")
+        print(f"Generated {len(embedding_texts)} embedding texts")
 
         # Generate embeddings in batch
-        print(f"  Generating embeddings using {self.EMBEDDING_MODEL}...")
-        print(f"  Batch size: {self.batch_size}")
+        print(f"Generating embeddings using {self.EMBEDDING_MODEL}...")
+        print(f"Batch size: {self.batch_size}")
 
         embeddings = get_embeddings(
             embedding_texts,
             model=self.EMBEDDING_MODEL,
             batch_size=self.batch_size,
-            show_progress=self.show_progress
+            show_progress=self.show_progress,
         )
 
         print(f"  Generated {len(embeddings)} embeddings")
 
         # Add embeddings to dataframe
         df_result = df.copy()
-        df_result['embedding'] = embeddings
-        df_result['embedding_model'] = self.EMBEDDING_MODEL
-        df_result['embedding_text'] = embedding_texts  # Store the combined text for reference
+        df_result["embedding"] = embeddings
+        df_result["embedding_model"] = self.EMBEDDING_MODEL
+        df_result["embedding_text"] = (
+            embedding_texts  # Store the combined text for reference
+        )
 
         # Save output if requested
         if save_output:
@@ -154,22 +149,24 @@ class SoundEmbedder:
         """Save the embedded sounds to CSV."""
         # Convert embeddings to list format for CSV storage
         df_csv = df.copy()
-        df_csv['embedding'] = df_csv['embedding'].apply(lambda x: x if isinstance(x, list) else x.tolist())
+        df_csv["embedding"] = df_csv["embedding"].apply(
+            lambda x: x if isinstance(x, list) else x.tolist()
+        )
 
         # Save to CSV
         df_csv.to_csv(output_path, index=False)
         print(f"  Saved embeddings to: {output_path}")
 
         # Also save metadata as JSON
-        metadata_path = output_path.replace('.csv', '_metadata.json')
+        metadata_path = output_path.replace(".csv", "_metadata.json")
         metadata = {
-            'embedding_model': self.EMBEDDING_MODEL,
-            'embedding_dimension': self.EMBEDDING_DIMENSION,
-            'total_sounds': len(df),
-            'batch_size': self.batch_size,
-            'text_format': '{title}: {description} [{keywords}]'
+            "embedding_model": self.EMBEDDING_MODEL,
+            "embedding_dimension": self.EMBEDDING_DIMENSION,
+            "total_sounds": len(df),
+            "batch_size": self.batch_size,
+            "text_format": "{title}: {description} [{keywords}]",
         }
-        with open(metadata_path, 'w') as f:
+        with open(metadata_path, "w") as f:
             json.dump(metadata, f, indent=2)
         print(f"  Saved metadata to: {metadata_path}")
 
@@ -177,7 +174,7 @@ class SoundEmbedder:
 def process_sound_file(
     input_path: str = "data/soundbible_details_from_section.csv",
     output_path: str = "data/soundbible_embeddings.csv",
-    batch_size: int = 32
+    batch_size: int = 32,
 ) -> pd.DataFrame:
     """
     Convenience function to process a sound CSV file.
@@ -194,25 +191,23 @@ def process_sound_file(
 
     # Try to load with semicolon delimiter first (original format)
     try:
-        df = pd.read_csv(input_path, sep=';')
-        print(f"  Loaded {len(df)} sounds (semicolon-delimited)")
+        df = pd.read_csv(input_path, sep=";")
+        print(f"Loaded {len(df)} sounds (semicolon-delimited)")
     except:
         # Fall back to comma delimiter
         df = pd.read_csv(input_path)
-        print(f"  Loaded {len(df)} sounds (comma-delimited)")
+        print(f"Loaded {len(df)} sounds (comma-delimited)")
 
     # Show column info
-    print(f"  Columns: {list(df.columns)}")
-    print(f"  Sample data:")
-    print(df[['title', 'description']].head(3))
+    print(f"Columns: {list(df.columns)}")
+    print(f"Sample data:")
+    print(df[["title", "description"]].head(3))
     print()
 
     # Create embedder and process
     embedder = SoundEmbedder(batch_size=batch_size, show_progress=True)
     df_embedded = embedder.process_sound_dataframe(
-        df,
-        save_output=True,
-        output_path=output_path
+        df, save_output=True, output_path=output_path
     )
 
     return df_embedded
@@ -234,18 +229,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input",
         default="data/soundbible_details_from_section.csv",
-        help="Path to input sound CSV file"
+        help="Path to input sound CSV file",
     )
     parser.add_argument(
         "--output",
         default="data/soundbible_embeddings.csv",
-        help="Path to save embeddings"
+        help="Path to save embeddings",
     )
     parser.add_argument(
-        "--batch-size",
-        type=int,
-        default=32,
-        help="Number of sounds to process at once"
+        "--batch-size", type=int, default=32, help="Number of sounds to process at once"
     )
 
     args = parser.parse_args()
@@ -263,24 +255,24 @@ if __name__ == "__main__":
 
     # Process the file
     df = process_sound_file(
-        input_path=args.input,
-        output_path=args.output,
-        batch_size=args.batch_size
+        input_path=args.input, output_path=args.output, batch_size=args.batch_size
     )
 
     print()
     print("=" * 70)
     print("Summary:")
-    print(f"  Total sounds embedded: {len(df)}")
-    print(f"  Embedding dimension: {len(df['embedding'].iloc[0]) if len(df) > 0 else 'N/A'}")
-    print(f"  Model: {df['embedding_model'].iloc[0] if len(df) > 0 else 'N/A'}")
+    print(f"Total sounds embedded: {len(df)}")
+    print(
+        f"Embedding dimension: {len(df['embedding'].iloc[0]) if len(df) > 0 else 'N/A'}"
+    )
+    print(f"Model: {df['embedding_model'].iloc[0] if len(df) > 0 else 'N/A'}")
     print("=" * 70)
 
     # Show a sample
     if len(df) > 0:
         print("\nSample embedded sound:")
         sample = df.iloc[0]
-        print(f"  Title: {sample['title']}")
-        print(f"  Description: {sample['description'][:100]}...")
-        print(f"  Embedding text: {sample['embedding_text'][:150]}...")
-        print(f"  Embedding (first 5): {sample['embedding'][:5]}")
+        print(f"Title: {sample['title']}")
+        print(f"Description: {sample['description'][:100]}...")
+        print(f"Embedding text: {sample['embedding_text'][:150]}...")
+        print(f"Embedding (first 5): {sample['embedding'][:5]}")

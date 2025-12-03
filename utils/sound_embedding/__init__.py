@@ -11,24 +11,17 @@ Main Components:
 Compatible with speech embeddings for semantic matching.
 """
 
-from .sound_embedder import (
-    SoundEmbedder,
-    process_sound_file
-)
+from .sound_embedder import SoundEmbedder, process_sound_file
 
-from .sound_embedding_loader import (
-    SoundEmbeddingLoader,
-    load_sound_embeddings
-)
+from .sound_embedding_loader import SoundEmbeddingLoader, load_sound_embeddings
 
 __all__ = [
     # Classes
-    'SoundEmbedder',
-    'SoundEmbeddingLoader',
-
+    "SoundEmbedder",
+    "SoundEmbeddingLoader",
     # Convenience functions
-    'process_sound_file',
-    'load_sound_embeddings'
+    "process_sound_file",
+    "load_sound_embeddings",
 ]
 
-__version__ = '1.0.0'
+__version__ = "1.0.0"

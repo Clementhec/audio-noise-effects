@@ -9,14 +9,18 @@ import sys
 import argparse
 from pathlib import Path
 from typing import Optional
+import pandas as pd
+from ast import literal_eval
 
 # Add project root to path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "video_preprocessing"))
 
+from similarity import find_similar_sounds
 from video_preprocessing import extract_audio_from_video
 from video_audio_merger import run_complete_video_audio_merge
+from utils.sound_embedding import process_sound_file
 
 
 def setup_directories(output_dir: str = "data"):
@@ -390,8 +394,9 @@ def run_llm_filtering_step(
 def run_semantic_matching_step(
     embeddings_path: Path,
     similarity_results_path: Path,
+    sound_embeddings_path: Path,
+    soundbible_metadata_path: Path,
     top_k: int = 5,
-    sound_embeddings_path=Path("data/soundbible_embeddings.csv"),
 ) -> Path:
     """
     Step 4: Match speech embeddings with sound effects.
@@ -410,21 +415,22 @@ def run_semantic_matching_step(
     print()
 
     if not sound_embeddings_path.exists():
+        if not soundbible_metadata_path.exists():
+            # fetch soundbible metadata
+            pass
+        process_sound_file(soundbible_metadata_path, sound_embeddings_path)
+
         print(f"Sound embeddings not found: {sound_embeddings_path}")
         print("Please generate sound embeddings first.")
         print("Run: uv run python utils/sound_embedding/generate_embeddings.py")
         print()
-        return None
+        return
 
     print(f"Speech embeddings: {embeddings_path}")
     print(f"Sound embeddings: {sound_embeddings_path}")
     print()
 
     try:
-        import pandas as pd
-        from ast import literal_eval
-        from similarity import find_similar_sounds
-
         # Load speech embeddings
         print("Loading speech embeddings...")
         df_speech = pd.read_csv(embeddings_path)
@@ -465,9 +471,9 @@ def run_semantic_matching_step(
         )
 
         print()
-        print(f" Similarity matching complete!")
-        print(f"  Matched {len(results)} speech segments")
-        print(f"  Results saved to: {output_path}")
+        print(f"Similarity matching complete!")
+        print(f"Matched {len(results)} speech segments")
+        print(f"Results saved to: {output_path}")
         print()
 
         # Display sample results
@@ -631,6 +637,12 @@ def main():
     embeddings_path = Path(args.output_dir) / Path(
         f"embeddings/{base_name}_video_speech_embeddings.csv"
     )
+    soundbible_metadata_path = Path(args.output_dir) / Path(
+        "input/soundbible_metadata.csv"
+    )
+    sound_embeddings_path = Path(args.output_dir) / Path(
+        "embeddings/soundbible_sound_embeddings.csv"
+    )
     similarity_results_path = Path(args.output_dir) / Path(
         f"similarity/{base_name}_similarity.json"
     )
@@ -672,8 +684,8 @@ def main():
                     f"  Exécutez d'abord --run-stt ou assurez-vous que le fichier existe"
                 )
                 sys.exit(1)
-            print(f" Utilisation de la transcription existante : {transcription_path}")
-            print(f" Utilisation du timing existant : {word_timing_path}")
+            print(f"Utilisation de la transcription existante : {transcription_path}")
+            print(f"Utilisation du timing existant : {word_timing_path}")
             print()
 
         if args.run_embeddings:
@@ -692,7 +704,11 @@ def main():
 
         if args.run_matching:
             similarity_results_path = run_semantic_matching_step(
-                embeddings_path, similarity_results_path, top_k=args.top_k
+                embeddings_path,
+                similarity_results_path,
+                top_k=args.top_k,
+                sound_embeddings_path=sound_embeddings_path,
+                soundbible_metadata_path=soundbible_metadata_path,
             )
         elif args.run_llm_filter:
             # Check if similarity results exist

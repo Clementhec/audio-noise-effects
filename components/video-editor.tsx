@@ -201,6 +201,12 @@ export default function VideoEditor() {
   const [dragStartX, setDragStartX] = useState<number>(0)
   const [dragStartTime, setDragStartTime] = useState<number>(0)
   const timelineRef = useRef<HTMLDivElement>(null)
+  
+  // États pour le redimensionnement des blocs
+  const [resizingBlock, setResizingBlock] = useState<string | null>(null)
+  const [resizeEdge, setResizeEdge] = useState<"left" | "right" | null>(null)
+  const [resizeStartX, setResizeStartX] = useState<number>(0)
+  const [resizeStartData, setResizeStartData] = useState<{ start: number; duration: number } | null>(null)
 
   // Initialiser les éléments audio pour les blocs avec audioUrl
   useEffect(() => {
@@ -384,6 +390,44 @@ export default function VideoEditor() {
     }))
   }
   
+  // Fonction pour mettre à jour le début et la durée d'un bloc (pour le redimensionnement)
+  const updateBlockDimensions = (trackId: string, blockId: string, newStart: number, newDuration: number) => {
+    setTracks(tracks.map((track) => {
+      if (track.id === trackId && track.blocks) {
+        return {
+          ...track,
+          blocks: track.blocks.map((block) => {
+            if (block.id === blockId) {
+              // S'assurer que la durée minimale est de 1 seconde
+              const clampedDuration = Math.max(1, newDuration)
+              // S'assurer que le bloc reste dans les limites de la timeline
+              const clampedStart = Math.max(0, Math.min(newStart, duration - clampedDuration))
+              return { ...block, start: clampedStart, duration: clampedDuration }
+            }
+            return block
+          })
+        }
+      }
+      return track
+    }))
+  }
+  
+  // Gestionnaires de redimensionnement pour les blocs
+  const handleResizeMouseDown = (e: React.MouseEvent, trackId: string, block: AudioBlock, edge: "left" | "right") => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Vérifier si la piste est verrouillée
+    const track = tracks.find(t => t.id === trackId)
+    if (track?.locked) return
+    
+    setResizingBlock(block.id)
+    setResizeEdge(edge)
+    setResizeStartX(e.clientX)
+    setResizeStartData({ start: block.start, duration: block.duration })
+    setSelectedBlock(block.id)
+  }
+  
   // Gestionnaires de drag & drop pour les blocs
   const handleBlockMouseDown = (e: React.MouseEvent, trackId: string, block: AudioBlock) => {
     e.preventDefault()
@@ -418,6 +462,9 @@ export default function VideoEditor() {
   
   const handleMouseUp = () => {
     setDraggingBlock(null)
+    setResizingBlock(null)
+    setResizeEdge(null)
+    setResizeStartData(null)
   }
   
   // Effet pour gérer les événements globaux de souris pendant le drag
@@ -451,6 +498,47 @@ export default function VideoEditor() {
       }
     }
   }, [draggingBlock, dragStartX, dragStartTime, zoom, duration, tracks])
+  
+  // Effet pour gérer les événements globaux de souris pendant le redimensionnement
+  useEffect(() => {
+    if (resizingBlock && resizeStartData && resizeEdge) {
+      const handleGlobalMouseMove = (e: MouseEvent) => {
+        if (!timelineRef.current) return
+        
+        const deltaX = e.clientX - resizeStartX
+        const pixelsPerSecond = (100 * 12 * zoom[0]) / duration
+        const deltaTime = deltaX / pixelsPerSecond
+        
+        const trackWithBlock = tracks.find(t => t.blocks?.some(b => b.id === resizingBlock))
+        if (trackWithBlock) {
+          if (resizeEdge === "left") {
+            // Redimensionnement par la gauche: on déplace le début et on ajuste la durée
+            const newStart = resizeStartData.start + deltaTime
+            const newDuration = resizeStartData.duration - deltaTime
+            updateBlockDimensions(trackWithBlock.id, resizingBlock, newStart, newDuration)
+          } else {
+            // Redimensionnement par la droite: on change seulement la durée
+            const newDuration = resizeStartData.duration + deltaTime
+            updateBlockDimensions(trackWithBlock.id, resizingBlock, resizeStartData.start, newDuration)
+          }
+        }
+      }
+      
+      const handleGlobalMouseUp = () => {
+        setResizingBlock(null)
+        setResizeEdge(null)
+        setResizeStartData(null)
+      }
+      
+      window.addEventListener('mousemove', handleGlobalMouseMove)
+      window.addEventListener('mouseup', handleGlobalMouseUp)
+      
+      return () => {
+        window.removeEventListener('mousemove', handleGlobalMouseMove)
+        window.removeEventListener('mouseup', handleGlobalMouseUp)
+      }
+    }
+  }, [resizingBlock, resizeStartX, resizeStartData, resizeEdge, zoom, duration, tracks])
 
   if (state === "upload") {
     return (
@@ -755,41 +843,75 @@ export default function VideoEditor() {
                             <div
                               key={block.id}
                               className={cn(
-                                "absolute h-full rounded cursor-move select-none",
+                                "absolute h-full rounded select-none group",
                                 "bg-foreground/80 hover:bg-foreground",
                                 selectedBlock === block.id && "ring-2 ring-ring ring-offset-2 ring-offset-background",
-                                draggingBlock === block.id && "opacity-90 shadow-lg z-10",
-                                track.locked && "cursor-not-allowed opacity-60",
+                                (draggingBlock === block.id || resizingBlock === block.id) && "opacity-90 shadow-lg z-10",
+                                track.locked && "opacity-60",
                               )}
                               style={{
                                 left: `${(block.start / duration) * 100 * 12 * zoom[0]}px`,
                                 width: `${(block.duration / duration) * 100 * 12 * zoom[0]}px`,
-                                transition: draggingBlock === block.id ? 'none' : 'all 0.15s ease-out',
+                                transition: (draggingBlock === block.id || resizingBlock === block.id) ? 'none' : 'all 0.15s ease-out',
                               }}
-                              onMouseDown={(e) => handleBlockMouseDown(e, track.id, block)}
                               onClick={(e) => {
                                 e.stopPropagation()
-                                if (!draggingBlock) setSelectedBlock(block.id)
+                                if (!draggingBlock && !resizingBlock) setSelectedBlock(block.id)
                               }}
                             >
-                              <div className="h-full p-2 flex flex-col justify-between pointer-events-none">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-medium text-background truncate">{block.name}</span>
-                                  <span className="text-[10px] text-background/70 font-mono">{formatTime(block.start)}</span>
+                              {/* Poignée de redimensionnement gauche */}
+                              <div
+                                className={cn(
+                                  "absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize z-20",
+                                  "bg-background/0 hover:bg-background/30 transition-colors",
+                                  "rounded-l flex items-center justify-center",
+                                  track.locked && "cursor-not-allowed"
+                                )}
+                                onMouseDown={(e) => handleResizeMouseDown(e, track.id, block, "left")}
+                              >
+                                <div className="w-0.5 h-4 bg-background/50 rounded opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              
+                              {/* Zone centrale draggable */}
+                              <div 
+                                className={cn(
+                                  "absolute left-2 right-2 top-0 bottom-0 cursor-move",
+                                  track.locked && "cursor-not-allowed"
+                                )}
+                                onMouseDown={(e) => handleBlockMouseDown(e, track.id, block)}
+                              >
+                                <div className="h-full p-2 flex flex-col justify-between pointer-events-none">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-medium text-background truncate">{block.name}</span>
+                                    <span className="text-[10px] text-background/70 font-mono">{formatTime(block.duration)}s</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    {/* Simulated audio block waveform */}
+                                    {Array.from({ length: 20 }).map((_, i) => {
+                                      const height = Math.random() * 50 + 30
+                                      return (
+                                        <div
+                                          key={i}
+                                          className="flex-1 bg-background/40 rounded-full"
+                                          style={{ height: `${height}%` }}
+                                        />
+                                      )
+                                    })}
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  {/* Simulated audio block waveform */}
-                                  {Array.from({ length: 20 }).map((_, i) => {
-                                    const height = Math.random() * 50 + 30
-                                    return (
-                                      <div
-                                        key={i}
-                                        className="flex-1 bg-background/40 rounded-full"
-                                        style={{ height: `${height}%` }}
-                                      />
-                                    )
-                                  })}
-                                </div>
+                              </div>
+                              
+                              {/* Poignée de redimensionnement droite */}
+                              <div
+                                className={cn(
+                                  "absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize z-20",
+                                  "bg-background/0 hover:bg-background/30 transition-colors",
+                                  "rounded-r flex items-center justify-center",
+                                  track.locked && "cursor-not-allowed"
+                                )}
+                                onMouseDown={(e) => handleResizeMouseDown(e, track.id, block, "right")}
+                              >
+                                <div className="w-0.5 h-4 bg-background/50 rounded opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                             </div>
                           ))}

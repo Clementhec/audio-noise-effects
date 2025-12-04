@@ -125,11 +125,13 @@ def clean_sounds_description(sound_details: pd.DataFrame) -> pd.DataFrame:
     return sound_details
 
 
-def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
+def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
     BASE_URL = "https://soundbible.com/"
 
     # Selectors
-    SEL_AUDIO_PRIMARY = "#ag1 > div:nth-child(2) > div > div > div > div.the-media > audio > source"
+    SEL_AUDIO_PRIMARY = (
+        "#ag1 > div:nth-child(2) > div > div > div > div.the-media > audio > source"
+    )
     SEL_TIME_PRIMARY = "#ag1 > div:nth-child(2) > div > div > div > div.ap-controls.scrubbar-loaded > div.scrubbar > div.total-time"
 
     # Fallback selectors
@@ -137,20 +139,22 @@ def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
         "div.audioplayer-inner .the-media audio source",
         "div.audioplayer-inner audio source",
         "#ag1 source",
-        "audio source"
+        "audio source",
     ]
     FALLBACK_TIME_SELECTORS = [
         "div.audioplayer-inner .total-time",
         ".total-time",
-        "div.total-time"
+        "div.total-time",
     ]
 
     session = requests.Session()
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/124.0.0.0 Safari/537.36"
-    })
+    session.headers.update(
+        {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        }
+    )
 
     results = []
 
@@ -163,7 +167,15 @@ def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
             url = urljoin(BASE_URL, str(row["href"]))
         else:
             print(f"[{idx}] Aucun 'url' ni 'href' trouvé, skip")
-            results.append({"index": idx, "url": None, "audio_length": None, "audio_file": None, "audio_url": None})
+            results.append(
+                {
+                    "index": idx,
+                    "url": None,
+                    "audio_length": None,
+                    "audio_file": None,
+                    "audio_url": None,
+                }
+            )
             continue
 
         audio_file_name = None
@@ -174,7 +186,15 @@ def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
             resp = session.get(url, timeout=15)
             if resp.status_code != 200:
                 print(f"  → status {resp.status_code}, skip")
-                results.append({"index": idx, "url": url, "audio_length": None, "audio_file": None, "audio_url": None})
+                results.append(
+                    {
+                        "index": idx,
+                        "url": url,
+                        "audio_length": None,
+                        "audio_file": None,
+                        "audio_url": None,
+                    }
+                )
                 continue
 
             soup = BeautifulSoup(resp.text, "html.parser")
@@ -191,7 +211,11 @@ def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
                 if ds_tag and ds_tag.has_attr("data-source"):
                     data_src = ds_tag["data-source"]
                     # le contenu peut être JSON-like; on cherche le premier mp3/wav
-                    m = re.search(r"(?:mp3|wav)/[A-Za-z0-9._\-\s()%]+(?:\.mp3|\.wav)", data_src, re.IGNORECASE)
+                    m = re.search(
+                        r"(?:mp3|wav)/[A-Za-z0-9._\-\s()%]+(?:\.mp3|\.wav)",
+                        data_src,
+                        re.IGNORECASE,
+                    )
                     if m:
                         src = m.group(0)
                 # si toujours rien, essayer autres fallback selectors
@@ -224,7 +248,9 @@ def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
                         break
                 if found:
                     audio_url_full = urljoin(url, found)
-                    audio_file_name = unquote(os.path.basename(urlparse(audio_url_full).path))
+                    audio_file_name = unquote(
+                        os.path.basename(urlparse(audio_url_full).path)
+                    )
 
             # 2) audio length : main selector
             time_tag = soup.select_one(SEL_TIME_PRIMARY)
@@ -244,17 +270,27 @@ def fetch_audio_urls_from_details(sound_details:pd.DataFrame) -> pd.DataFrame:
                 if t:
                     audio_length = t.get_text(strip=True)
 
-            results.append({
-                "index": idx,
-                "url": url,
-                "audio_length": audio_length,
-                "audio_file": audio_file_name,
-                "audio_url": audio_url_full
-            })
+            results.append(
+                {
+                    "index": idx,
+                    "url": url,
+                    "audio_length": audio_length,
+                    "audio_file": audio_file_name,
+                    "audio_url": audio_url_full,
+                }
+            )
 
         except Exception as e:
             print(f"erreur sur {url}: {e}")
-            results.append({"index": idx, "url": url, "audio_length": None, "audio_file": None, "audio_url": None})
+            results.append(
+                {
+                    "index": idx,
+                    "url": url,
+                    "audio_length": None,
+                    "audio_file": None,
+                    "audio_url": None,
+                }
+            )
 
     return pd.DataFrame(results)
 
@@ -277,4 +313,3 @@ if __name__ == "__main__":
     sound_audio_urls = fetch_audio_urls_from_details(sound_details)
 
     sound_audio_urls.to_csv("soundbible_audio_files.csv")
-    

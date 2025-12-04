@@ -1,20 +1,21 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Main Video Preprocessing Pipeline
-"""
-
 import os
 import sys
+import json
 import argparse
+import numpy as np
+import pandas as pd
 from pathlib import Path
 from typing import Optional
+from ast import literal_eval
 
 # Add project root to path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "video_preprocessing"))
 
+from utils import get_embeddings
+from similarity import find_similar_sounds
+from text_processing import SpeechSegmenter
 from video_preprocessing import extract_audio_from_video
 from video_audio_merger import run_complete_video_audio_merge
 
@@ -185,25 +186,17 @@ def run_embeddings_step(
 
     # Check if embeddings already exist
     if output_path.exists() and not force_regenerate:
-        print(f" Embeddings already exist: {output_path}")
-        print("  Skipping generation (use --force-regenerate to recreate)")
+        print(f"Embeddings already exist: {output_path}")
+        print("Skipping generation (use --force-regenerate to recreate)")
         return output_path
 
     print(f"Transcription file: {transcription_path}")
     print(f"Word timing file: {word_timing_path}")
 
-    # Import required modules
-    import json
-    import pandas as pd
-    import numpy as np
-    from text_processing import SpeechSegmenter
-    from utils import get_embeddings
-
     def parse_time_string(time_str: str) -> float:
         """Convert time string from STT format to float seconds."""
         return float(time_str.rstrip("s"))
 
-    # Load STT data
     print("Loading STT output...")
     with open(word_timing_path, "r") as f:
         raw_word_timings = json.load(f)
@@ -246,7 +239,6 @@ def run_embeddings_step(
     if not segments:
         raise ValueError("No segments created!")
 
-    # Generate embeddings
     print("Generating embeddings...")
     segment_texts = [seg["text"] for seg in segments]
     EMBEDDING_MODEL = "all-MiniLM-L6-v2"
@@ -256,8 +248,6 @@ def run_embeddings_step(
     )
     print(f"Generated {len(embeddings)} embeddings (dim: {len(embeddings[0])})")
 
-    # Create DataFrame
-    print("Creating DataFrame...")
     output_data = []
     for i, segment in enumerate(segments):
         output_data.append(
@@ -281,13 +271,9 @@ def run_embeddings_step(
         lambda x: x.tolist() if isinstance(x, np.ndarray) else x
     )
 
-    # Ensure parent directory exists
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
     df_csv.to_csv(output_path, index=False)
 
-    print(f"Embeddings generated successfully!")
-    print(f"Saved to: {output_path}")
+    print(f"Embeddings saved to: {output_path}")
     print(f"Total segments: {len(df)}")
 
     return output_path
@@ -421,10 +407,6 @@ def run_semantic_matching_step(
     print()
 
     try:
-        import pandas as pd
-        from ast import literal_eval
-        from similarity import find_similar_sounds
-
         # Load speech embeddings
         print("Loading speech embeddings...")
         df_speech = pd.read_csv(embeddings_path)
@@ -434,7 +416,7 @@ def run_semantic_matching_step(
             if isinstance(df_speech["embedding"].iloc[0], str):
                 df_speech["embedding"] = df_speech["embedding"].apply(literal_eval)
 
-        print(f"  Loaded {len(df_speech)} speech segments")
+        print(f"Loaded {len(df_speech)} speech segments")
         print()
 
         # Load sound embeddings
@@ -446,15 +428,9 @@ def run_semantic_matching_step(
             if isinstance(df_sounds["embedding"].iloc[0], str):
                 df_sounds["embedding"] = df_sounds["embedding"].apply(literal_eval)
 
-        print(f"  Loaded {len(df_sounds)} sound effects")
-        print()
+        print(f"Loaded {len(df_sounds)} sound effects")
 
-        # Run similarity matching
-        print(f"Finding top {top_k} similar sounds for each speech segment...")
         output_path = similarity_results_path
-
-        # Ensure parent directory exists
-        output_path.parent.mkdir(parents=True, exist_ok=True)
 
         results = find_similar_sounds(
             df_speech=df_speech,
@@ -464,29 +440,9 @@ def run_semantic_matching_step(
             output_path=str(output_path),
         )
 
-        print()
-        print(f" Similarity matching complete!")
-        print(f"  Matched {len(results)} speech segments")
-        print(f"  Results saved to: {output_path}")
-        print()
+        print(f"Matched {len(results)} speech segments")
+        print(f"Results saved to: {output_path}")
 
-        # Display sample results
-        if results:
-            print("Sample matches:")
-            print("-" * 70)
-            for i, result in enumerate(results[:3]):  # Show first 3
-                print(
-                    f'\nSegment {result["speech_index"]}: "{result["speech_text"][:60]}..."'
-                )
-                top_match = result["top_matches"][0]
-                print(f"  Best match: {top_match['sound_title']}")
-                print(f"  Similarity: {top_match['similarity']:.4f}")
-                print(f"  Description: {top_match['sound_description'][:80]}...")
-
-            if len(results) > 3:
-                print(f"\n... and {len(results) - 3} more segments")
-
-        print()
         return output_path
 
     except ImportError as e:
@@ -613,7 +569,7 @@ def main():
         args.run_llm_filter = True
         args.run_video_merge = True
 
-    validate_args()
+    validate_args(args)
     setup_directories(output_dir=args.output_dir)
 
     # Initialize paths from default locations

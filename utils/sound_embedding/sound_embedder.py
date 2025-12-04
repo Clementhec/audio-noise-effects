@@ -146,12 +146,11 @@ class SoundEmbedder:
             lambda x: x if isinstance(x, list) else x.tolist()
         )
 
-        # Save to CSV
         df_csv.to_csv(output_path, index=False)
         print(f"Saved embeddings to: {output_path}")
 
         # Also save metadata as JSON
-        metadata_path = output_path.replace(".csv", "_metadata.json")
+        metadata_path = str(output_path).replace(".csv", "_metadata.json")
         metadata = {
             "embedding_model": self.EMBEDDING_MODEL,
             "embedding_dimension": self.EMBEDDING_DIMENSION,

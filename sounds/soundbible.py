@@ -185,7 +185,7 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
         try:
             resp = session.get(url, timeout=15)
             if resp.status_code != 200:
-                print(f"  → status {resp.status_code}, skip")
+                print(f"status {resp.status_code}, skip")
                 results.append(
                     {
                         "index": idx,
@@ -291,8 +291,11 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
                     "audio_url": None,
                 }
             )
-
-    return pd.DataFrame(results)
+            # also add the title of the sound for further matching
+        results[-1]["title"] = row["title"]
+    sounds_df = pd.DataFrame(results)
+    sounds_df["audio_url_wav"] = sounds_df["audio_url"].str.replace("mp3", "wav")
+    return sounds_df
 
 
 if __name__ == "__main__":

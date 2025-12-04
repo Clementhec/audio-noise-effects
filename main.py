@@ -27,6 +27,7 @@ def setup_directories(output_dir: str = "data"):
         output_dir,  # Base output directory
         f"{output_dir}/audio",  # Extracted audio files
         f"{output_dir}/soundbible",  # soundbible sounds metadata
+        f"{output_dir}/soundbible/downloaded_sounds",  # soundbible download directory
         f"{output_dir}/speech_to_text",  # Transcription and word timing files
         f"{output_dir}/embeddings",  # Speech embeddings
         f"{output_dir}/similarity",  # Similarity matching results
@@ -556,6 +557,10 @@ def main():
     audio_base_path = Path(args.output_dir) / "audio" / (Path(args.video).stem + ".wav")
     soundbible_embeddings_path = Path(args.output_dir) / "embeddings/soundbible.csv"
     soundbible_details_path = Path(args.output_dir) / "soundbible"
+    soundbible_download_dir = Path(args.output_dir) / Path(
+        "soundbible/downloaded_sounds"
+    )
+    sound_audio_urls_path = soundbible_details_path / "soundbible_audio_files.csv"
     transcription_path = Path(args.output_dir) / Path(
         f"speech_to_text/{base_name}_full_transcription.json"
     )
@@ -575,151 +580,120 @@ def main():
         f"output/{base_name}_soundeasy.mp4"
     )
 
-    try:
-        audio_path = extract_audio(
-            args.video,
-            output_dir=audio_base_path,
-            sample_rate=args.sample_rate,
-            channels=args.channels,
+    audio_path = extract_audio(
+        args.video,
+        output_dir=audio_base_path,
+        sample_rate=args.sample_rate,
+        channels=args.channels,
+    )
+    if args.run_stt:
+        transcription_path, word_timing_path = run_stt_step(
+            audio_path=audio_path,
+            transcription_path=transcription_path,
+            word_timing_path=word_timing_path,
         )
-        if args.run_stt:
-            transcription_path, word_timing_path = run_stt_step(
-                audio_path=audio_path,
-                transcription_path=transcription_path,
-                word_timing_path=word_timing_path,
-            )
-        elif args.run_embeddings or args.run_video_merge:
-            # Check if required files exist
-            if not transcription_path.exists():
-                print(f"Error: missing {transcription_path}")
-                sys.exit(1)
-            if not word_timing_path.exists():
-                print(f"Error: missing {word_timing_path}")
-                sys.exit(1)
+    elif args.run_embeddings or args.run_video_merge:
+        if not transcription_path.exists():
+            print(f"Error: missing {transcription_path}")
+            sys.exit(1)
+        if not word_timing_path.exists():
+            print(f"Error: missing {word_timing_path}")
+            sys.exit(1)
 
-        if args.run_embeddings:
-            embeddings_path = run_embeddings_step(
-                transcription_path,
-                word_timing_path,
-                embeddings_path,
-                force_regenerate=args.force_regenerate,
-            )
-        elif args.run_matching:
-            # Check if embeddings exist
-            if not embeddings_path.exists():
-                print(f"Missing video speech embeddings : {embeddings_path}")
-                sys.exit(1)
-            print(f"Use existing video speech embeddings : {embeddings_path}")
+    if args.run_embeddings:
+        embeddings_path = run_embeddings_step(
+            transcription_path,
+            word_timing_path,
+            embeddings_path,
+            force_regenerate=args.force_regenerate,
+        )
+    elif args.run_matching:
+        if not embeddings_path.exists():
+            print(f"Missing video speech embeddings : {embeddings_path}")
+            sys.exit(1)
+        print(f"Use existing video speech embeddings : {embeddings_path}")
 
-            # check if sounds embeddings exist
-            if not soundbible_embeddings_path.exists():
-                from utils.sound_embedding.sound_embedder import SoundEmbedder
-                from sounds.soundbible import (
-                    fetch_sound_hrefs,
-                    fetch_sound_details_from_hrefs,
-                    clean_sounds_description,
-                    fetch_audio_urls_from_details,
-                )
+        from utils.sound_embedding.sound_embedder import SoundEmbedder
+        from sounds.soundbible import (
+            fetch_sound_hrefs,
+            fetch_sound_details_from_hrefs,
+            clean_sounds_description,
+            fetch_audio_urls_from_details,
+        )
 
-                base_url = "https://soundbible.com/free-sound-effects-{}.html"
-                sound_links_path = soundbible_details_path / "soundbible_links.csv"
-                if not sound_links_path.exists():
-                    sound_hrefs = fetch_sound_hrefs(base_url)
-                    sound_hrefs.to_csv(sound_links_path, index=False)
-                sound_details_path = soundbible_details_path / "soundbible_details.csv"
-                if not sound_details_path.exists():
-                    sound_hrefs = pd.read_csv(sound_links_path)
-                    sound_details = fetch_sound_details_from_hrefs(sound_hrefs)
-                    sound_details.to_csv(sound_details_path, index=False)
-                sound_details_clean_path = (
-                    soundbible_details_path / "soundbible_details_clean.csv"
-                )
-                if not sound_details_clean_path.exists():
-                    sound_details = pd.read_csv(sound_details_path)
-                    sound_details_clean = clean_sounds_description(sound_details)
-                    sound_details_clean.to_csv(sound_details_clean_path, index=False)
-                sound_audio_urls_path = (
-                    soundbible_details_path / "soundbible_audio_files.csv"
-                )
-                if not sound_audio_urls_path.exists():
-                    sound_details = pd.read_csv(sound_details_path)
-                    sound_audio_urls = fetch_audio_urls_from_details(sound_details)
-                    sound_audio_urls.to_csv(sound_audio_urls_path)
-                soundbible_details = pd.read_csv(sound_details_clean_path)
-                SoundEmbedder().process_sound_dataframe(
-                    soundbible_details, output_path=soundbible_embeddings_path
-                )
-
-        if args.run_matching:
-            similarity_results_path = run_semantic_matching_step(
-                embeddings_path,
-                similarity_results_path,
-                top_k=args.top_k,
-                sound_embeddings_path=soundbible_embeddings_path,
-            )
-        elif args.run_llm_filter:
-            # Check if similarity results exist
-            if not similarity_results_path.exists():
-                print(f"Missing similarity results : {similarity_results_path}")
-                sys.exit(1)
-            print(f"Using existing similarity results : {similarity_results_path}")
-            print()
-
-        if args.run_llm_filter:
-            filtered_results_path = run_llm_filtering_step(
-                similarity_results_path,
-                filtered_results_path,
-                max_sounds=args.max_sounds,
-            )
-        elif args.run_video_merge:
-            # Check if filtered results exist
-            if not filtered_results_path.exists():
-                print(
-                    f"Erreur : Les résultats filtrés LLM sont manquants : {filtered_results_path}"
-                )
-                print(
-                    f"Exécutez d'abord --run-llm-filter ou assurez-vous que le fichier existe"
-                )
-                sys.exit(1)
-            print(
-                f" Utilisation des résultats filtrés existants : {filtered_results_path}"
+        base_url = "https://soundbible.com/free-sound-effects-{}.html"
+        sound_links_path = soundbible_details_path / "soundbible_links.csv"
+        if not sound_links_path.exists():
+            sound_hrefs = fetch_sound_hrefs(base_url)
+            sound_hrefs.to_csv(sound_links_path, index=False)
+        sound_details_path = soundbible_details_path / "soundbible_details.csv"
+        if not sound_details_path.exists():
+            sound_hrefs = pd.read_csv(sound_links_path)
+            sound_details = fetch_sound_details_from_hrefs(sound_hrefs)
+            sound_details.to_csv(sound_details_path, index=False)
+        sound_details_clean_path = (
+            soundbible_details_path / "soundbible_details_clean.csv"
+        )
+        if not sound_details_clean_path.exists():
+            sound_details = pd.read_csv(sound_details_path)
+            sound_details_clean = clean_sounds_description(sound_details)
+            sound_details_clean.to_csv(sound_details_clean_path, index=False)
+        if not sound_audio_urls_path.exists():
+            sound_details = pd.read_csv(sound_details_path)
+            sound_audio_urls = fetch_audio_urls_from_details(sound_details)
+            sound_audio_urls.to_csv(sound_audio_urls_path)
+        soundbible_details = pd.read_csv(sound_details_clean_path)
+        if not soundbible_embeddings_path.exists():
+            SoundEmbedder().process_sound_dataframe(
+                soundbible_details, output_path=soundbible_embeddings_path
             )
 
-        if args.run_video_merge:
-            # Check if original audio exists
-            if not audio_path.exists():
-                print(f"Missing audio path : {audio_path}")
-                sys.exit(1)
+    if args.run_matching:
+        similarity_results_path = run_semantic_matching_step(
+            embeddings_path,
+            similarity_results_path,
+            top_k=args.top_k,
+            sound_embeddings_path=soundbible_embeddings_path,
+        )
+    elif args.run_llm_filter:
+        if not similarity_results_path.exists():
+            print(f"Missing similarity results : {similarity_results_path}")
+            sys.exit(1)
+        print(f"Using existing similarity results : {similarity_results_path}")
 
-            print("Starting video-audio merge pipeline...")
+    if args.run_llm_filter:
+        filtered_results_path = run_llm_filtering_step(
+            similarity_results_path,
+            filtered_results_path,
+            max_sounds=args.max_sounds,
+        )
+    elif args.run_video_merge:
+        if not filtered_results_path.exists():
+            print(f"Error : missing filtered results : {filtered_results_path}")
+            sys.exit(1)
+        print(f"Using existing filtered results: {filtered_results_path}")
 
-            # Ensure output directory exists
-            output_video_path.parent.mkdir(parents=True, exist_ok=True)
+    if args.run_video_merge:
+        if not audio_path.exists():
+            print(f"Missing audio path : {audio_path}")
+            sys.exit(1)
 
-            final_video_path = run_complete_video_audio_merge(
-                video_path=input_video_path,
-                filtered_results_path=filtered_results_path,
-                speech_embedding_file=embeddings_path,
-                word_timing_path=word_timing_path,
-                original_audio_path=audio_path,
-                output_video_path=output_video_path,
-                sound_intensity=args.sound_intensity,
-                sound_duration=args.sound_duration,
-                metadata_path=sound_audio_urls_path,
-            )
+        final_video_path = run_complete_video_audio_merge(
+            video_path=input_video_path,
+            filtered_results_path=filtered_results_path,
+            speech_embedding_file=embeddings_path,
+            word_timing_path=word_timing_path,
+            original_audio_path=audio_path,
+            output_video_path=output_video_path,
+            sound_intensity=args.sound_intensity,
+            sound_duration=args.sound_duration,
+            metadata_path=sound_audio_urls_path,
+            soundbible_download_dir=soundbible_download_dir,
+        )
 
-            print("Generated files:")
-            print(f"Audio: {audio_path}")
-            print(f"Final video path : {final_video_path}")
-
-    except Exception as e:
-        print()
-        print("=" * 70)
-        print("ERROR: Pipeline failed")
-        print("=" * 70)
-        print(f"{e}")
-        print()
-        sys.exit(1)
+        print("Generated files:")
+        print(f"Audio: {audio_path}")
+        print(f"Final video path : {final_video_path}")
 
 
 if __name__ == "__main__":

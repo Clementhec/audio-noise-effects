@@ -67,9 +67,9 @@ Here is the data to analyze:
         prompt += f"Text: \"{item['speech_text']}\"\n"
         prompt += f"Suggested sounds:\n"
         for i, match in enumerate(item['top_matches'][:3], 1):  # Top 3 only
-            prompt += f"  [Index {i-1}] {match['sound_title']} (similarity: {match['similarity']:.2f})\n"
-            prompt += f"              Description: {match['sound_description']}\n"
-    
+            prompt += f"  {i}. {match['sound_title']} (similarity: {match['similarity']:.2f})\n"
+            prompt += f"     Description: {match['sound_description']}\n"
+            prompt += f"     URL: {match['audio_url_wav']}\n"
     prompt += """
 
 RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
@@ -80,10 +80,15 @@ CRITICAL: Use ONLY the sound_index (0, 1, or 2) to reference sounds. DO NOT copy
   "filtered_sounds": [
     {
       "speech_index": 0,
-      "relevance_rank": 1,
-      "target_word": "specific word where to place the sound",
-      "selected_sound_index": 0,
-      "reasoning": "brief explanation of why this sound, this word, and this rank"
+      "speech_text": "original text",
+      "should_add_sound": true/false,
+      "target_word": "specific word where to place the sound (null if should_add_sound=false)",
+      "selected_sound": {
+        "sound_title": "title of chosen sound",
+        "audio_url_wav": "EXACT URL from the data above - DO NOT MODIFY",
+        "reason": "brief explanation of why this sound and this word"
+      },
+      "reasoning": "explanation of the decision"
     }
   ]
 }

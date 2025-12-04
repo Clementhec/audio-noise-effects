@@ -165,8 +165,8 @@ def prepare_sound_effects(
     embeddings = pd.read_csv(embedding_file)
 
     for item in filtered_results.get("filtered_sounds", []):
-        # if not item.get("should_add_sound", False):
-        #     continue
+        if not item.get("should_add_sound", False):
+            continue
 
         segment_id = item.get("speech_index")
         # the LLM filtering does not respect the embedding segments

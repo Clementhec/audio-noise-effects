@@ -7,19 +7,12 @@ Uses HuggingFace sentence-transformers (all-MiniLM-L6-v2) for local, offline emb
 This ensures compatibility with speech embeddings for semantic matching.
 """
 
-import os
-import sys
 import json
 import pandas as pd
-import numpy as np
-from typing import Optional, List
-from pathlib import Path
+from typing import Optional
 import ast
 
-# Add parent directory to path to import utils
-# sys.path.append(str(Path(__file__).parent))
-
-from utils.embeddings_utils import get_embeddings, get_embedding_dimension
+from utils.embeddings_utils import get_embeddings
 
 
 class SoundEmbedder:
@@ -106,7 +99,7 @@ class SoundEmbedder:
             raise ValueError(f"Missing required columns: {missing_cols}")
 
         # Create embedding texts
-        print("  Creating embedding texts...")
+        print("Creating embedding texts...")
         embedding_texts = []
         for idx, row in df.iterrows():
             text = self.create_embedding_text(
@@ -117,8 +110,8 @@ class SoundEmbedder:
         print(f"  Generated {len(embedding_texts)} embedding texts")
 
         # Generate embeddings in batch
-        print(f"  Generating embeddings using {self.EMBEDDING_MODEL}...")
-        print(f"  Batch size: {self.batch_size}")
+        print(f"Generating embeddings using {self.EMBEDDING_MODEL}...")
+        print(f"Batch size: {self.batch_size}")
 
         embeddings = get_embeddings(
             embedding_texts,
@@ -155,7 +148,7 @@ class SoundEmbedder:
 
         # Save to CSV
         df_csv.to_csv(output_path, index=False)
-        print(f"  Saved embeddings to: {output_path}")
+        print(f"Saved embeddings to: {output_path}")
 
         # Also save metadata as JSON
         metadata_path = output_path.replace(".csv", "_metadata.json")
@@ -168,17 +161,10 @@ class SoundEmbedder:
         }
         with open(metadata_path, "w") as f:
             json.dump(metadata, f, indent=2)
-        print(f"  Saved metadata to: {metadata_path}")
+        print(f"Saved metadata to: {metadata_path}")
 
 
 if __name__ == "__main__":
-    """
-    Example usage:
-
-    python sound_embedder.py
-    python sound_embedder.py --input data/sounds.csv --output data/sounds_embedded.csv
-    python sound_embedder.py --batch-size 64
-    """
     import argparse
 
     parser = argparse.ArgumentParser(

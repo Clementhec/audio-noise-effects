@@ -17,6 +17,8 @@ import {
   EyeOff,
   Lock,
   Unlock,
+  Trash2,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -410,6 +412,30 @@ export default function VideoEditor() {
       }
       return track
     }))
+  }
+  
+  // Fonction pour supprimer un bloc
+  const deleteBlock = (blockId: string) => {
+    setTracks(tracks.map((track) => {
+      if (track.blocks) {
+        return {
+          ...track,
+          blocks: track.blocks.filter((block) => block.id !== blockId)
+        }
+      }
+      return track
+    }))
+    // Désélectionner le bloc après suppression
+    if (selectedBlock === blockId) {
+      setSelectedBlock(null)
+    }
+    // Nettoyer l'audio associé
+    const audio = audioRefs.current.get(blockId)
+    if (audio) {
+      audio.pause()
+      audio.src = ""
+      audioRefs.current.delete(blockId)
+    }
   }
   
   // Gestionnaires de redimensionnement pour les blocs
@@ -931,7 +957,7 @@ export default function VideoEditor() {
           <div className="flex items-center justify-between">
             <h3 className="font-medium">{"Block Properties"}</h3>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelectedBlock(null)}>
-              <Scissors className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
 
@@ -1000,7 +1026,9 @@ export default function VideoEditor() {
                   variant="outline"
                   size="sm"
                   className="w-full text-destructive hover:text-destructive bg-transparent"
+                  onClick={() => deleteBlock(selectedBlock)}
                 >
+                  <Trash2 className="mr-2 h-4 w-4" />
                   {"Delete Block"}
                 </Button>
               </div>

@@ -24,7 +24,7 @@ from typing import Optional
 import av
 import torch
 import numpy as np
-from transformers import VideoLlavaForConditionalGeneration, VideoLlavaProcessor
+from transformers import VideoLlavaForConditionalGeneration, VideoLlavaProcessor, BitsAndBytesConfig
 
 
 def read_video_pyav(container, indices):
@@ -66,13 +66,18 @@ def load_model(model_name: str = "LanguageBind/Video-LLaVA-7B-hf", device: str =
     print(f"Loading Video-LLaVA model: {model_name}...")
 
     # Determine dtype based on device availability
-    dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-
+    dtype = torch.float16 if torch.cuda.is_available() else torch.float16
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+    )
     model = VideoLlavaForConditionalGeneration.from_pretrained(
         model_name,
         torch_dtype=dtype,
-        device_map=device,
-        low_cpu_mem_usage=True
+        device_map="auto",
+        low_cpu_mem_usage=True,
+        quantization_config=quantization_config
     )
 
     processor = VideoLlavaProcessor.from_pretrained(model_name)

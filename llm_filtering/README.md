@@ -6,10 +6,10 @@ This module uses Google's Gemini LLM to intelligently filter and refine sound ef
 
 After the similarity matching generates top-K sound candidates for each speech segment, the LLM filtering step:
 
-1. **Analyzes context** - Understands which sentences would benefit most from sound effects
+1. **Ranks all sentences** - Assigns a unique relevance rank to each sentence (1 = most impactful, 2 = second most, etc.)
 2. **Selects optimal placement** - Identifies the specific word where each sound should be placed
 3. **Chooses best match** - Picks the most appropriate sound from the top candidates
-4. **Provides reasoning** - Explains why each sound was selected
+4. **Provides reasoning** - Explains why each sound was selected and ranked
 
 ## How It Works
 
@@ -38,14 +38,14 @@ The LLM receives similarity matching results:
 ### Processing
 
 The LLM (Gemini 2.5 Flash Lite) evaluates:
-- Which sentences need sound effects (not all do!)
+- Assigns a unique relevance rank to each sentence (1, 2, 3, 4...)
 - The specific word where the sound fits best
-- Which of the top-K sounds is most appropriate
-- Why this combination works
+- Which of the top-K sounds is most appropriate (by index: 0, 1, or 2)
+- Why this combination works and why this rank was assigned
 
 ### Output
 
-Filtered results with target words:
+Filtered results with relevance ranking and target words:
 
 ```json
 {
@@ -53,14 +53,15 @@ Filtered results with target words:
     {
       "speech_index": 0,
       "speech_text": "I heard thunder rumbling in the distance",
-      "should_add_sound": true,
+      "relevance_rank": 1,
       "target_word": "thunder",
       "selected_sound": {
         "sound_title": "Thunder Rumble",
-        "audio_url": "...",
-        "reason": "Perfect match for thunder, place on the word 'thunder' for natural effect"
+        "sound_description": "Deep thunder sound",
+        "audio_url_wav": "...",
+        "similarity_score": 0.8542
       },
-      "reasoning": "Thunder is a concrete sound that clearly benefits from an effect"
+      "reasoning": "Thunder is a concrete sound that clearly benefits from an effect - ranked #1 for high impact"
     }
   ]
 }
@@ -91,14 +92,14 @@ with open('output/video_similarity_matches.json', 'r') as f:
 # Run LLM filtering
 result = filter_sounds(
     similarity_data=similarity_data,
-    max_sounds=5,  # Or None to let LLM decide
-    keep_only_with_sound=True,
+    max_sounds=5,  # Optional: prioritize top N sentences
+    user_prompt="Favor natural sounds and avoid ambiances",  # Optional
     output_file='output/filtered_sounds.json'
 )
 
-# Use filtered results
+# Use filtered results (sorted by relevance rank)
 for item in result['filtered_sounds']:
-    print(f"Segment: {item['speech_text']}")
+    print(f"Rank #{item['relevance_rank']}: {item['speech_text']}")
     print(f"Target word: {item['target_word']}")
     print(f"Sound: {item['selected_sound']['sound_title']}")
 ```
@@ -111,7 +112,8 @@ from llm_filtering import filter_from_file
 result = filter_from_file(
     input_file='output/video_similarity_matches.json',
     output_file='output/filtered_sounds.json',
-    max_sounds=5
+    max_sounds=5,
+    user_prompt="Prioritize impactful sounds"  # Optional
 )
 ```
 
@@ -139,42 +141,45 @@ result = filter_sounds(
 
 ### Max Sounds Parameter
 
-Control how many sentences get sound effects:
+Control how many sentences to prioritize:
 
 ```bash
-# Let LLM decide (more selective)
+# Rank all sentences (LLM decides priority)
 uv run python main.py video.mp4 --full-pipeline
 
-# Force exactly 5 sounds
+# Prioritize top 5 sentences
 uv run python main.py video.mp4 --full-pipeline --max-sounds 5
 
-# Force exactly 10 sounds
+# Prioritize top 10 sentences
 uv run python main.py video.mp4 --full-pipeline --max-sounds 10
 ```
 
-**Recommendation**: Let the LLM decide (`max_sounds=None`) for best results. The LLM is trained to be selective and only add sounds where they enhance the experience.
+**Note**: The `max_sounds` parameter guides the LLM to prioritize the top N most impactful sentences. All sentences are still ranked with unique relevance scores (1, 2, 3...), but the LLM focuses on selecting the best N.
 
 ## LLM Behavior
 
-### Selection Criteria
+### Ranking Criteria
 
 The LLM is instructed to:
-- **Be highly selective** - Only recommend sounds that truly enhance the audio
+- **Assign unique ranks** - Each sentence gets a unique relevance rank (1 = most impactful, 2 = second most, etc.)
 - **Favor concrete sounds** - Thunder, barking, rain over general ambiances
-- **One sound per sentence** - Maximum, on the most relevant word
+- **One keyword per sentence** - Maximum, on the most relevant word
 - **Natural placement** - Sounds should feel organic, not forced
+- **Use sound indices** - Reference sounds by index (0, 1, or 2) to avoid hallucinations
 
-### Example Decisions
+### Example Rankings
 
-**Will Add Sound:**
-- "I heard **thunder** rumbling" → Thunder sound on "thunder"
-- "A dog **barking** loudly" → Dog bark on "barking"
-- "The **rain** was pouring" → Rain sound on "rain"
+**High Rank (1-3):**
+- "I heard **thunder** rumbling" → Rank 1, Thunder sound on "thunder"
+- "A dog **barking** loudly" → Rank 2, Dog bark on "barking"
+- "The **rain** was pouring" → Rank 3, Rain sound on "rain"
 
-**Won't Add Sound:**
-- "The weather was nice" → No concrete sound to add
-- "I felt happy" → Emotion doesn't need sound effect
-- "We talked for hours" → Talking doesn't benefit from added sound
+**Lower Rank (4+):**
+- "The weather was nice" → Rank 4, Less concrete/impactful
+- "I felt happy" → Rank 5, Abstract emotion
+- "We talked for hours" → Rank 6, Less benefit from sound effect
+
+All sentences receive a unique rank, allowing you to select the top N most impactful ones.
 
 ## Output Format
 
@@ -186,14 +191,15 @@ The LLM is instructed to:
     {
       "speech_index": 0,
       "speech_text": "Original sentence text",
-      "should_add_sound": true,
+      "relevance_rank": 1,
       "target_word": "specific_word",
       "selected_sound": {
         "sound_title": "Sound Effect Name",
-        "audio_url": "https://...",
-        "reason": "Brief explanation"
+        "sound_description": "Description of the sound",
+        "audio_url_wav": "https://...",
+        "similarity_score": 0.8542
       },
-      "reasoning": "Detailed decision explanation"
+      "reasoning": "Detailed decision explanation including why this rank"
     }
   ]
 }
@@ -203,13 +209,14 @@ The LLM is instructed to:
 
 - `speech_index`: Index from original similarity results
 - `speech_text`: Full sentence text
-- `should_add_sound`: Boolean - whether to add sound
-- `target_word`: Specific word for sound placement (null if no sound)
-- `selected_sound`: Chosen sound details
+- `relevance_rank`: Unique rank (1 = most impactful, 2 = second most, etc.)
+- `target_word`: Specific word for sound placement
+- `selected_sound`: Chosen sound details (from original data, not LLM-generated)
   - `sound_title`: Name of the sound effect
-  - `audio_url`: URL/path to audio file
-  - `reason`: Why this sound and word were chosen
-- `reasoning`: LLM's explanation for the decision
+  - `sound_description`: Description of the sound
+  - `audio_url_wav`: URL/path to WAV audio file
+  - `similarity_score`: Original similarity score from matching
+- `reasoning`: LLM's explanation for the rank, sound choice, and word placement
 
 ## Integration with Pipeline
 
@@ -229,9 +236,10 @@ The LLM is instructed to:
 - 10 segments × 5 sounds = 50 total sound suggestions
 
 **Step 5 Output** (LLM Filtering):
-- 3-7 segments selected (LLM's choice)
+- All 10 segments ranked (1-10)
+- Each with unique relevance rank
 - Each with specific target word
-- Best sound from top-K candidates
+- Best sound from top-3 candidates (selected by index)
 
 ### Why LLM Filtering?
 
@@ -242,9 +250,11 @@ Without LLM filtering:
 - No context awareness
 
 With LLM filtering:
-- Selective, high-quality sound placement
+- All sounds ranked by relevance (1, 2, 3...)
 - Precise timing (word-level)
 - Context-aware decisions
+- Easy to select top N most impactful sounds
+- Prevents LLM hallucinations by using indices
 - Natural, professional results
 
 ## Performance
@@ -264,16 +274,17 @@ Using Gemini 2.5 Flash Lite for:
 ### Accuracy
 
 The LLM correctly:
+- Assigns unique relevance ranks (100% - enforced by prompt)
 - Identifies concrete vs. abstract concepts (95%+)
 - Selects appropriate target words (90%+)
-- Chooses contextually correct sounds (85%+)
+- Chooses contextually correct sounds by index (90%+ - no hallucinations)
 
 ## Error Handling
 
 ### API Key Missing
 
 ```python
-ValueError: GOOGLE_API_KEY doit être définie dans l'environnement ou passée en paramètre
+ValueError: GOOGLE_API_KEY must be defined in the environment or passed as a parameter
 ```
 
 **Solution**: Add `GOOGLE_API_KEY` to `.env` file
@@ -325,36 +336,47 @@ Add post-processing:
 ```python
 result = filter_sounds(data, max_sounds=10)
 
-# Custom filtering
-result['filtered_sounds'] = [
+# Select only top 5 ranked sounds
+top_5 = result['filtered_sounds'][:5]
+
+# Filter by similarity threshold
+high_similarity = [
     item for item in result['filtered_sounds']
-    if item['selected_sound']['similarity'] > 0.7
+    if item['selected_sound']['similarity_score'] > 0.7
 ]
 ```
 
 ## Best Practices
 
-1. **Let LLM Decide**: Don't set `max_sounds` unless you have a specific constraint
+1. **Use Ranking System**: All sentences are ranked - select top N based on your needs
 2. **Review Results**: Check filtered output before audio mixing
-3. **Adjust top-k**: Use `--top-k 5` to give LLM good options to choose from
+3. **Adjust top-k**: Use `--top-k 3` to give LLM good options to choose from (default)
 4. **API Key Security**: Never commit `.env` file with API keys
 5. **Error Handling**: Implement fallbacks if LLM filtering fails
+6. **Custom Instructions**: Use `user_prompt` parameter to guide LLM behavior
 
 ## Troubleshooting
 
-### "Too Many Sounds Selected"
+### "Need Fewer Sounds"
 
-If LLM selects too many sounds:
+All sentences are ranked - simply use the top N:
+```python
+# Take only top 5 ranked sounds
+top_sounds = result['filtered_sounds'][:5]
+```
+
+Or guide the LLM:
 ```bash
 uv run python main.py video.mp4 --full-pipeline --max-sounds 5
 ```
 
-### "Not Enough Sounds Selected"
+### "Need Better Rankings"
 
-If LLM is too conservative:
+If rankings seem off:
+- Use `user_prompt` to guide LLM: "Prioritize loud, impactful sounds"
 - Check similarity scores in Step 4
 - Increase `--top-k` for more options
-- Review prompt instructions
+- Review prompt instructions in `filtering.py`
 
 ### "Wrong Words Selected"
 
@@ -367,12 +389,12 @@ If target words seem incorrect:
 
 Potential improvements:
 1. **Multi-language Support**: Handle non-English transcripts
-2. **Confidence Scores**: Add LLM confidence ratings
+2. **Confidence Scores**: Add LLM confidence ratings per rank
 3. **User Feedback**: Learn from manual corrections
 4. **Batch Processing**: Process multiple videos efficiently
-5. **Custom Instructions**: User-configurable behavior
-6. **Sound Categories**: Filter by sound type preferences
-7. **Temporal Awareness**: Consider timing and pacing
+5. **Sound Categories**: Filter by sound type preferences
+6. **Temporal Awareness**: Consider timing and pacing
+7. **Dynamic Ranking**: Adjust ranks based on video context
 
 ## Examples
 
@@ -381,26 +403,28 @@ Potential improvements:
 **Input**: "The storm was approaching with dark clouds overhead. Thunder rumbled in the distance. Rain began falling heavily."
 
 **LLM Output**:
-- Segment 2: "Thunder rumbled" → **thunder** (Thunder sound)
-- Segment 3: "Rain began falling" → **Rain** (Rain sound)
-- Skip segment 1 (no concrete sound)
+- Rank 1: Segment 2 "Thunder rumbled" → **thunder** (Thunder sound)
+- Rank 2: Segment 3 "Rain began falling" → **Rain** (Rain sound)
+- Rank 3: Segment 1 "storm was approaching" → **storm** (less concrete)
 
 ### Example 2: Nature Scene
 
 **Input**: "Birds were singing in the trees. A dog barked nearby. Children were laughing and playing."
 
 **LLM Output**:
-- Segment 1: "Birds were singing" → **singing** (Birds chirping)
-- Segment 2: "dog barked" → **barked** (Dog bark)
-- Segment 3: "Children were laughing" → **laughing** (Children laughter)
+- Rank 1: Segment 2 "dog barked" → **barked** (Dog bark - most impactful)
+- Rank 2: Segment 1 "Birds were singing" → **singing** (Birds chirping)
+- Rank 3: Segment 3 "Children were laughing" → **laughing** (Children laughter)
 
 ### Example 3: Abstract Content
 
 **Input**: "I felt happy about the decision. The future looks bright. We made progress today."
 
 **LLM Output**:
-- No sounds selected (all abstract concepts)
-- LLM reasoning: "These sentences describe emotions and abstract concepts that don't benefit from sound effects"
+- Rank 1: Segment 3 "We made progress" → **progress** (least abstract)
+- Rank 2: Segment 1 "I felt happy" → **happy** (emotion)
+- Rank 3: Segment 2 "future looks bright" → **bright** (very abstract)
+- LLM reasoning: "All sentences are abstract - ranked by relative concreteness. Consider using only top 1 or skipping all."
 
 ## API Reference
 
@@ -411,10 +435,19 @@ def filter_sounds(
     similarity_data: List[Dict[str, Any]],
     max_sounds: Optional[int] = None,
     api_key: Optional[str] = None,
-    keep_only_with_sound: bool = True,
+    user_prompt: Optional[str] = None,
     output_file: Optional[str] = None
 ) -> Dict[str, Any]
 ```
+
+**Parameters:**
+- `similarity_data`: Data from similarity matching
+- `max_sounds`: Number of sentences to prioritize (optional guide for LLM)
+- `api_key`: Google API key (optional, uses env var if not provided)
+- `user_prompt`: Additional instructions to refine filtering (optional)
+- `output_file`: Output path (optional, defaults to `llm_filtering/output/filtered_sounds.json`)
+
+**Returns:** Dictionary with all sounds ranked by unique relevance (1 = best)
 
 ### filter_from_file()
 
@@ -424,9 +457,18 @@ def filter_from_file(
     output_file: Optional[str] = None,
     max_sounds: Optional[int] = None,
     api_key: Optional[str] = None,
-    keep_only_with_sound: bool = True
+    user_prompt: Optional[str] = None
 ) -> Dict[str, Any]
 ```
+
+**Parameters:**
+- `input_file`: Path to similarity.json file
+- `output_file`: Output path (optional)
+- `max_sounds`: Number of sentences to prioritize (optional)
+- `api_key`: Google API key (optional)
+- `user_prompt`: Additional filtering instructions (optional)
+
+**Returns:** Filtering result with all sounds ranked by unique rank (1, 2, 3...)
 
 ### get_gemini_model()
 

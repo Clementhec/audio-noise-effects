@@ -393,7 +393,7 @@ def run_complete_video_audio_merge(
     original_audio_path: Path,
     speech_embedding_file: Path,
     output_video_path: Path,
-    metadata_path: str = "data/soundbible_metadata.csv",
+    metadata_path: Path,
     sound_intensity: float = 0.3,
     sound_duration: Optional[float] = None,
 ) -> Path:
@@ -428,7 +428,12 @@ def run_complete_video_audio_merge(
     print(f"Loaded {len(metadata_df)} sound metadata entries")
 
     # Prepare sound effects (download and find timings)
-    prepared_sounds = prepare_sound_effects(filtered_results, metadata_df, word_timings, embedding_file=speech_embedding_file)
+    prepared_sounds = prepare_sound_effects(
+        filtered_results,
+        metadata_df,
+        word_timings,
+        embedding_file=speech_embedding_file,
+    )
 
     if not prepared_sounds:
         print("No sound effects prepared. Skipping merge.")

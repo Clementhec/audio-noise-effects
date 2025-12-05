@@ -1,73 +1,89 @@
-import json
 import os
-from typing import List, Dict, Any, Optional
+import json
+from dotenv import load_dotenv
 import google.generativeai as genai
+from typing import List, Dict, Any, Optional
 
 
 def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
     """
-    Configure et retourne un modèle Gemini.
-    
+    Configure and return a Gemini model.
+
     Args:
-        api_key: Clé API Google. Si None, utilise la variable d'environnement GOOGLE_API_KEY
-        
+        api_key: Google API key. If None, uses the GOOGLE_API_KEY environment variable
+
     Returns:
-        Instance du modèle Gemini configuré
+        Configured Gemini model instance
     """
+    load_dotenv()
     if api_key is None:
-        api_key = os.getenv('GOOGLE_API_KEY')
+        api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY doit être définie dans l'environnement ou passée en paramètre")
-    
+            raise ValueError(
+                "GOOGLE_API_KEY must be defined in the environment or passed as a parameter"
+            )
+
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel('gemini-2.5-flash-lite')
+    return genai.GenerativeModel("gemini-2.5-flash-lite")
 
 
-def create_prompt(similarity_data: List[Dict[str, Any]], max_sounds: Optional[int] = None) -> str:
+def create_prompt(
+    similarity_data: List[Dict[str, Any]],
+    max_sounds: Optional[int] = None,
+    user_prompt: Optional[str] = None,
+) -> str:
     """
-    Crée le prompt pour le LLM.
-    
+    Create the prompt for the LLM.
+
     Args:
-        similarity_data: Données de similarité entre phrases et sons
-        max_sounds: Nombre maximum de phrases à sélectionner (optionnel)
-        
+        similarity_data: Similarity data between sentences and sounds
+        max_sounds: Maximum number of sentences to select (optional)
+        user_prompt: Additional user instructions to refine filtering (optional)
+
     Returns:
-        Prompt formaté pour le LLM
+        Formatted prompt for the LLM
     """
     max_sounds_instruction = ""
     if max_sounds is not None:
-        max_sounds_instruction = f"\n- CRITICAL: You MUST select EXACTLY {max_sounds} sentences (no more, no less) that would benefit most from sound effects"
-    
+        max_sounds_instruction = (
+            f"\n- You should prioritize the top {max_sounds} most impactful sentences"
+        )
+
+    user_context = ""
+    if user_prompt:
+        user_context = f"\n\nUSER SPECIFIC INSTRUCTIONS:\n{user_prompt}\n"
+
     prompt = f"""You are an expert in sound design for audio. Your role is to analyze sentences with their suggested corresponding sounds and determine:
 
-1. Which sentences would benefit MOST from a sound effect (prioritize the most impactful ones)
+1. A unique relevance rank for each sentence (1 = most relevant, 2 = second most relevant, etc.)
 2. On which specific word(s) to place the sound effect for a natural result
-3. Which sound among the suggestions is most appropriate
+3. Which sound among the suggestions (by index) is most appropriate
 
 IMPORTANT RULES:
-- Be highly selective: only recommend sounds that truly enhance the audio experience in a natural way
+- You MUST assign a UNIQUE rank to each sentence (no duplicates: 1, 2, 3, 4, 5...)
+- Rank 1 = most impactful/relevant, higher numbers = less relevant
 - Favor concrete sounds (thunder, barking, rain) rather than general ambiances
 - Maximum one keyword per sentence (the most relevant one)
-- If a sentence should not have a sound, set "should_add_sound": false{max_sounds_instruction}
+- Use the sound_index (0, 1, or 2) to reference which sound from the suggestions you select {max_sounds_instruction} {user_context}
 
 Here is the data to analyze:
 
 """
-    
+
     for item in similarity_data:
         prompt += f"\n--- Sentence {item['speech_index']} ---\n"
-        prompt += f"Text: \"{item['speech_text']}\"\n"
+        prompt += f'Text: "{item["speech_text"]}"\n'
         prompt += f"Suggested sounds:\n"
-        for i, match in enumerate(item['top_matches'][:3], 1):  # Top 3 only
+        for i, match in enumerate(item["top_matches"][:3], 1):  # Top 3 only
             prompt += f"  {i}. {match['sound_title']} (similarity: {match['similarity']:.2f})\n"
             prompt += f"     Description: {match['sound_description']}\n"
             prompt += f"     URL: {match['audio_url_wav']}\n"
-    
     prompt += """
 
 RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
+Your overall response should be a valid JSON string AS IS.
 
-CRITICAL: You MUST use the EXACT audio_url_wav provided in the data above. DO NOT create or modify URLs.
+CRITICAL: Use ONLY the sound_index (0, 1, or 2) to reference sounds. DO NOT copy titles or URLs.
 
 {
   "filtered_sounds": [
@@ -76,141 +92,123 @@ CRITICAL: You MUST use the EXACT audio_url_wav provided in the data above. DO NO
       "speech_text": "original text",
       "should_add_sound": true/false,
       "target_word": "specific word where to place the sound (null if should_add_sound=false)",
-      "selected_sound": {
-        "sound_title": "title of chosen sound",
-        "audio_url_wav": "EXACT URL from the data above - DO NOT MODIFY",
-        "reason": "brief explanation of why this sound and this word"
-      },
-      "reasoning": "explanation of the decision"
+      "selected_sound_index" : "EXACT sound index identifier",
+      "reasoning": "explanation of the decision",
+      "relevance_rank": "integer numeric relevance, (most is 1)" 
     }
   ]
 }
+
+ALL sentences must be included with UNIQUE ranks (1, 2, 3, 4...). Order by rank ascending (1 first).
 """
     return prompt
 
 
 def clean_json_response(response_text: str) -> str:
     """
-    Nettoie la réponse du LLM pour extraire le JSON pur.
-    
+    Clean the LLM response to extract pure JSON.
+
     Args:
-        response_text: Réponse brute du LLM
-        
+        response_text: Raw LLM response
+
     Returns:
-        JSON nettoyé
+        Cleaned JSON
     """
-    response_text = response_text.strip()
-    
-    # Nettoie le markdown si présent
-    if response_text.startswith('```'):
-        lines = response_text.split('\n')
-        response_text = '\n'.join(lines[1:-1])
-        if response_text.startswith('json'):
+    response_text = response_text.strip().replace(' ""', ' "')
+
+    # Clean markdown if present
+    if response_text.startswith("```"):
+        lines = response_text.split("\n")
+        response_text = "\n".join(lines[1:-1])
+        if response_text.startswith("json"):
             response_text = response_text[4:].strip()
-    
+
     return response_text
 
 
 def filter_sounds(
-    similarity_data: List[Dict[str, Any]], 
-    max_sounds: Optional[int] = None,
+    similarity_data: List[Dict[str, Any]],
+    max_sounds: Optional[int] = 4,
     api_key: Optional[str] = None,
-    keep_only_with_sound: bool = True,
-    output_file: Optional[str] = None
+    user_prompt: Optional[str] = None,
+    output_file: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
-    Filtre les sons en utilisant le LLM.
-    
+    Filter sounds using the LLM with a relevance ranking system.
+
     Args:
-        similarity_data: Données du fichier similarity.json
-        max_sounds: Nombre maximum de phrases à sélectionner pour des effets sonores.
-                   Si None, le LLM décide librement. Si spécifié, le LLM sélectionnera
-                   exactement ce nombre de phrases parmi les plus pertinentes.
-        api_key: Clé API Google (optionnel)
-        keep_only_with_sound: Si True, ne garde que les résultats avec should_add_sound=true (défaut: True)
-        output_file: Chemin du fichier de sortie. Si None, utilise 'llm_filtering/output/filtered_sounds.json'
-        
+        similarity_data: Data from the similarity.json file
+        max_sounds: Number of sentences to prioritize (optional, serves as a guide for the LLM)
+        api_key: Google API key (optional)
+        user_prompt: Additional instructions to refine filtering (optional)
+        output_file: Output file path. If None, uses 'llm_filtering/output/filtered_sounds.json'
+
     Returns:
-        Dictionnaire avec les sons filtrés et les mots cibles
+        Dictionary with all sounds ranked by unique rank (1 = best, 2 = 2nd best, etc.)
     """
     model = get_gemini_model(api_key)
-    prompt = create_prompt(similarity_data, max_sounds)
+    prompt = create_prompt(similarity_data, max_sounds, user_prompt)
     response = model.generate_content(prompt)
+
+    # TODO : this step should not be ! JSON response expected as is.
     response_text = clean_json_response(response.text)
-    result = json.loads(response_text)
-    
-    # Filtre pour ne garder que les sons à ajouter
-    if keep_only_with_sound:
-        result['filtered_sounds'] = [
-            item for item in result['filtered_sounds'] 
-            if item.get('should_add_sound', False)
-        ]
-    
-    # Sauvegarde automatique dans output/
+
+    print(response)
+    print()
+    print(response_text)
+    try:
+        llm_result = json.loads(response_text)
+    except json.JSONDecodeError as e:
+        print("Error decoding LLM filter response")
+        print(f"First 200 chars of cleaned response: {response_text[:200]}")
+        raise e
+    # Reconstruct complete data from indexes
+    # to avoid LLM hallucinations
+    result = {"filtered_sounds": []}
+
+    for item in llm_result["filtered_sounds"]:
+        try:  # TODO : this is a quickfix, JSON should be well structured
+            speech_idx = item["speech_index"]
+            sound_idx = item["selected_sound_index"]
+
+            # Retrieve original data
+            original_data = similarity_data[speech_idx]
+            selected_sound = original_data["top_matches"][sound_idx]
+
+            # Build entry with real data (not generated by the LLM)
+            result["filtered_sounds"].append(
+                {
+                    "speech_index": speech_idx,
+                    "speech_text": original_data["speech_text"],
+                    "relevance_rank": item["relevance_rank"],
+                    "target_word": item["target_word"],
+                    "should_add_sound": item["should_add_sound"],
+                    "selected_sound": {
+                        "sound_title": selected_sound["sound_title"],
+                        "sound_description": selected_sound["sound_description"],
+                        "audio_url_wav": selected_sound["audio_url_wav"],
+                        "similarity_score": selected_sound["similarity"],
+                    },
+                    "reasoning": item["reasoning"],
+                }
+            )
+        except:
+            print("TODO : LLM filter did not output expected JSON struct")
+            pass
+
+    # Sort by ascending relevance rank (1 = best)
+    result["filtered_sounds"].sort(key=lambda x: x["relevance_rank"])
+
+    # Automatic save to output/
     if output_file is None:
-        output_file = 'llm_filtering/output/filtered_sounds.json'
-    
+        output_file = "llm_filtering/output/filtered_sounds.json"
+
     output_dir = os.path.dirname(output_file)
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    
-    with open(output_file, 'w', encoding='utf-8') as f:
+
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
-    print(f"Résultat sauvegardé dans {output_file}")
-    
+    print(f"Result saved to {output_file}")
+
     return result
-
-
-def filter_from_file(
-    input_file: str, 
-    output_file: Optional[str] = None, 
-    max_sounds: Optional[int] = None,
-    api_key: Optional[str] = None,
-    keep_only_with_sound: bool = True
-) -> Dict[str, Any]:
-    """
-    Filtre les sons à partir d'un fichier similarity.json.
-    
-    Args:
-        input_file: Chemin vers le fichier similarity.json
-        output_file: Chemin de sortie (optionnel)
-        max_sounds: Nombre maximum de phrases à sélectionner pour des effets sonores (optionnel)
-        api_key: Clé API Google (optionnel)
-        keep_only_with_sound: Si True, ne garde que les résultats avec should_add_sound=true (défaut: True)
-        
-    Returns:
-        Résultat du filtrage
-    """
-    with open(input_file, 'r', encoding='utf-8') as f:
-        similarity_data = json.load(f)
-    
-    result = filter_sounds(similarity_data, max_sounds, api_key, keep_only_with_sound)
-    
-    if output_file:
-        # Crée le répertoire de sortie si nécessaire
-        output_dir = os.path.dirname(output_file)
-        if output_dir and not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(result, f, indent=2, ensure_ascii=False)
-        print(f"Résultat sauvegardé dans {output_file}")
-    
-    return result
-
-
-
-def main():
-    """Exemple d'utilisation."""
-    input_file = "similarity/output/similarity.json"
-    output_file = "llm_filtering/output/filtered_sounds.json"
-    max_sounds = 3
-    
-    print(f"Analyse des sons avec le LLM (max {max_sounds} phrases)..." if max_sounds else "Analyse des sons avec le LLM...")
-    result = filter_from_file(input_file, output_file, max_sounds=max_sounds)
-    print_summary(result)
-
-
-if __name__ == "__main__":
-    main()
-

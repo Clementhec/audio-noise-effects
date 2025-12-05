@@ -41,10 +41,7 @@ class SoundEmbeddingLoader:
         self._cache: Dict[str, pd.DataFrame] = {}
 
     def load_embeddings(
-        self,
-        filepath: str,
-        validate: bool = True,
-        use_cache: bool = True
+        self, filepath: str, validate: bool = True, use_cache: bool = True
     ) -> pd.DataFrame:
         """
         Load sound embeddings from CSV file.
@@ -72,12 +69,12 @@ class SoundEmbeddingLoader:
         print(f"  Loaded {len(df)} sound embeddings")
 
         # Check if embedding column exists
-        if 'embedding' not in df.columns:
+        if "embedding" not in df.columns:
             raise ValueError("CSV must contain 'embedding' column")
 
         # Parse embeddings from string to numpy array
         print("  Parsing embeddings...")
-        df['embedding'] = df['embedding'].apply(self._parse_embedding)
+        df["embedding"] = df["embedding"].apply(self._parse_embedding)
 
         # Validate if requested
         if validate:
@@ -129,12 +126,12 @@ class SoundEmbeddingLoader:
         print("  Validating embeddings...")
 
         # Check that all embeddings are numpy arrays
-        non_arrays = df['embedding'].apply(lambda x: not isinstance(x, np.ndarray))
+        non_arrays = df["embedding"].apply(lambda x: not isinstance(x, np.ndarray))
         if non_arrays.any():
             raise ValueError(f"Found {non_arrays.sum()} non-array embeddings")
 
         # Check dimensions
-        dimensions = df['embedding'].apply(len)
+        dimensions = df["embedding"].apply(len)
         unique_dims = dimensions.unique()
 
         if len(unique_dims) > 1:
@@ -142,27 +139,25 @@ class SoundEmbeddingLoader:
 
         actual_dim = unique_dims[0]
         if actual_dim != self.EXPECTED_DIMENSION:
-            print(f"  WARNING: Expected {self.EXPECTED_DIMENSION} dimensions, got {actual_dim}")
+            print(
+                f"  WARNING: Expected {self.EXPECTED_DIMENSION} dimensions, got {actual_dim}"
+            )
             print(f"  This may indicate a model mismatch!")
 
-        print(f"  ✓ All embeddings validated ({actual_dim} dimensions)")
+        print(f"   All embeddings validated ({actual_dim} dimensions)")
 
         # Check model if column exists
-        if 'embedding_model' in df.columns:
-            models = df['embedding_model'].unique()
+        if "embedding_model" in df.columns:
+            models = df["embedding_model"].unique()
             if len(models) == 1:
                 model = models[0]
-                print(f"  ✓ Embedding model: {model}")
+                print(f"   Embedding model: {model}")
                 if model != self.EXPECTED_MODEL:
                     print(f"    WARNING: Expected {self.EXPECTED_MODEL}")
             else:
                 print(f"  WARNING: Multiple embedding models found: {models}")
 
-    def get_sound_by_id(
-        self,
-        df: pd.DataFrame,
-        sound_id: int
-    ) -> Optional[pd.Series]:
+    def get_sound_by_id(self, df: pd.DataFrame, sound_id: int) -> Optional[pd.Series]:
         """
         Get a specific sound by its index/ID.
 
@@ -178,10 +173,7 @@ class SoundEmbeddingLoader:
         return df.iloc[sound_id]
 
     def filter_by_keywords(
-        self,
-        df: pd.DataFrame,
-        keywords: List[str],
-        match_any: bool = True
+        self, df: pd.DataFrame, keywords: List[str], match_any: bool = True
     ) -> pd.DataFrame:
         """
         Filter sounds by keywords.
@@ -194,7 +186,7 @@ class SoundEmbeddingLoader:
         Returns:
             Filtered DataFrame
         """
-        if 'keywords' not in df.columns:
+        if "keywords" not in df.columns:
             print("  WARNING: 'keywords' column not found, returning all sounds")
             return df
 
@@ -222,7 +214,7 @@ class SoundEmbeddingLoader:
                 # Match if all keywords match
                 return all(kw in sound_kw_lower for kw in search_kw_lower)
 
-        mask = df['keywords'].apply(matches_keywords)
+        mask = df["keywords"].apply(matches_keywords)
         filtered_df = df[mask]
         print(f"  Filtered to {len(filtered_df)} sounds (from {len(df)})")
         return filtered_df
@@ -231,7 +223,7 @@ class SoundEmbeddingLoader:
         self,
         df: pd.DataFrame,
         min_seconds: Optional[float] = None,
-        max_seconds: Optional[float] = None
+        max_seconds: Optional[float] = None,
     ) -> pd.DataFrame:
         """
         Filter sounds by duration.
@@ -244,20 +236,20 @@ class SoundEmbeddingLoader:
         Returns:
             Filtered DataFrame
         """
-        if 'length' not in df.columns:
+        if "length" not in df.columns:
             print("  WARNING: 'length' column not found, returning all sounds")
             return df
 
         filtered_df = df.copy()
 
         # Convert length to numeric if needed
-        filtered_df['length'] = pd.to_numeric(filtered_df['length'], errors='coerce')
+        filtered_df["length"] = pd.to_numeric(filtered_df["length"], errors="coerce")
 
         if min_seconds is not None:
-            filtered_df = filtered_df[filtered_df['length'] >= min_seconds]
+            filtered_df = filtered_df[filtered_df["length"] >= min_seconds]
 
         if max_seconds is not None:
-            filtered_df = filtered_df[filtered_df['length'] <= max_seconds]
+            filtered_df = filtered_df[filtered_df["length"] <= max_seconds]
 
         print(f"  Filtered to {len(filtered_df)} sounds (from {len(df)})")
         return filtered_df
@@ -270,58 +262,28 @@ class SoundEmbeddingLoader:
     def get_cache_info(self) -> Dict:
         """Get information about cached data."""
         return {
-            'cache_enabled': self.cache_enabled,
-            'cached_files': list(self._cache.keys()),
-            'total_cached_sounds': sum(len(df) for df in self._cache.values())
+            "cache_enabled": self.cache_enabled,
+            "cached_files": list(self._cache.keys()),
+            "total_cached_sounds": sum(len(df) for df in self._cache.values()),
         }
 
 
-def load_sound_embeddings(filepath: str) -> pd.DataFrame:
-    """
-    Convenience function to load sound embeddings.
-
-    Args:
-        filepath: Path to embeddings CSV
-
-    Returns:
-        DataFrame with embeddings as numpy arrays
-    """
-    loader = SoundEmbeddingLoader()
-    return loader.load_embeddings(filepath)
-
-
 if __name__ == "__main__":
-    """
-    Test the loader with sample data.
-
-    Usage:
-        python sound_embedding_loader.py <embeddings.csv>
-    """
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Load and validate sound embeddings"
-    )
+    parser = argparse.ArgumentParser(description="Load and validate sound embeddings")
     parser.add_argument(
         "embeddings_file",
-        nargs='?',
+        nargs="?",
         default="data/soundbible_embeddings.csv",
-        help="Path to embeddings CSV file"
+        help="Path to embeddings CSV file",
+    )
+    parser.add_argument("--filter-keywords", nargs="+", help="Filter by keywords")
+    parser.add_argument(
+        "--min-duration", type=float, help="Minimum sound duration (seconds)"
     )
     parser.add_argument(
-        "--filter-keywords",
-        nargs='+',
-        help="Filter by keywords"
-    )
-    parser.add_argument(
-        "--min-duration",
-        type=float,
-        help="Minimum sound duration (seconds)"
-    )
-    parser.add_argument(
-        "--max-duration",
-        type=float,
-        help="Maximum sound duration (seconds)"
+        "--max-duration", type=float, help="Maximum sound duration (seconds)"
     )
 
     args = parser.parse_args()
@@ -342,7 +304,7 @@ if __name__ == "__main__":
     print(f"  Columns: {list(df.columns)}")
     if len(df) > 0:
         print(f"  Embedding dimension: {len(df['embedding'].iloc[0])}")
-        if 'embedding_model' in df.columns:
+        if "embedding_model" in df.columns:
             print(f"  Embedding model: {df['embedding_model'].iloc[0]}")
     print("=" * 70)
 
@@ -352,19 +314,7 @@ if __name__ == "__main__":
         df = loader.filter_by_keywords(df, args.filter_keywords)
 
     if args.min_duration is not None or args.max_duration is not None:
-        print(f"\nFiltering by duration: {args.min_duration}-{args.max_duration} seconds")
+        print(
+            f"\nFiltering by duration: {args.min_duration}-{args.max_duration} seconds"
+        )
         df = loader.filter_by_duration(df, args.min_duration, args.max_duration)
-
-    # Show samples
-    if len(df) > 0:
-        print("\nSample sounds:")
-        for idx in range(min(3, len(df))):
-            sound = df.iloc[idx]
-            print(f"\n  [{idx}] {sound['title']}")
-            if 'description' in sound:
-                print(f"      {sound['description'][:100]}...")
-            if 'embedding_text' in sound:
-                print(f"      Embedding text: {sound['embedding_text'][:100]}...")
-            print(f"      Embedding shape: {sound['embedding'].shape}")
-
-    print()

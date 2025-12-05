@@ -38,7 +38,7 @@ class SpeechEmbeddingPipeline:
         self,
         segmentation_method: str = "sentences",
         max_words_per_segment: int = 15,
-        output_dir: Optional[str] = None
+        output_dir: Optional[str] = None,
     ):
         """
         Initialize the pipeline.
@@ -59,7 +59,7 @@ class SpeechEmbeddingPipeline:
         self,
         stt_result: Dict,
         save_output: bool = True,
-        output_filename: Optional[str] = None
+        output_filename: Optional[str] = None,
     ) -> pd.DataFrame:
         """
         Complete pipeline: STT output → Segmentation → Embedding → Structured output.
@@ -103,29 +103,28 @@ class SpeechEmbeddingPipeline:
             return pd.DataFrame()
 
         # Step 3: Generate embeddings for all segments
-        segment_texts = [seg['text'] for seg in segments]
+        segment_texts = [seg["text"] for seg in segments]
         print(f"  Generating embeddings using {self.EMBEDDING_MODEL}...")
 
-        embeddings = get_embeddings(
-            segment_texts,
-            model=self.EMBEDDING_MODEL
-        )
+        embeddings = get_embeddings(segment_texts, model=self.EMBEDDING_MODEL)
 
         print(f"  Generated {len(embeddings)} embeddings")
 
         # Step 4: Create structured output
         output_data = []
         for i, segment in enumerate(segments):
-            output_data.append({
-                'segment_id': segment['segment_id'],
-                'text': segment['text'],
-                'start_time': segment['start_time'],
-                'end_time': segment['end_time'],
-                'duration': segment['end_time'] - segment['start_time'],
-                'word_count': segment['word_count'],
-                'embedding': np.array(embeddings[i]),
-                'embedding_model': self.EMBEDDING_MODEL
-            })
+            output_data.append(
+                {
+                    "segment_id": segment["segment_id"],
+                    "text": segment["text"],
+                    "start_time": segment["start_time"],
+                    "end_time": segment["end_time"],
+                    "duration": segment["end_time"] - segment["start_time"],
+                    "word_count": segment["word_count"],
+                    "embedding": np.array(embeddings[i]),
+                    "embedding_model": self.EMBEDDING_MODEL,
+                }
+            )
 
         df = pd.DataFrame(output_data)
 
@@ -144,28 +143,28 @@ class SpeechEmbeddingPipeline:
         # Save as CSV (embeddings as string representation)
         csv_path = os.path.join(self.output_dir, f"{filename}.csv")
         df_csv = df.copy()
-        df_csv['embedding'] = df_csv['embedding'].apply(lambda x: x.tolist())
+        df_csv["embedding"] = df_csv["embedding"].apply(lambda x: x.tolist())
         df_csv.to_csv(csv_path, index=False)
         print(f"  Saved CSV to: {csv_path}")
 
         # Save as JSON (more structured format)
         json_path = os.path.join(self.output_dir, f"{filename}.json")
         output_json = {
-            'metadata': {
-                'embedding_model': self.EMBEDDING_MODEL,
-                'embedding_dimension': self.EMBEDDING_DIMENSION,
-                'segmentation_method': self.segmentation_method,
-                'total_segments': len(df)
+            "metadata": {
+                "embedding_model": self.EMBEDDING_MODEL,
+                "embedding_dimension": self.EMBEDDING_DIMENSION,
+                "segmentation_method": self.segmentation_method,
+                "total_segments": len(df),
             },
-            'segments': df.to_dict(orient='records')
+            "segments": df.to_dict(orient="records"),
         }
 
         # Convert numpy arrays to lists for JSON serialization
-        for segment in output_json['segments']:
-            if isinstance(segment['embedding'], np.ndarray):
-                segment['embedding'] = segment['embedding'].tolist()
+        for segment in output_json["segments"]:
+            if isinstance(segment["embedding"], np.ndarray):
+                segment["embedding"] = segment["embedding"].tolist()
 
-        with open(json_path, 'w') as f:
+        with open(json_path, "w") as f:
             json.dump(output_json, f, indent=2)
         print(f"  Saved JSON to: {json_path}")
 
@@ -179,15 +178,15 @@ class SpeechEmbeddingPipeline:
         Returns:
             DataFrame with embeddings as numpy arrays
         """
-        if filepath.endswith('.csv'):
+        if filepath.endswith(".csv"):
             df = pd.read_csv(filepath)
             # Convert string representation back to numpy array
-            df['embedding'] = df['embedding'].apply(eval).apply(np.array)
-        elif filepath.endswith('.json'):
-            with open(filepath, 'r') as f:
+            df["embedding"] = df["embedding"].apply(eval).apply(np.array)
+        elif filepath.endswith(".json"):
+            with open(filepath, "r") as f:
                 data = json.load(f)
-            df = pd.DataFrame(data['segments'])
-            df['embedding'] = df['embedding'].apply(np.array)
+            df = pd.DataFrame(data["segments"])
+            df["embedding"] = df["embedding"].apply(np.array)
         else:
             raise ValueError("File must be .csv or .json")
 
@@ -197,7 +196,7 @@ class SpeechEmbeddingPipeline:
 def process_speech_file(
     stt_result_path: str,
     output_dir: str = "./text-processing/output",
-    segmentation_method: str = "sentences"
+    segmentation_method: str = "sentences",
 ) -> pd.DataFrame:
     """
     Convenience function to process a saved STT result file.
@@ -211,13 +210,12 @@ def process_speech_file(
         DataFrame with embedded segments
     """
     # Load STT result
-    with open(stt_result_path, 'r') as f:
+    with open(stt_result_path, "r") as f:
         stt_result = json.load(f)
 
     # Create pipeline and process
     pipeline = SpeechEmbeddingPipeline(
-        segmentation_method=segmentation_method,
-        output_dir=output_dir
+        segmentation_method=segmentation_method, output_dir=output_dir
     )
 
     df = pipeline.process_stt_output(stt_result)
@@ -235,29 +233,24 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate embeddings for speech segments from STT output"
     )
-    parser.add_argument(
-        "stt_file",
-        help="Path to STT result JSON file"
-    )
+    parser.add_argument("stt_file", help="Path to STT result JSON file")
     parser.add_argument(
         "--output-dir",
         default="./text-processing/output",
-        help="Output directory for embeddings"
+        help="Output directory for embeddings",
     )
     parser.add_argument(
         "--method",
         choices=["sentences", "time_windows"],
         default="sentences",
-        help="Segmentation method"
+        help="Segmentation method",
     )
 
     args = parser.parse_args()
 
     print(f"Processing: {args.stt_file}")
     df = process_speech_file(
-        args.stt_file,
-        output_dir=args.output_dir,
-        segmentation_method=args.method
+        args.stt_file, output_dir=args.output_dir, segmentation_method=args.method
     )
 
     print(f"\nResults:")

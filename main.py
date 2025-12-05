@@ -10,11 +10,11 @@ from ast import literal_eval
 
 
 from utils import get_embeddings
+from llm_filtering.filtering import filter_sounds
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
 from video_preprocessing import extract_audio_from_video
 from merging_audio.video_audio_merger import run_complete_video_audio_merge
-from utils.sound_embedding import process_sound_file
 
 
 def setup_directories(output_dir: str = "data"):
@@ -285,72 +285,40 @@ def run_llm_filtering_step(
     else:
         print("Max sounds: LLM will decide")
 
-    try:
-        import json
-        from llm_filtering import filter_sounds
+    # Load similarity results
+    print("Loading similarity results...")
+    with open(similarity_results_path, "r", encoding="utf-8") as f:
+        similarity_data = json.load(f)
 
-        # Load similarity results
-        print("Loading similarity results...")
-        with open(similarity_results_path, "r", encoding="utf-8") as f:
-            similarity_data = json.load(f)
+    print(f"Found {len(similarity_data)} speech segments")
 
-        print(f"Found {len(similarity_data)} speech segments")
+    # Run LLM filtering
+    print("Running LLM analysis...")
+    print("  The LLM will:")
+    print("  - Determine which sentences benefit most from sound effects")
+    print("  - Identify the specific word where to place each sound")
+    print("  - Select the most appropriate sound from top matches")
+    print()
 
-        # Run LLM filtering
-        print("Running LLM analysis...")
-        print("  The LLM will:")
-        print("  - Determine which sentences benefit most from sound effects")
-        print("  - Identify the specific word where to place each sound")
-        print("  - Select the most appropriate sound from top matches")
-        print()
+    output_path = filtered_results_path
 
-        output_path = filtered_results_path
+    # Ensure parent directory exists
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Ensure parent directory exists
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+    result = filter_sounds(
+        similarity_data=similarity_data,
+        max_sounds=max_sounds,
+        # keep_only_with_sound=True,
+        output_file=str(output_path),
+    )
 
-        result = filter_sounds(
-            similarity_data=similarity_data,
-            max_sounds=max_sounds,
-            # keep_only_with_sound=True,
-            output_file=str(output_path),
-        )
+    filtered_count = len(result.get("filtered_sounds", []))
 
-        filtered_count = len(result.get("filtered_sounds", []))
+    print(f"LLM filtering complete!")
+    print(f"Selected {filtered_count} segments for sound effects")
+    print(f"Results saved to: {output_path}")
 
-        print(f"LLM filtering complete!")
-        print(f"Selected {filtered_count} segments for sound effects")
-        print(f"Results saved to: {output_path}")
-
-        # Display sample results
-        if result.get("filtered_sounds"):
-            print("Sample filtered results:")
-            print("-" * 70)
-            for i, item in enumerate(result["filtered_sounds"][:3]):  # Show first 3
-                print(
-                    f'\nSegment {item["speech_index"]}: "{item["speech_text"][:60]}..."'
-                )
-                print(f"  Target word: '{item.get('target_word', 'N/A')}'")
-                if item.get("selected_sound"):
-                    sound = item["selected_sound"]
-                    print(f"  Selected sound: {sound.get('sound_title', 'N/A')}")
-                    print(f"  Reason: {sound.get('reason', 'N/A')[:80]}...")
-
-            if filtered_count > 3:
-                print(f"\n... and {filtered_count - 3} more segments")
-
-        return output_path
-
-    except ImportError as e:
-        print(f" Error: Missing dependencies for LLM filtering")
-        print(f"  {e}")
-        print()
-        print("Install required packages:")
-        print("  pip install google-generativeai")
-        raise
-    except Exception as e:
-        print(f" Error during LLM filtering: {e}")
-        raise
+    return output_path
 
 
 def run_semantic_matching_step(
@@ -375,18 +343,6 @@ def run_semantic_matching_step(
     print("Semantic Matching with Sound Effects")
     print("=" * 70)
     print()
-
-    if not sound_embeddings_path.exists():
-        if not soundbible_metadata_path.exists():
-            # fetch soundbible metadata
-            pass
-        process_sound_file(soundbible_metadata_path, sound_embeddings_path)
-
-        print(f"Sound embeddings not found: {sound_embeddings_path}")
-        print("Please generate sound embeddings first.")
-        print("Run: uv run python utils/sound_embedding/generate_embeddings.py")
-        print()
-        return
 
     print(f"Speech embeddings: {embeddings_path}")
     print(f"Sound embeddings: {sound_embeddings_path}")
@@ -648,9 +604,7 @@ def main():
         # add wav url to the embedding dataframe
         sound_audio_urls = pd.read_csv(sound_audio_urls_path)
         soundbible_details_full = soundbible_details.merge(
-            sound_audio_urls[["title", "audio_url_wav"]],
-            on="title",
-            how="left"
+            sound_audio_urls[["title", "audio_url_wav"]], on="title", how="left"
         )
         if not soundbible_embeddings_path.exists():
             SoundEmbedder().process_sound_dataframe(

@@ -2,7 +2,9 @@
 Prompt templates for LLM-based sound filtering.
 """
 
-FILTER_PROMPT_HEADER = """You are an expert in sound design for audio. Your role is to analyze sentences with their suggested corresponding sounds and determine:
+FILTER_PROMPT_HEADER = """
+You are an expert in sound design for audio. 
+Your role is to analyze sentences with their suggested corresponding sounds and determine:
 
 1. A unique relevance rank for each sentence (1 = most relevant, 2 = second most relevant, etc.)
 2. On which specific word(s) to place the sound effect for a natural result

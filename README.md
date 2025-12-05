@@ -40,6 +40,15 @@ Input (Audio/Video)
 Output (Enhanced Audio/Video)
 ```
 
+### Sounds
+
+By default, sounds from the open-source sound library [SoundBible](https://soundbible.com/) are used.
+
+The library contains mainstream sounds, but is not comprehensive.
+For situations that require more subtlety, 
+one can leverage the text-to-sound generation API from [ElevenLabs](https://elevenlabs.io/sound-effects), 
+which can further enhance the video experience.
+
 ## References
 - [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
 
@@ -56,12 +65,8 @@ GOOGLE_API_KEY=your_google_api_key_here
 ELEVENLABS_API_KEY=your_api_key_here
 ```
 
-```bash
-export OPENAI_API_KEY="your-api-key-here"
-```
-
-
-Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+Get your key from: 
+- [Google AI Studio](https://makersuite.google.com/app/apikey)
 
 ## Project Guidelines
 

@@ -374,63 +374,45 @@ def run_semantic_matching_step(
     print("=" * 70)
     print()
 
-    if not sound_embeddings_path.exists():
-        print(f"Sound embeddings not found: {sound_embeddings_path}")
-        print("Please generate sound embeddings first.")
-        print("Run: uv run python utils/sound_embedding/generate_embeddings.py")
-        print()
-        return None
-
     print(f"Speech embeddings: {embeddings_path}")
     print(f"Sound embeddings: {sound_embeddings_path}")
     print()
 
-    try:
-        # Load speech embeddings
-        print("Loading speech embeddings...")
-        df_speech = pd.read_csv(embeddings_path)
+    # Load speech embeddings
+    print("Loading speech embeddings...")
+    df_speech = pd.read_csv(embeddings_path)
 
-        # Convert embeddings from string to list/array
-        if "embedding" in df_speech.columns:
-            if isinstance(df_speech["embedding"].iloc[0], str):
-                df_speech["embedding"] = df_speech["embedding"].apply(literal_eval)
+    # Convert embeddings from string to list/array
+    if "embedding" in df_speech.columns:
+        if isinstance(df_speech["embedding"].iloc[0], str):
+            df_speech["embedding"] = df_speech["embedding"].apply(literal_eval)
 
-        print(f"Loaded {len(df_speech)} speech segments")
-        print()
+    print(f"Loaded {len(df_speech)} speech segments")
+    print()
 
-        # Load sound embeddings
-        print("Loading sound embeddings...")
-        df_sounds = pd.read_csv(sound_embeddings_path)
+    # Load sound embeddings
+    print("Loading sound embeddings...")
+    df_sounds = pd.read_csv(sound_embeddings_path)
 
-        # Convert embeddings from string to list/array
-        if "embedding" in df_sounds.columns:
-            if isinstance(df_sounds["embedding"].iloc[0], str):
-                df_sounds["embedding"] = df_sounds["embedding"].apply(literal_eval)
+    # Convert embeddings from string to list/array
+    if "embedding" in df_sounds.columns:
+        if isinstance(df_sounds["embedding"].iloc[0], str):
+            df_sounds["embedding"] = df_sounds["embedding"].apply(literal_eval)
 
-        print(f"Loaded {len(df_sounds)} sound effects")
+    print(f"Loaded {len(df_sounds)} sound effects")
 
-        output_path = similarity_results_path
+    results = find_similar_sounds(
+        df_speech=df_speech,
+        df_sounds=df_sounds,
+        top_k=top_k,
+        save_to_json_file=True,
+        output_path=str(similarity_results_path),
+    )
 
-        results = find_similar_sounds(
-            df_speech=df_speech,
-            df_sounds=df_sounds,
-            top_k=top_k,
-            save_to_json_file=True,
-            output_path=str(output_path),
-        )
+    print(f"Matched {len(results)} speech segments")
+    print(f"Results saved to: {similarity_results_path}")
 
-        print(f"Matched {len(results)} speech segments")
-        print(f"Results saved to: {output_path}")
-
-        return output_path
-
-    except ImportError as e:
-        print(f" Error: Missing dependencies")
-        print(f"  {e}")
-        raise
-    except Exception as e:
-        print(f" Error during similarity matching: {e}")
-        raise
+    return similarity_results_path
 
 
 def validate_args(args):
@@ -641,11 +623,20 @@ def main():
         if not sound_audio_urls_path.exists():
             sound_details = pd.read_csv(sound_details_path)
             sound_audio_urls = fetch_audio_urls_from_details(sound_details)
-            sound_audio_urls.to_csv(sound_audio_urls_path)
+            sound_audio_urls.to_csv(sound_audio_urls_path, index=False)
+        sound_audio_urls = pd.read_csv(sound_audio_urls_path)
         soundbible_details = pd.read_csv(sound_details_clean_path)
+        print(soundbible_details.head(10))
+        print()
+        print(sound_audio_urls[["title", "audio_url_wav"]])
+        soundbible_details_full = soundbible_details.merge(
+            sound_audio_urls[["title", "audio_url_wav"]],
+            on="title",
+            how="left"
+        )
         if not soundbible_embeddings_path.exists():
             SoundEmbedder().process_sound_dataframe(
-                soundbible_details, output_path=soundbible_embeddings_path
+                soundbible_details_full, output_path=soundbible_embeddings_path
             )
 
     if args.run_matching:

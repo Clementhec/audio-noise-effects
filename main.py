@@ -13,7 +13,8 @@ from utils import get_embeddings
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
 from video_preprocessing import extract_audio_from_video
-from video_audio_merger import run_complete_video_audio_merge
+from merging_audio.video_audio_merger import run_complete_video_audio_merge
+from utils.sound_embedding import process_sound_file
 
 
 def setup_directories(output_dir: str = "data"):
@@ -356,6 +357,7 @@ def run_semantic_matching_step(
     embeddings_path: Path,
     similarity_results_path: Path,
     sound_embeddings_path: Path,
+    soundbible_metadata_path: Path,
     top_k: int = 5,
 ) -> Path:
     """
@@ -373,6 +375,18 @@ def run_semantic_matching_step(
     print("Semantic Matching with Sound Effects")
     print("=" * 70)
     print()
+
+    if not sound_embeddings_path.exists():
+        if not soundbible_metadata_path.exists():
+            # fetch soundbible metadata
+            pass
+        process_sound_file(soundbible_metadata_path, sound_embeddings_path)
+
+        print(f"Sound embeddings not found: {sound_embeddings_path}")
+        print("Please generate sound embeddings first.")
+        print("Run: uv run python utils/sound_embedding/generate_embeddings.py")
+        print()
+        return
 
     print(f"Speech embeddings: {embeddings_path}")
     print(f"Sound embeddings: {sound_embeddings_path}")
@@ -551,6 +565,12 @@ def main():
     )
     embeddings_path = Path(args.output_dir) / Path(
         f"embeddings/{base_name}_video_speech_embeddings.csv"
+    )
+    soundbible_metadata_path = Path(args.output_dir) / Path(
+        "input/soundbible_metadata.csv"
+    )
+    sound_embeddings_path = Path(args.output_dir) / Path(
+        "embeddings/soundbible_sound_embeddings.csv"
     )
     similarity_results_path = Path(args.output_dir) / Path(
         f"similarity/{base_name}_similarity.json"

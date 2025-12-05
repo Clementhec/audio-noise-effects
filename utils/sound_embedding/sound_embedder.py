@@ -107,7 +107,7 @@ class SoundEmbedder:
             )
             embedding_texts.append(text)
 
-        print(f"  Generated {len(embedding_texts)} embedding texts")
+        print(f"Generated {len(embedding_texts)} embedding texts")
 
         # Generate embeddings in batch
         print(f"Generating embeddings using {self.EMBEDDING_MODEL}...")

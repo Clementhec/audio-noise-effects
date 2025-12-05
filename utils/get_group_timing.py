@@ -1,9 +1,9 @@
-
 import json
+
 
 def get_group_timing(data, group_text):
     """
-    data : dict 
+    data : dict
     group_text : str, ex. "Hello, how are you?"
     """
     words = data["words_timings"]
@@ -22,10 +22,6 @@ def get_group_timing(data, group_text):
         if match:
             start = words[i].get("startTime")
             end = words[i + len(group_tokens) - 1].get("endTime")
-            return {
-                "group": group_text,
-                "startTime": start,
-                "endTime": end
-            }
+            return {"group": group_text, "startTime": start, "endTime": end}
 
     return None

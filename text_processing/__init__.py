@@ -9,8 +9,8 @@ from .speech_segmenter import SpeechSegmenter, load_stt_output
 from .speech_embedder import SpeechEmbeddingPipeline, process_speech_file
 
 __all__ = [
-    'SpeechSegmenter',
-    'load_stt_output',
-    'SpeechEmbeddingPipeline',
-    'process_speech_file'
+    "SpeechSegmenter",
+    "load_stt_output",
+    "SpeechEmbeddingPipeline",
+    "process_speech_file",
 ]

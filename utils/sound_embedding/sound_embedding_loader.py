@@ -268,27 +268,7 @@ class SoundEmbeddingLoader:
         }
 
 
-def load_sound_embeddings(filepath: str) -> pd.DataFrame:
-    """
-    Convenience function to load sound embeddings.
-
-    Args:
-        filepath: Path to embeddings CSV
-
-    Returns:
-        DataFrame with embeddings as numpy arrays
-    """
-    loader = SoundEmbeddingLoader()
-    return loader.load_embeddings(filepath)
-
-
 if __name__ == "__main__":
-    """
-    Test the loader with sample data.
-
-    Usage:
-        python sound_embedding_loader.py <embeddings.csv>
-    """
     import argparse
 
     parser = argparse.ArgumentParser(description="Load and validate sound embeddings")
@@ -338,17 +318,3 @@ if __name__ == "__main__":
             f"\nFiltering by duration: {args.min_duration}-{args.max_duration} seconds"
         )
         df = loader.filter_by_duration(df, args.min_duration, args.max_duration)
-
-    # Show samples
-    if len(df) > 0:
-        print("\nSample sounds:")
-        for idx in range(min(3, len(df))):
-            sound = df.iloc[idx]
-            print(f"\n  [{idx}] {sound['title']}")
-            if "description" in sound:
-                print(f"      {sound['description'][:100]}...")
-            if "embedding_text" in sound:
-                print(f"      Embedding text: {sound['embedding_text'][:100]}...")
-            print(f"      Embedding shape: {sound['embedding'].shape}")
-
-    print()

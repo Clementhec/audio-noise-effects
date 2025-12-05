@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Video Audio Merger
 
@@ -142,7 +141,7 @@ def prepare_sound_effects(
     metadata_df: pd.DataFrame,
     word_timings: List[Dict],
     embedding_file: Path,
-    download_dir: Path = Path("merging_audio/downloaded_sounds"),
+    download_dir: Path,
 ) -> List[Tuple[Path, float, str]]:
     """
     Prepare sound effects: download files and find timings.
@@ -393,7 +392,8 @@ def run_complete_video_audio_merge(
     original_audio_path: Path,
     speech_embedding_file: Path,
     output_video_path: Path,
-    metadata_path: str = "data/soundbible_metadata.csv",
+    metadata_path: Path,
+    soundbible_download_dir: Path,
     sound_intensity: float = 0.3,
     sound_duration: Optional[float] = None,
 ) -> Path:
@@ -413,7 +413,6 @@ def run_complete_video_audio_merge(
     Returns:
         Path to final video file
     """
-    # Load data
     base_name = video_path.stem
     print(f"Loading data for {base_name}...")
     with open(filtered_results_path, "r", encoding="utf-8") as f:
@@ -428,13 +427,19 @@ def run_complete_video_audio_merge(
     print(f"Loaded {len(metadata_df)} sound metadata entries")
 
     # Prepare sound effects (download and find timings)
-    prepared_sounds = prepare_sound_effects(filtered_results, metadata_df, word_timings, embedding_file=speech_embedding_file)
+    prepared_sounds = prepare_sound_effects(
+        filtered_results,
+        metadata_df,
+        word_timings,
+        embedding_file=speech_embedding_file,
+        download_dir=soundbible_download_dir,
+    )
 
     if not prepared_sounds:
         print("No sound effects prepared. Skipping merge.")
         return
 
-    print(f" Prepared {len(prepared_sounds)} sound effects")
+    print(f"Prepared {len(prepared_sounds)} sound effects")
 
     # Merge sounds with original audio
     merged_audio_path = Path(f"output/{base_name}_merged_audio.wav")

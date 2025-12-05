@@ -25,7 +25,7 @@ def extract_audio_from_video(
     output_path: Optional[Union[str, Path]] = None,
     audio_format: str = "wav",
     sample_rate: int = 16000,
-    channels: int = 1
+    channels: int = 1,
 ) -> Path:
     """
     Extract audio from a video file and save as audio file.
@@ -81,9 +81,7 @@ def extract_audio_from_video(
 
         # Export as WAV
         audio.export(
-            str(output_path),
-            format=audio_format,
-            parameters=["-ac", str(channels)]
+            str(output_path), format=audio_format, parameters=["-ac", str(channels)]
         )
 
         print(f" Audio extracted successfully: {output_path}")
@@ -101,7 +99,7 @@ def extract_audio_ffmpeg_direct(
     video_path: Union[str, Path],
     output_path: Optional[Union[str, Path]] = None,
     sample_rate: int = 16000,
-    channels: int = 1
+    channels: int = 1,
 ) -> Path:
     """
     Extract audio from video using ffmpeg directly via subprocess.
@@ -144,13 +142,17 @@ def extract_audio_ffmpeg_direct(
     # Build ffmpeg command
     cmd = [
         "ffmpeg",
-        "-i", str(video_path),           # Input file
-        "-vn",                           # Disable video
-        "-acodec", "pcm_s16le",         # Audio codec (16-bit PCM for WAV)
-        "-ar", str(sample_rate),        # Sample rate
-        "-ac", str(channels),           # Number of channels
-        "-y",                           # Overwrite output file
-        str(output_path)
+        "-i",
+        str(video_path),  # Input file
+        "-vn",  # Disable video
+        "-acodec",
+        "pcm_s16le",  # Audio codec (16-bit PCM for WAV)
+        "-ar",
+        str(sample_rate),  # Sample rate
+        "-ac",
+        str(channels),  # Number of channels
+        "-y",  # Overwrite output file
+        str(output_path),
     ]
 
     try:
@@ -159,12 +161,7 @@ def extract_audio_ffmpeg_direct(
         print(f"Running: {' '.join(cmd)}")
 
         # Run ffmpeg
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
 
         print(f" Audio extracted successfully: {output_path}")
         print(f"  Sample rate: {sample_rate} Hz")
@@ -180,9 +177,7 @@ def extract_audio_ffmpeg_direct(
             "  Windows: Download from https://ffmpeg.org/download.html"
         )
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(
-            f"ffmpeg failed with error:\n{e.stderr}"
-        ) from e
+        raise RuntimeError(f"ffmpeg failed with error:\n{e.stderr}") from e
 
 
 def batch_extract_audio(
@@ -190,7 +185,7 @@ def batch_extract_audio(
     output_dir: Union[str, Path],
     pattern: str = "*.mp4",
     sample_rate: int = 16000,
-    channels: int = 1
+    channels: int = 1,
 ) -> list[Path]:
     """
     Extract audio from all video files in a directory.
@@ -235,10 +230,7 @@ def batch_extract_audio(
 
         try:
             result_path = extract_audio_from_video(
-                video_path,
-                output_path,
-                sample_rate=sample_rate,
-                channels=channels
+                video_path, output_path, sample_rate=sample_rate, channels=channels
             )
             extracted_files.append(result_path)
 
@@ -247,7 +239,9 @@ def batch_extract_audio(
             continue
 
     print("\n" + "=" * 70)
-    print(f" Batch extraction complete: {len(extracted_files)}/{len(video_files)} successful")
+    print(
+        f" Batch extraction complete: {len(extracted_files)}/{len(video_files)} successful"
+    )
 
     return extracted_files
 

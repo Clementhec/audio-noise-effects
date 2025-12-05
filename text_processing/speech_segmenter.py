@@ -23,9 +23,7 @@ class SpeechSegmenter:
         self.max_words_per_segment = max_words_per_segment
 
     def segment_by_sentences(
-        self,
-        transcript: str,
-        word_timings: List[Dict[str, any]]
+        self, transcript: str, word_timings: List[Dict[str, any]]
     ) -> List[Dict[str, any]]:
         """
         Segment transcript into sentences while preserving timing information.
@@ -50,7 +48,7 @@ class SpeechSegmenter:
             ]
         """
         # Split transcript into sentences using basic punctuation
-        sentence_pattern = r'[.!?]+\s*'
+        sentence_pattern = r"[.!?]+\s*"
         sentences = re.split(sentence_pattern, transcript)
         sentences = [s.strip() for s in sentences if s.strip()]
 
@@ -64,15 +62,15 @@ class SpeechSegmenter:
             if len(sentence_words) > self.max_words_per_segment:
                 # Break into smaller chunks
                 for i in range(0, len(sentence_words), self.max_words_per_segment):
-                    chunk_words = sentence_words[i:i + self.max_words_per_segment]
-                    chunk_text = ' '.join(chunk_words)
+                    chunk_words = sentence_words[i : i + self.max_words_per_segment]
+                    chunk_text = " ".join(chunk_words)
 
                     segment = self._create_segment(
                         segment_id=len(segments),
                         text=chunk_text,
                         word_timings=word_timings,
                         word_index=word_index,
-                        word_count=len(chunk_words)
+                        word_count=len(chunk_words),
                     )
 
                     if segment:
@@ -85,7 +83,7 @@ class SpeechSegmenter:
                     text=sentence,
                     word_timings=word_timings,
                     word_index=word_index,
-                    word_count=len(sentence_words)
+                    word_count=len(sentence_words),
                 )
 
                 if segment:
@@ -100,7 +98,7 @@ class SpeechSegmenter:
         text: str,
         word_timings: List[Dict],
         word_index: int,
-        word_count: int
+        word_count: int,
     ) -> Dict[str, any]:
         """
         Create a segment with timing information.
@@ -128,16 +126,16 @@ class SpeechSegmenter:
             return None
 
         # Calculate segment start and end times
-        start_time = segment_words[0]['start_time']
-        end_time = segment_words[-1]['end_time']
+        start_time = segment_words[0]["start_time"]
+        end_time = segment_words[-1]["end_time"]
 
         return {
-            'segment_id': segment_id,
-            'text': text,
-            'start_time': start_time,
-            'end_time': end_time,
-            'word_count': len(segment_words),
-            'words': segment_words  # Preserve word-level detail
+            "segment_id": segment_id,
+            "text": text,
+            "start_time": start_time,
+            "end_time": end_time,
+            "word_count": len(segment_words),
+            "words": segment_words,  # Preserve word-level detail
         }
 
     def segment_by_time_windows(
@@ -145,7 +143,7 @@ class SpeechSegmenter:
         transcript: str,
         word_timings: List[Dict[str, any]],
         window_seconds: float = 5.0,
-        overlap_seconds: float = 0.0
+        overlap_seconds: float = 0.0,
     ) -> List[Dict[str, any]]:
         """
         Segment transcript using fixed time windows (alternative approach).
@@ -163,8 +161,8 @@ class SpeechSegmenter:
             return []
 
         segments = []
-        current_window_start = word_timings[0]['start_time']
-        total_duration = word_timings[-1]['end_time']
+        current_window_start = word_timings[0]["start_time"]
+        total_duration = word_timings[-1]["end_time"]
         segment_id = 0
 
         while current_window_start < total_duration:
@@ -172,27 +170,29 @@ class SpeechSegmenter:
 
             # Find words within this time window
             window_words = [
-                w for w in word_timings
-                if w['start_time'] >= current_window_start and w['end_time'] <= window_end
+                w
+                for w in word_timings
+                if w["start_time"] >= current_window_start
+                and w["end_time"] <= window_end
             ]
 
             if window_words:
-                text = ' '.join([w['word'] for w in window_words])
+                text = " ".join([w["word"] for w in window_words])
 
                 segment = {
-                    'segment_id': segment_id,
-                    'text': text,
-                    'start_time': window_words[0]['start_time'],
-                    'end_time': window_words[-1]['end_time'],
-                    'word_count': len(window_words),
-                    'words': window_words
+                    "segment_id": segment_id,
+                    "text": text,
+                    "start_time": window_words[0]["start_time"],
+                    "end_time": window_words[-1]["end_time"],
+                    "word_count": len(window_words),
+                    "words": window_words,
                 }
 
                 segments.append(segment)
                 segment_id += 1
 
             # Move to next window (with optional overlap)
-            current_window_start += (window_seconds - overlap_seconds)
+            current_window_start += window_seconds - overlap_seconds
 
         return segments
 
@@ -207,7 +207,7 @@ def load_stt_output(stt_result: Dict) -> Tuple[str, List[Dict]]:
     Returns:
         Tuple of (transcript, word_timings)
     """
-    transcript = stt_result['results']['transcript']
-    word_timings = stt_result['words_timings']
+    transcript = stt_result["results"]["transcript"]
+    word_timings = stt_result["words_timings"]
 
     return transcript, word_timings

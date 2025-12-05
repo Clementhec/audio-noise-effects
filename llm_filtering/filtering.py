@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from typing import List, Dict, Any, Optional
 
+from llm_filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
+
 
 def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
     """
@@ -43,6 +45,7 @@ def create_prompt(
     Returns:
         Formatted prompt for the LLM
     """
+    # Build dynamic instructions
     max_sounds_instruction = ""
     if max_sounds is not None:
         max_sounds_instruction = (
@@ -53,23 +56,13 @@ def create_prompt(
     if user_prompt:
         user_context = f"\n\nUSER SPECIFIC INSTRUCTIONS:\n{user_prompt}\n"
 
-    prompt = f"""You are an expert in sound design for audio. Your role is to analyze sentences with their suggested corresponding sounds and determine:
+    # Build prompt header with dynamic parts
+    prompt = FILTER_PROMPT_HEADER.format(
+        max_sounds_instruction=max_sounds_instruction,
+        user_context=user_context
+    )
 
-1. A unique relevance rank for each sentence (1 = most relevant, 2 = second most relevant, etc.)
-2. On which specific word(s) to place the sound effect for a natural result
-3. Which sound among the suggestions (by index) is most appropriate
-
-IMPORTANT RULES:
-- You MUST assign a UNIQUE rank to each sentence (no duplicates: 1, 2, 3, 4, 5...)
-- Rank 1 = most impactful/relevant, higher numbers = less relevant
-- Favor concrete sounds (thunder, barking, rain) rather than general ambiances
-- Maximum one keyword per sentence (the most relevant one)
-- Use the sound_index (0, 1, or 2) to reference which sound from the suggestions you select {max_sounds_instruction} {user_context}
-
-Here is the data to analyze:
-
-"""
-
+    # Add sentence data
     for item in similarity_data:
         prompt += f"\n--- Sentence {item['speech_index']} ---\n"
         prompt += f'Text: "{item["speech_text"]}"\n'
@@ -78,29 +71,10 @@ Here is the data to analyze:
             prompt += f"  {i}. {match['sound_title']} (similarity: {match['similarity']:.2f})\n"
             prompt += f"     Description: {match['sound_description']}\n"
             prompt += f"     URL: {match['audio_url_wav']}\n"
-    prompt += """
 
-RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
-Your overall response should be a valid JSON string AS IS.
+    # Add footer
+    prompt += FILTER_PROMPT_FOOTER
 
-CRITICAL: Use ONLY the sound_index (0, 1, or 2) to reference sounds. DO NOT copy titles or URLs.
-
-{
-  "filtered_sounds": [
-    {
-      "speech_index": 0,
-      "speech_text": "original text",
-      "should_add_sound": true/false,
-      "target_word": "specific word where to place the sound (null if should_add_sound=false)",
-      "selected_sound_index" : "EXACT sound index identifier",
-      "reasoning": "explanation of the decision",
-      "relevance_rank": "integer numeric relevance, (most is 1)" 
-    }
-  ]
-}
-
-ALL sentences must be included with UNIQUE ranks (1, 2, 3, 4...). Order by rank ascending (1 first).
-"""
     return prompt
 
 

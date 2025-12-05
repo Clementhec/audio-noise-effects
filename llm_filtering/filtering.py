@@ -73,6 +73,7 @@ Here is the data to analyze:
     prompt += """
 
 RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
+Your overall response should be a valid JSON string AS IS.
 
 CRITICAL: Use ONLY the sound_index (0, 1, or 2) to reference sounds. DO NOT copy titles or URLs.
 
@@ -144,8 +145,14 @@ def filter_sounds(
     prompt = create_prompt(similarity_data, max_sounds, user_prompt)
     response = model.generate_content(prompt)
     response_text = clean_json_response(response.text)
-    llm_result = json.loads(response_text)
-    
+    print(response)
+    print()
+    print(response_text)
+    try:
+        llm_result = json.loads(response_text)
+    except json.JSONDecodeError as e:
+        print("Error decoding LLM filter response")
+        raise e
     # Reconstruct complete data from indexes
     # to avoid LLM hallucinations
     result = {"filtered_sounds": []}

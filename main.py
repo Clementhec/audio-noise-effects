@@ -624,11 +624,9 @@ def main():
             sound_details = pd.read_csv(sound_details_path)
             sound_audio_urls = fetch_audio_urls_from_details(sound_details)
             sound_audio_urls.to_csv(sound_audio_urls_path, index=False)
-        sound_audio_urls = pd.read_csv(sound_audio_urls_path)
         soundbible_details = pd.read_csv(sound_details_clean_path)
-        print(soundbible_details.head(10))
-        print()
-        print(sound_audio_urls[["title", "audio_url_wav"]])
+        # add wav url to the embedding dataframe
+        sound_audio_urls = pd.read_csv(sound_audio_urls_path)
         soundbible_details_full = soundbible_details.merge(
             sound_audio_urls[["title", "audio_url_wav"]],
             on="title",

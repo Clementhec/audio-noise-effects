@@ -149,7 +149,9 @@ if __name__ == "__main__":
     parser.add_argument("video_file", help="Path to input video file")
     parser.add_argument("-o", "--output", help="Output audio file path")
     parser.add_argument("--format", default="wav", help="Audio format (default: wav)")
-    parser.add_argument("--sample-rate", type=int, default=16000, help="Sample rate in Hz")
+    parser.add_argument(
+        "--sample-rate", type=int, default=16000, help="Sample rate in Hz"
+    )
     parser.add_argument("--channels", type=int, default=1, help="Number of channels")
 
     args = parser.parse_args()

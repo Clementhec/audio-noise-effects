@@ -50,6 +50,11 @@ Example sample rates :
 - **48000 Hz**: Professional audio/video standard
 
 
+
+### Vector store
+
+Use either FAISS or ChromaDB.
+
 ## References
 
 - [Eleven labs deref project](https://videotosfx.elevenlabs.io/)

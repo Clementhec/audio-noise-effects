@@ -596,7 +596,7 @@ def main():
         print(f"Use existing video speech embeddings : {embeddings_path}")
 
         from utils.sound_embedding.sound_embedder import SoundEmbedder
-        from sounds.soundbible import (
+        from sounds.soundbible_utils import (
             fetch_sound_hrefs,
             fetch_sound_details_from_hrefs,
             clean_sounds_description,
@@ -630,9 +630,9 @@ def main():
         soundbible_details_full = soundbible_details.merge(
             sound_audio_urls[["title", "audio_url_wav"]], on="title", how="left"
         )
-        if not soundbible_embeddings_path.exists():
+        if not embeddings_path.exists():
             SoundEmbedder().process_sound_dataframe(
-                soundbible_details_full, output_path=soundbible_embeddings_path
+                soundbible_details_full, output_path=embeddings_path
             )
 
     if args.run_matching:
@@ -640,7 +640,7 @@ def main():
             embeddings_path,
             similarity_results_path,
             top_k=args.top_k,
-            sound_embeddings_path=soundbible_embeddings_path,
+            sound_embeddings_path=embeddings_path,
         )
     elif args.run_llm_filter:
         if not similarity_results_path.exists():

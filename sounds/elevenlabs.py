@@ -41,7 +41,9 @@ def generate_sound_effect(
         api_key = os.getenv("ELEVENLABS_API_KEY")
 
     if not api_key:
-        raise ValueError("ElevenLabs API key not found. Set ELEVENLABS_API_KEY in .env or pass api_key parameter.")
+        raise ValueError(
+            "ElevenLabs API key not found. Set ELEVENLABS_API_KEY in .env or pass api_key parameter."
+        )
 
     # Create output directory if it doesn't exist
     sound_folder = Path(sound_folder)
@@ -61,7 +63,9 @@ def generate_sound_effect(
 
     # Create a safe filename from the description
     # Use first few words and add a hash for uniqueness
-    safe_description = "".join(c if c.isalnum() or c.isspace() else "_" for c in sound_description)
+    safe_description = "".join(
+        c if c.isalnum() or c.isspace() else "_" for c in sound_description
+    )
     safe_description = "_".join(safe_description.split()[:5])  # First 5 words
 
     # Add hash of full description for uniqueness
@@ -75,8 +79,24 @@ def generate_sound_effect(
         for chunk in result:
             if isinstance(chunk, bytes):
                 f.write(chunk)
-            elif hasattr(chunk, 'audio'):
+            elif hasattr(chunk, "audio"):
                 f.write(chunk.audio)
 
     return output_path
 
+
+if __name__ == "__main__":
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument("--text", type=str)
+    parser.add_argument("--sound-folder", type=Path, default=Path("../data/sounds"))
+    parser.add_argument("--duration", type=float, default=2.0)
+    parser.add_argument("--prompt-influence", type=float, default=1.0)
+    args = parser.parse_args()
+    generate_sound_effect(
+        sound_description=args.text,
+        sound_folder=args.sound_folder,
+        duration_seconds=args.duration,
+        prompt_influence=args.prompt_influence,
+    )

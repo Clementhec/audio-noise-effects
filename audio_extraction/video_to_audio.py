@@ -142,21 +142,26 @@ def batch_extract_audio(
 
 
 if __name__ == "__main__":
-    # Example usage
+    import argparse
     import sys
 
-    if len(sys.argv) < 2:
-        print("Usage: python video_to_audio.py <video_file.mp4> [output_file.wav]")
-        print("\nExample:")
-        print("  python video_to_audio.py my_video.mp4")
-        print("  python video_to_audio.py my_video.mp4 audio/output.wav")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Extract audio from video files")
+    parser.add_argument("video_file", help="Path to input video file")
+    parser.add_argument("-o", "--output", help="Output audio file path")
+    parser.add_argument("--format", default="wav", help="Audio format (default: wav)")
+    parser.add_argument("--sample-rate", type=int, default=16000, help="Sample rate in Hz")
+    parser.add_argument("--channels", type=int, default=1, help="Number of channels")
 
-    video_file = sys.argv[1]
-    output_file = sys.argv[2] if len(sys.argv) > 2 else None
+    args = parser.parse_args()
 
     try:
-        result = extract_audio_from_video(video_file, output_file)
+        result = extract_audio_from_video(
+            args.video_file,
+            args.output,
+            audio_format=args.format,
+            sample_rate=args.sample_rate,
+            channels=args.channels,
+        )
         print(f"\n Success! Audio saved to: {result}")
     except Exception as e:
         print(f"\n Error: {e}")

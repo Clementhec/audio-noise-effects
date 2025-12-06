@@ -40,7 +40,18 @@ Input (Audio/Video)
 Output (Enhanced Audio/Video)
 ```
 
+### Audio Extraction
+
+Example sample rates :
+
+- **16000 Hz**: Standard for speech recognition (Google STT, Whisper)
+- **22050 Hz**: Acceptable quality for speech
+- **44100 Hz**: CD quality, good for music
+- **48000 Hz**: Professional audio/video standard
+
+
 ## References
+
 - [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
 
 
@@ -60,8 +71,24 @@ ELEVENLABS_API_KEY=your_api_key_here
 export OPENAI_API_KEY="your-api-key-here"
 ```
 
-
 Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+## Requirements
+
+### Audio extraction and merging 
+
+Install ffmpeg on your system:
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install ffmpeg
+
+# macOS
+brew install ffmpeg
+
+# Windows
+# Download from https://ffmpeg.org/download.html
+```
 
 ## Project Guidelines
 

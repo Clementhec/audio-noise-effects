@@ -385,14 +385,7 @@ def run_semantic_matching_step(
     return similarity_results_path
 
 
-def validate_args(args):
-    # Validate sound intensity
-    if not 0.0 <= args.sound_intensity <= 1.0:
-        print("Error: --sound-intensity must be between 0.0 and 1.0")
-        sys.exit(1)
-
-
-def main():
+def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Video preprocessing pipeline for audio-noise-effects",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -491,6 +484,14 @@ def main():
     )
 
     args = parser.parse_args()
+    return args
+
+
+def validate_args(args):
+    # Validate sound intensity
+    if not 0.0 <= args.sound_intensity <= 1.0:
+        print("Error: --sound-intensity must be between 0.0 and 1.0")
+        sys.exit(1)
 
     # Full pipeline enables all steps
     if args.full_pipeline:
@@ -500,18 +501,23 @@ def main():
         args.run_llm_filter = True
         args.run_video_merge = True
 
+
+def main():
+    args = parse_arguments()
+
     validate_args(args)
     setup_directories(output_dir=args.output_dir)
 
     # Initialize paths from default locations
     input_video_path = Path(args.video)
+
+    # video identifier 
     base_name = input_video_path.stem
-    audio_base_path = Path(args.output_dir) / "audio" / (Path(args.video).stem + ".wav")
-    soundbible_embeddings_path = Path(args.output_dir) / "embeddings/soundbible.csv"
+    
+    # extracted audio file
+    audio_base_path = Path(args.output_dir) / "audio" / (base_name + ".wav")
+    
     soundbible_details_path = Path(args.output_dir) / "soundbible"
-    soundbible_download_dir = Path(args.output_dir) / Path(
-        "soundbible/downloaded_sounds"
-    )
     sound_audio_urls_path = soundbible_details_path / "soundbible_audio_files.csv"
     transcription_path = Path(args.output_dir) / Path(
         f"speech_to_text/{base_name}_full_transcription.json"
@@ -525,19 +531,34 @@ def main():
     soundbible_metadata_path = Path(args.output_dir) / Path(
         "input/soundbible_metadata.csv"
     )
+    
+    # sounds audio .wav files 
+    sounds_path = Path(args.output_dir) / Path("sounds") 
+    sounds_soundbible_path = sounds_path / Path("soundbible")
+    sounds_elevenlabs_path = sounds_path / Path("elevenlabs")
+    
+    # stored sound embeddings
     sound_embeddings_path = Path(args.output_dir) / Path(
         "embeddings/soundbible_sound_embeddings.csv"
     )
-    sounds_path = Path(args.output_dir) / Path("sounds") # the folder to store all .wav files 
+
+    # similarity results intermediate output
     similarity_results_path = Path(args.output_dir) / Path(
         f"similarity/{base_name}_similarity.json"
     )
+    
+    # filtered sound effects additions summary
     filtered_results_path = Path(args.output_dir) / Path(
         f"filtered/{base_name}_video_filtered_sounds.json"
     )
+    
+    # final video output
     output_video_path = Path(args.output_dir) / Path(
         f"output/{base_name}_soundeasy.mp4"
     )
+
+    
+    # * START OF THE PROCESS *
 
     audio_path = extract_audio(
         args.video,
@@ -658,7 +679,6 @@ def main():
         print("Generated files:")
         print(f"Audio: {audio_path}")
         print(f"Final video path : {final_video_path}")
-
 
 if __name__ == "__main__":
     main()

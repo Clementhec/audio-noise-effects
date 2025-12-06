@@ -49,6 +49,10 @@ For situations that require more subtlety,
 one can leverage the text-to-sound generation API from [ElevenLabs](https://elevenlabs.io/sound-effects), 
 which can further enhance the video experience.
 
+Generated sounds are then stored in the sounds bank, and their embeddings are cached, 
+to be reused if necessary in comparable contexts, 
+to guarantee consistent sound additions and leverage repetition effects.
+
 ## References
 - [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
 

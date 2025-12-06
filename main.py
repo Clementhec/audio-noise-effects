@@ -528,6 +528,7 @@ def main():
     sound_embeddings_path = Path(args.output_dir) / Path(
         "embeddings/soundbible_sound_embeddings.csv"
     )
+    sounds_path = Path(args.output_dir) / Path("sounds") # the folder to store all .wav files 
     similarity_results_path = Path(args.output_dir) / Path(
         f"similarity/{base_name}_similarity.json"
     )

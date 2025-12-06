@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("--text", type=str)
-    parser.add_argument("--sound-folder", type=Path, default=Path("../data/sounds"))
+    parser.add_argument("--sound-folder", type=Path, default=Path("data/sounds"))
     parser.add_argument("--duration", type=float, default=2.0)
     parser.add_argument("--prompt-influence", type=float, default=1.0)
     args = parser.parse_args()

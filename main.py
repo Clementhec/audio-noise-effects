@@ -13,7 +13,7 @@ from utils import get_embeddings
 from llm_filtering.filtering import filter_sounds
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
-from audio_extraction import extract_audio_from_video
+from utils.audio_extraction import extract_audio_from_video
 from merging_audio.video_audio_merger import run_complete_video_audio_merge
 
 

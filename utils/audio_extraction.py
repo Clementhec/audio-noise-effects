@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 from typing import Optional, Union
 from pydub import AudioSegment
@@ -73,72 +72,6 @@ def extract_audio_from_video(
     print(f"Channels: {channels}")
 
     return output_path
-
-
-def batch_extract_audio(
-    video_dir: Union[str, Path],
-    output_dir: Union[str, Path],
-    pattern: str = "*.mp4",
-    sample_rate: int = 16000,
-    channels: int = 1,
-) -> list[Path]:
-    """
-    Extract audio from all video files in a directory.
-
-    Args:
-        video_dir: Directory containing video files
-        output_dir: Directory for output audio files
-        pattern: Glob pattern for video files (default: "*.mp4")
-        sample_rate: Sample rate in Hz (default: 16000)
-        channels: Number of audio channels (default: 1)
-
-    Returns:
-        List of Path objects for created audio files
-
-    Example:
-        >>> batch_extract_audio("videos/", "audio/", pattern="*.mp4")
-        [PosixPath('audio/video1.wav'), PosixPath('audio/video2.wav')]
-    """
-    video_dir = Path(video_dir)
-    output_dir = Path(output_dir)
-
-    # Create output directory
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Find all video files
-    video_files = sorted(video_dir.glob(pattern))
-
-    if not video_files:
-        print(f"No video files found in {video_dir} matching pattern {pattern}")
-        return []
-
-    print(f"Found {len(video_files)} video files")
-    print("=" * 70)
-
-    extracted_files = []
-
-    for i, video_path in enumerate(video_files, 1):
-        print(f"\n[{i}/{len(video_files)}] Processing: {video_path.name}")
-
-        # Generate output path with same name but .wav extension
-        output_path = output_dir / video_path.with_suffix(".wav").name
-
-        try:
-            result_path = extract_audio_from_video(
-                video_path, output_path, sample_rate=sample_rate, channels=channels
-            )
-            extracted_files.append(result_path)
-
-        except Exception as e:
-            print(f" Failed to process {video_path.name}: {e}")
-            continue
-
-    print("\n" + "=" * 70)
-    print(
-        f" Batch extraction complete: {len(extracted_files)}/{len(video_files)} successful"
-    )
-
-    return extracted_files
 
 
 if __name__ == "__main__":

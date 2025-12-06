@@ -511,14 +511,13 @@ def main():
     # Initialize paths from default locations
     input_video_path = Path(args.video)
 
-    # video identifier 
+    # video identifier
     base_name = input_video_path.stem
-    
+
     # extracted audio file
     audio_base_path = Path(args.output_dir) / "audio" / (base_name + ".wav")
-    
-    soundbible_details_path = Path(args.output_dir) / "soundbible"
-    sound_audio_urls_path = soundbible_details_path / "soundbible_audio_files.csv"
+
+    # sound_audio_urls_path = soundbible_details_path / "soundbible_audio_files.csv"
     transcription_path = Path(args.output_dir) / Path(
         f"speech_to_text/{base_name}_full_transcription.json"
     )
@@ -531,14 +530,15 @@ def main():
     soundbible_metadata_path = Path(args.output_dir) / Path(
         "input/soundbible_metadata.csv"
     )
-    
-    # sounds audio .wav files 
-    sounds_path = Path(args.output_dir) / Path("sounds") 
+
+    # sounds audio .wav files
+    sounds_path = Path(args.output_dir) / Path("sounds")
+    soundbible_details_path = sounds_path / "soundbible_details.csv"
     sounds_soundbible_path = sounds_path / Path("soundbible")
-    # TODO : to integrate to the pipeline, 
+    # TODO : to integrate to the pipeline,
     # TODO for instance if relevance of best matches is below some threshold
-    sounds_elevenlabs_path = sounds_path / Path("elevenlabs") 
-    
+    sounds_elevenlabs_path = sounds_path / Path("elevenlabs")
+
     # stored sound embeddings
     sound_embeddings_path = Path(args.output_dir) / Path(
         "embeddings/soundbible_sound_embeddings.csv"
@@ -548,18 +548,17 @@ def main():
     similarity_results_path = Path(args.output_dir) / Path(
         f"similarity/{base_name}_similarity.json"
     )
-    
+
     # filtered sound effects additions summary
     filtered_results_path = Path(args.output_dir) / Path(
         f"filtered/{base_name}_video_filtered_sounds.json"
     )
-    
+
     # final video output
     output_video_path = Path(args.output_dir) / Path(
         f"output/{base_name}_soundeasy.mp4"
     )
 
-    
     # * START OF THE PROCESS *
 
     audio_path = extract_audio(
@@ -596,40 +595,17 @@ def main():
         print(f"Use existing video speech embeddings : {embeddings_path}")
 
         from utils.sound_embedding.sound_embedder import SoundEmbedder
-        from sounds.soundbible_utils import (
-            fetch_sound_hrefs,
-            fetch_sound_details_from_hrefs,
-            clean_sounds_description,
-            fetch_audio_urls_from_details,
-        )
 
-        base_url = "https://soundbible.com/free-sound-effects-{}.html"
-        sound_links_path = soundbible_details_path / "soundbible_links.csv"
-        if not sound_links_path.exists():
-            sound_hrefs = fetch_sound_hrefs(base_url)
-            sound_hrefs.to_csv(sound_links_path, index=False)
-        sound_details_path = soundbible_details_path / "soundbible_details.csv"
-        if not sound_details_path.exists():
-            sound_hrefs = pd.read_csv(sound_links_path)
-            sound_details = fetch_sound_details_from_hrefs(sound_hrefs)
-            sound_details.to_csv(sound_details_path, index=False)
-        sound_details_clean_path = (
-            soundbible_details_path / "soundbible_details_clean.csv"
-        )
-        if not sound_details_clean_path.exists():
-            sound_details = pd.read_csv(sound_details_path)
-            sound_details_clean = clean_sounds_description(sound_details)
-            sound_details_clean.to_csv(sound_details_clean_path, index=False)
-        if not sound_audio_urls_path.exists():
-            sound_details = pd.read_csv(sound_details_path)
-            sound_audio_urls = fetch_audio_urls_from_details(sound_details)
-            sound_audio_urls.to_csv(sound_audio_urls_path, index=False)
-        soundbible_details = pd.read_csv(sound_details_clean_path)
-        # add wav url to the embedding dataframe
-        sound_audio_urls = pd.read_csv(sound_audio_urls_path)
-        soundbible_details_full = soundbible_details.merge(
-            sound_audio_urls[["title", "audio_url_wav"]], on="title", how="left"
-        )
+        if not soundbible_details_path.exists():
+            from sounds.soundbible_utils import SoundBibleScraper
+
+            BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
+            soundbible_details_full = SoundBibleScraper(
+                base_url=BASE_URL, download_dir=sounds_soundbible_path
+            ).run()
+            soundbible_details_path.parent.mkdir(parents=True, exist_ok=True)
+            soundbible_details_full.to_csv(soundbible_details_path)
+
         if not embeddings_path.exists():
             SoundEmbedder().process_sound_dataframe(
                 soundbible_details_full, output_path=embeddings_path
@@ -674,13 +650,14 @@ def main():
             output_video_path=output_video_path,
             sound_intensity=args.sound_intensity,
             sound_duration=args.sound_duration,
-            metadata_path=sound_audio_urls_path,
+            metadata_path=soundbible_details_path,
             soundbible_download_dir=sounds_soundbible_path,
         )
 
         print("Generated files:")
         print(f"Audio: {audio_path}")
         print(f"Final video path : {final_video_path}")
+
 
 if __name__ == "__main__":
     main()

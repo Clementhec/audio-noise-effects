@@ -4,6 +4,7 @@ import time
 import requests
 import pandas as pd
 from pathlib import Path
+from typing import Optional
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, unquote
 from multiprocessing import Pool
@@ -11,9 +12,10 @@ from itertools import chain
 
 
 class SoundBibleScraper:
-    def __init__(self, base_url: str):
+    def __init__(self, base_url: str, download_dir: Path):
         self.sound_details = None
         self.base_url = base_url
+        self.download_dir = download_dir
 
     @staticmethod
     def _fetch_page_hrefs(args):
@@ -42,6 +44,37 @@ class SoundBibleScraper:
 
         return page_results
 
+    @staticmethod
+    def _download_sound_effect(
+        url: str, output_path: Path, force_download: bool = False
+    ) -> bool:
+        """
+        Download a sound effect file from URL.
+
+        Args:
+            url: URL to download from
+            output_path: Local path to save file
+            force_download: Re-download even if file exists
+
+        Returns:
+            True if successful, False otherwise
+        """
+        if output_path.exists() and not force_download:
+            print(f"Already downloaded: {output_path.name}")
+            return True
+
+        try:
+            print(f"Downloading: {output_path.name}")
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            output_path.write_bytes(response.content)
+            print(f"Downloaded: {output_path.name}")
+            return True
+
+        except Exception as e:
+            print(f"Download failed: {e}")
+            return False
+
     def fetch_sound_hrefs(self):
         # ? How do we know this ?
         N_PAGES = 237
@@ -69,12 +102,12 @@ class SoundBibleScraper:
         )
 
         # initialise new columns
-        self.sound_hrefs["url"] = None
-        self.sound_hrefs["description"] = None
-        self.sound_hrefs["keywords"] = None
-        self.sound_hrefs["length"] = None
+        self.sound_details["url"] = None
+        self.sound_details["description"] = None
+        self.sound_details["keywords"] = None
+        self.sound_details["length"] = None
 
-        for _, row in self.sound_hrefs.iterrows():
+        for _, row in self.sound_details.iterrows():
             href = row["href"]
             title = row["title"]
             url = f"https://soundbible.com/{href}"
@@ -260,6 +293,7 @@ class SoundBibleScraper:
                         )
 
                 # 2) audio length : main selector
+                audio_length = None
                 time_tag = soup.select_one(SEL_TIME_PRIMARY)
                 if time_tag:
                     audio_length = time_tag.get_text(strip=True)
@@ -299,47 +333,32 @@ class SoundBibleScraper:
         self.fetch_sound_details_from_hrefs()
         self.clean_sounds_description()
         self.fetch_audio_urls_from_details()
+        self.download()
         return self.sound_details
 
-
-def download_sound_effect(
-    url: str, output_path: Path, force_download: bool = False
-) -> bool:
-    """
-    Download a sound effect file from URL.
-
-    Args:
-        url: URL to download from
-        output_path: Local path to save file
-        force_download: Re-download even if file exists
-
-    Returns:
-        True if successful, False otherwise
-    """
-    if output_path.exists() and not force_download:
-        print(f"Already downloaded: {output_path.name}")
-        return True
-
-    try:
-        print(f"Downloading: {output_path.name}")
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
-
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_bytes(response.content)
-
-        print(f"Downloaded: {output_path.name}")
-        return True
-
-    except Exception as e:
-        print(f"Download failed: {e}")
-        return False
+    def download(self, sound_folder: Optional[Path] = None):
+        """
+        Download sound effects in the specified folder
+        """
+        if not sound_folder:
+            sound_folder = self.download_dir
+        self.sound_details["sound_location"] = self.sound_details["title"].apply(
+            lambda t: sound_folder / Path(t.lower().replace(" ", "_") + ".wav")
+        )
+        sound_folder.mkdir(parents=True, exist_ok=True)
+        sounds = self.sound_details[["title", "sound_location"]]
+        sounds = [(s.sound_location, s.audio_url_wav) for s in sounds.itertuples()]
+        with Pool(processes=-1) as pool:
+            results = pool.map(SoundBibleScraper._download_sound_effect, sounds)
+        n = sum([int(i) for i in results])
+        print(f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)")
 
 
 if __name__ == "__main__":
     BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
-
-    scraper = SoundBibleScraper(BASE_URL)
+    download_dir = Path("data/sounds/soundbible")
+    
+    scraper = SoundBibleScraper(BASE_URL, download_dir)
 
     sound_details = scraper.run()
 

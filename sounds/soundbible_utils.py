@@ -10,12 +10,14 @@ from urllib.parse import urljoin, urlparse, unquote
 from multiprocessing import Pool
 from itertools import chain
 
+from utils.logger import get_logger
 
 class SoundBibleScraper:
     def __init__(self, base_url: str, download_dir: Path):
         self.sound_details = None
         self.base_url = base_url
         self.download_dir = download_dir
+        self.logger = get_logger("SoundBibleScraper")
 
     @staticmethod
     def _fetch_page_hrefs(args):
@@ -40,7 +42,7 @@ class SoundBibleScraper:
                         {"title": a_tag.text.strip(), "href": a_tag["href"]}
                     )
         except Exception as e:
-            print(f"Error fetching page {page}: {e}")
+            self.logger.info(f"Error fetching page {page}: {e}")
 
         return page_results
 
@@ -64,15 +66,15 @@ class SoundBibleScraper:
             return True
 
         try:
-            print(f"Downloading: {output_path.name}")
+            self.logger.info(f"Downloading: {output_path.name}")
             response = requests.get(url, timeout=30)
             response.raise_for_status()
             output_path.write_bytes(response.content)
-            print(f"Downloaded: {output_path.name}")
+            self.logger.info(f"Downloaded: {output_path.name}")
             return True
 
         except Exception as e:
-            print(f"Download failed: {e}")
+            self.logger.info(f"Download failed: {e}")
             return False
 
     def fetch_sound_hrefs(self):
@@ -115,7 +117,7 @@ class SoundBibleScraper:
             try:
                 response = session.get(url, timeout=12)
                 if response.status_code != 200:
-                    print(f"Failed to fetch {url} (status {response.status_code})")
+                    self.logger.info(f"Failed to fetch {url} (status {response.status_code})")
                     continue
 
                 soup = BeautifulSoup(response.text, "html.parser")
@@ -160,7 +162,7 @@ class SoundBibleScraper:
                 )
 
             except Exception as e:
-                print(f"Error on {url}: {e}")
+                self.logger.info(f"Error on {url}: {e}")
 
             # Avoid overloading website
             time.sleep(0.2)
@@ -224,7 +226,7 @@ class SoundBibleScraper:
             elif "href" in row and pd.notna(row["href"]):
                 url = urljoin(BASE_URL, str(row["href"]))
             else:
-                print(f"[{idx}] Aucun 'url' ni 'href' trouvé, skip")
+                self.logger.info(f"[{idx}] Aucun 'url' ni 'href' trouvé, skip")
                 continue
 
             self.sound_details["audio_length"] = None
@@ -234,7 +236,7 @@ class SoundBibleScraper:
             try:
                 resp = session.get(url, timeout=15)
                 if resp.status_code != 200:
-                    print(f"status {resp.status_code}, skip")
+                    self.logger.info(f"status {resp.status_code}, skip")
                     continue
 
                 soup = BeautifulSoup(resp.text, "html.parser")
@@ -322,19 +324,11 @@ class SoundBibleScraper:
                 )
 
             except Exception as e:
-                print(f"erreur sur {url}: {e}")
+                self.logger.info(f"erreur sur {url}: {e}")
 
         self.sound_details["audio_url_wav"] = self.sound_details[
             "audio_url"
         ].str.replace("mp3", "wav")
-
-    def run(self) -> pd.DataFrame:
-        self.fetch_sound_hrefs()
-        self.fetch_sound_details_from_hrefs()
-        self.clean_sounds_description()
-        self.fetch_audio_urls_from_details()
-        self.download()
-        return self.sound_details
 
     def download(self, sound_folder: Optional[Path] = None):
         """
@@ -351,7 +345,15 @@ class SoundBibleScraper:
         with Pool(processes=-1) as pool:
             results = pool.map(SoundBibleScraper._download_sound_effect, sounds)
         n = sum([int(i) for i in results])
-        print(f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)")
+        self.logger.info(f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)")
+
+    def run(self) -> pd.DataFrame:
+        self.fetch_sound_hrefs()
+        self.fetch_sound_details_from_hrefs()
+        self.clean_sounds_description()
+        self.fetch_audio_urls_from_details()
+        self.download()
+        return self.sound_details
 
 
 if __name__ == "__main__":

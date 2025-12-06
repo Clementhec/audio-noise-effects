@@ -10,14 +10,17 @@ from urllib.parse import urljoin, urlparse, unquote
 from multiprocessing import Pool
 from itertools import chain
 
-from utils.logger import get_logger
+from utils.logger import setup_logger
+
 
 class SoundBibleScraper:
     def __init__(self, base_url: str, download_dir: Path):
         self.sound_details = None
         self.base_url = base_url
         self.download_dir = download_dir
-        self.logger = get_logger("SoundBibleScraper")
+        self.logger = setup_logger(
+            "SoundBibleScraper", log_file=Path("logs/soundbible_scraper.log")
+        )
 
     @staticmethod
     def _fetch_page_hrefs(args):
@@ -119,7 +122,9 @@ class SoundBibleScraper:
             try:
                 response = session.get(url, timeout=12)
                 if response.status_code != 200:
-                    self.logger.info(f"Failed to fetch {url} (status {response.status_code})")
+                    self.logger.info(
+                        f"Failed to fetch {url} (status {response.status_code})"
+                    )
                     continue
 
                 soup = BeautifulSoup(response.text, "html.parser")
@@ -345,15 +350,21 @@ class SoundBibleScraper:
         )
         sound_folder.mkdir(parents=True, exist_ok=True)
         # Create list of (url, output_path) tuples for download
-        download_args = list(zip(
-            self.sound_details["audio_url_wav"],
-            self.sound_details["sound_location"]
-        ))
+        download_args = list(
+            zip(
+                self.sound_details["audio_url_wav"],
+                self.sound_details["sound_location"],
+            )
+        )
         self.logger.info("Download audio files from URL...")
-        with Pool(processes=-1) as pool:
-            results = pool.starmap(SoundBibleScraper._download_sound_effect, download_args)
+        with Pool(processes=8) as pool:
+            results = pool.starmap(
+                SoundBibleScraper._download_sound_effect, download_args
+            )
         n = sum([int(i) for i in results])
-        self.logger.info(f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)")
+        self.logger.info(
+            f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)"
+        )
 
     def run(self) -> pd.DataFrame:
         self.fetch_sound_hrefs()
@@ -367,7 +378,7 @@ class SoundBibleScraper:
 if __name__ == "__main__":
     BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
     download_dir = Path("data/sounds/soundbible")
-    
+
     scraper = SoundBibleScraper(BASE_URL, download_dir)
 
     sound_details = scraper.run()

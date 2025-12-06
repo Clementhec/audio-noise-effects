@@ -3,6 +3,7 @@ import re
 import time
 import requests
 import pandas as pd
+from pathlib import Path
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, unquote
 
@@ -296,6 +297,40 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
     sounds_df = pd.DataFrame(results)
     sounds_df["audio_url_wav"] = sounds_df["audio_url"].str.replace("mp3", "wav")
     return sounds_df
+
+
+def download_sound_effect(
+    url: str, output_path: Path, force_download: bool = False
+) -> bool:
+    """
+    Download a sound effect file from URL.
+
+    Args:
+        url: URL to download from
+        output_path: Local path to save file
+        force_download: Re-download even if file exists
+
+    Returns:
+        True if successful, False otherwise
+    """
+    if output_path.exists() and not force_download:
+        print(f"Already downloaded: {output_path.name}")
+        return True
+
+    try:
+        print(f"Downloading: {output_path.name}")
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_bytes(response.content)
+
+        print(f"Downloaded: {output_path.name}")
+        return True
+
+    except Exception as e:
+        print(f"Download failed: {e}")
+        return False
 
 
 if __name__ == "__main__":

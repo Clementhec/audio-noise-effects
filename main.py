@@ -535,7 +535,9 @@ def main():
     # sounds audio .wav files 
     sounds_path = Path(args.output_dir) / Path("sounds") 
     sounds_soundbible_path = sounds_path / Path("soundbible")
-    sounds_elevenlabs_path = sounds_path / Path("elevenlabs")
+    # TODO : to integrate to the pipeline, 
+    # TODO for instance if relevance of best matches is below some threshold
+    sounds_elevenlabs_path = sounds_path / Path("elevenlabs") 
     
     # stored sound embeddings
     sound_embeddings_path = Path(args.output_dir) / Path(
@@ -673,7 +675,7 @@ def main():
             sound_intensity=args.sound_intensity,
             sound_duration=args.sound_duration,
             metadata_path=sound_audio_urls_path,
-            soundbible_download_dir=soundbible_download_dir,
+            soundbible_download_dir=sounds_soundbible_path,
         )
 
         print("Generated files:")

@@ -6,17 +6,21 @@ import pandas as pd
 from pathlib import Path
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, unquote
+from multiprocessing import Pool
+from itertools import chain
 
 
-def fetch_sound_hrefs(base_url: str):
-    all_results = []
-    for page in range(1, 237):  # Pages 1 to 20
-        url = base_url.format(page)
+def _fetch_page_hrefs(args):
+    """Worker function to fetch hrefs from a single page."""
+    page, base_url = args
+    url = base_url.format(page)
+    page_results = []
 
+    try:
         response = requests.get(url)
         if response.status_code != 200:
             print(f"Failed to fetch {url}")
-            continue
+            return page_results
 
         soup = BeautifulSoup(response.text, "html.parser")
 
@@ -24,7 +28,26 @@ def fetch_sound_hrefs(base_url: str):
         for h3 in soup.find_all("h3"):
             a_tag = h3.find("a", href=True)
             if a_tag:
-                all_results.append({"title": a_tag.text.strip(), "href": a_tag["href"]})
+                page_results.append({"title": a_tag.text.strip(), "href": a_tag["href"]})
+    except Exception as e:
+        print(f"Error fetching page {page}: {e}")
+
+    return page_results
+
+
+def fetch_sound_hrefs(base_url: str):
+    # ? How do we know this ?
+    N_PAGES = 237
+
+    # Prepare arguments for multiprocessing
+    page_args = [(page, base_url) for page in range(1, N_PAGES)]
+
+    # Use multiprocessing pool with 4 workers
+    with Pool(processes=4) as pool:
+        results = pool.map(_fetch_page_hrefs, page_args)
+
+    # Flatten results from all pages
+    all_results = list(chain.from_iterable(results))
 
     return pd.DataFrame(all_results)
 
@@ -39,9 +62,13 @@ def fetch_sound_details_from_hrefs(sound_hrefs: pd.DataFrame) -> pd.DataFrame:
         }
     )
 
-    results = []
+    # initialise new columns
+    sound_hrefs["url"] = None
+    sound_hrefs["description"] = None
+    sound_hrefs["keywords"] = None
+    sound_hrefs["length"] = None
 
-    for idx, row in sound_hrefs.iterrows():
+    for _, row in sound_hrefs.iterrows():
         href = row["href"]
         title = row["title"]
         url = f"https://soundbible.com/{href}"
@@ -82,7 +109,7 @@ def fetch_sound_details_from_hrefs(sound_hrefs: pd.DataFrame) -> pd.DataFrame:
                 time_tag = soup.find("div", {"class": "total-time"})
             length = time_tag.get_text(strip=True) if time_tag else None
 
-            results.append(
+            row.update(
                 {
                     "title": title,
                     "href": href,
@@ -96,12 +123,10 @@ def fetch_sound_details_from_hrefs(sound_hrefs: pd.DataFrame) -> pd.DataFrame:
         except Exception as e:
             print(f"Error on {url}: {e}")
 
-        # Politesse pour éviter de surcharger le site
-        time.sleep(1)
+        # Avoid overloading website
+        time.sleep(.3)
 
-    # DataFrame et export
-    sounds_details = pd.DataFrame(results)
-    return sounds_details
+    return sound_hrefs
 
 
 def clean_sounds_description(sound_details: pd.DataFrame) -> pd.DataFrame:
@@ -157,7 +182,7 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
         }
     )
 
-    results = []
+    # results = []
 
     for idx, row in sound_details.iterrows():
         # get url or construct with href
@@ -168,34 +193,16 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
             url = urljoin(BASE_URL, str(row["href"]))
         else:
             print(f"[{idx}] Aucun 'url' ni 'href' trouvé, skip")
-            results.append(
-                {
-                    "index": idx,
-                    "url": None,
-                    "audio_length": None,
-                    "audio_file": None,
-                    "audio_url": None,
-                }
-            )
             continue
 
-        audio_file_name = None
-        audio_url_full = None
-        audio_length = None
+        sound_details["audio_length"] = None
+        sound_details["audio_file"] = None
+        sound_details["audio_url"] = None
 
         try:
             resp = session.get(url, timeout=15)
             if resp.status_code != 200:
                 print(f"status {resp.status_code}, skip")
-                results.append(
-                    {
-                        "index": idx,
-                        "url": url,
-                        "audio_length": None,
-                        "audio_file": None,
-                        "audio_url": None,
-                    }
-                )
                 continue
 
             soup = BeautifulSoup(resp.text, "html.parser")
@@ -271,7 +278,7 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
                 if t:
                     audio_length = t.get_text(strip=True)
 
-            results.append(
+            row.update(
                 {
                     "index": idx,
                     "url": url,
@@ -293,10 +300,9 @@ def fetch_audio_urls_from_details(sound_details: pd.DataFrame) -> pd.DataFrame:
                 }
             )
             # also add the title of the sound for further matching
-        results[-1]["title"] = row["title"]
-    sounds_df = pd.DataFrame(results)
-    sounds_df["audio_url_wav"] = sounds_df["audio_url"].str.replace("mp3", "wav")
-    return sounds_df
+        
+    sound_details["audio_url_wav"] = sound_details["audio_url"].str.replace("mp3", "wav")
+    return sound_details
 
 
 def download_sound_effect(
@@ -334,20 +340,14 @@ def download_sound_effect(
 
 
 if __name__ == "__main__":
-    base_url = "https://soundbible.com/free-sound-effects-{}.html"
+    BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
 
-    sound_hrefs = fetch_sound_hrefs(base_url)
-
-    sound_hrefs.to_csv("soundbible_links.csv", index=False)
+    sound_hrefs = fetch_sound_hrefs(BASE_URL)
 
     sound_details = fetch_sound_details_from_hrefs(sound_hrefs)
 
-    sound_details.to_csv("soundbible_details_from_section.csv", index=False)
-
     sound_details_clean = clean_sounds_description(sound_details)
 
-    sound_details_clean.to_csv("soundbible_details_clean.csv", index=False)
+    sound_audio_urls = fetch_audio_urls_from_details(sound_details_clean)
 
-    sound_audio_urls = fetch_audio_urls_from_details(sound_details)
-
-    sound_audio_urls.to_csv("soundbible_audio_files.csv")
+    sound_audio_urls.to_csv("data/sounds/soundbible_metadata.csv", index=False)

@@ -42,7 +42,7 @@ class SoundBibleScraper:
                         {"title": a_tag.text.strip(), "href": a_tag["href"]}
                     )
         except Exception as e:
-            self.logger.info(f"Error fetching page {page}: {e}")
+            print(f"Error fetching page {page}: {e}")
 
         return page_results
 
@@ -66,15 +66,15 @@ class SoundBibleScraper:
             return True
 
         try:
-            self.logger.info(f"Downloading: {output_path.name}")
+            print(f"Downloading: {output_path.name}")
             response = requests.get(url, timeout=30)
             response.raise_for_status()
             output_path.write_bytes(response.content)
-            self.logger.info(f"Downloaded: {output_path.name}")
+            print(f"Downloaded: {output_path.name}")
             return True
 
         except Exception as e:
-            self.logger.info(f"Download failed: {e}")
+            print(f"Download failed: {e}")
             return False
 
     def fetch_sound_hrefs(self):
@@ -85,6 +85,7 @@ class SoundBibleScraper:
         page_args = [(page, self.base_url) for page in range(1, N_PAGES)]
 
         # Use multiprocessing pool with 4 workers
+        self.logger.info("Fetch sounds hyperrefs...")
         with Pool(processes=4) as pool:
             results = pool.map(SoundBibleScraper._fetch_page_hrefs, page_args)
 
@@ -109,6 +110,7 @@ class SoundBibleScraper:
         self.sound_details["keywords"] = None
         self.sound_details["length"] = None
 
+        self.logger.info("Fetch sound details from hyperref...")
         for _, row in self.sound_details.iterrows():
             href = row["href"]
             title = row["title"]
@@ -170,6 +172,7 @@ class SoundBibleScraper:
     def clean_sounds_description(self):
         cleaned_descriptions = []
 
+        self.logger.info("Clean sound description...")
         for desc in self.sound_details["description"]:
             if pd.isna(desc):
                 cleaned_descriptions.append(None)
@@ -218,6 +221,7 @@ class SoundBibleScraper:
             }
         )
 
+        self.logger.info("Fetch audio URL from details...")
         for idx, row in self.sound_details.iterrows():
             # get url or construct with href
             url = None
@@ -340,10 +344,14 @@ class SoundBibleScraper:
             lambda t: sound_folder / Path(t.lower().replace(" ", "_") + ".wav")
         )
         sound_folder.mkdir(parents=True, exist_ok=True)
-        sounds = self.sound_details[["title", "sound_location"]]
-        sounds = [(s.sound_location, s.audio_url_wav) for s in sounds.itertuples()]
+        # Create list of (url, output_path) tuples for download
+        download_args = list(zip(
+            self.sound_details["audio_url_wav"],
+            self.sound_details["sound_location"]
+        ))
+        self.logger.info("Download audio files from URL...")
         with Pool(processes=-1) as pool:
-            results = pool.map(SoundBibleScraper._download_sound_effect, sounds)
+            results = pool.starmap(SoundBibleScraper._download_sound_effect, download_args)
         n = sum([int(i) for i in results])
         self.logger.info(f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)")
 

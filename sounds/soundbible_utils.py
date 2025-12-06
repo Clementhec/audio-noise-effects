@@ -114,9 +114,9 @@ class SoundBibleScraper:
         self.sound_details["length"] = None
 
         self.logger.info("Fetch sound details from hyperref...")
-        for _, row in self.sound_details.iterrows():
+        for i, row in self.sound_details.iterrows():
             href = row["href"]
-            title = row["title"]
+            # title = row["title"]
             url = f"https://soundbible.com/{href}"
 
             try:
@@ -157,16 +157,11 @@ class SoundBibleScraper:
                     time_tag = soup.find("div", {"class": "total-time"})
                 length = time_tag.get_text(strip=True) if time_tag else None
 
-                row.update(
-                    {
-                        "title": title,
-                        "href": href,
-                        "url": url,
-                        "description": description,  # <-- maintenant depuis #course-details
-                        "keywords": [k.strip() for k in keywords if k.strip()],
-                        "length": length,
-                    }
-                )
+                # Update DataFrame using .at for correct assignment
+                self.sound_details.at[i, "url"] = url
+                self.sound_details.at[i, "description"] = description
+                self.sound_details.at[i, "keywords"] = [k.strip() for k in keywords if k.strip()]
+                self.sound_details.at[i, "length"] = length
 
             except Exception as e:
                 self.logger.info(f"Error on {url}: {e}")
@@ -226,6 +221,9 @@ class SoundBibleScraper:
             }
         )
 
+        self.sound_details["audio_length"] = None
+        self.sound_details["audio_file"] = None
+        self.sound_details["audio_url"] = None
         self.logger.info("Fetch audio URL from details...")
         for idx, row in self.sound_details.iterrows():
             # get url or construct with href
@@ -238,9 +236,6 @@ class SoundBibleScraper:
                 self.logger.info(f"[{idx}] Aucun 'url' ni 'href' trouvé, skip")
                 continue
 
-            self.sound_details["audio_length"] = None
-            self.sound_details["audio_file"] = None
-            self.sound_details["audio_url"] = None
 
             try:
                 resp = session.get(url, timeout=15)
@@ -322,15 +317,12 @@ class SoundBibleScraper:
                     if t:
                         audio_length = t.get_text(strip=True)
 
-                row.update(
-                    {
-                        "index": idx,
-                        "url": url,
-                        "audio_length": audio_length,
-                        "audio_file": audio_file_name,
-                        "audio_url": audio_url_full,
-                    }
-                )
+                # Update DataFrame using .at for correct assignment
+                self.sound_details.at[idx, "index"] = idx
+                self.sound_details.at[idx, "url"] = url
+                self.sound_details.at[idx, "audio_length"] = audio_length
+                self.sound_details.at[idx, "audio_file"] = audio_file_name
+                self.sound_details.at[idx, "audio_url"] = audio_url_full
 
             except Exception as e:
                 self.logger.info(f"erreur sur {url}: {e}")

@@ -97,77 +97,93 @@ class SoundBibleScraper:
 
         self.sound_details = pd.DataFrame(all_results)
 
+    @staticmethod
+    def _fetch_single_sound_detail(args):
+        """Worker function to fetch details for a single sound."""
+        index, href = args
+        url = f"https://soundbible.com/{href}"
+
+        result = {
+            "index": index,
+            "url": None,
+            "description": None,
+            "keywords": None,
+            "length": None,
+        }
+
+        try:
+            # Create session per worker
+            session = requests.Session()
+            session.headers.update(
+                {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/124.0.0.0 Safari/537.36"
+                }
+            )
+
+            response = session.get(url, timeout=12)
+            if response.status_code != 200:
+                print(f"Failed to fetch {url} (status {response.status_code})")
+                return result
+
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            # Extract description from course-details section
+            description = None
+            section = soup.find("section", id="course-details")
+            if section:
+                p_tag = section.select_one(".col-lg-8 p")
+                if not p_tag:
+                    p_tag = section.find("p")
+                if p_tag:
+                    description = " ".join(p_tag.stripped_strings)
+
+            # Extract keywords from meta tag
+            kw_tag = soup.find("meta", {"name": "keywords"})
+            keywords = (
+                kw_tag["content"].split(",")
+                if kw_tag and kw_tag.has_attr("content")
+                else []
+            )
+
+            # Extract audio length
+            time_tag = soup.select_one("#course-details .total-time")
+            if not time_tag:
+                time_tag = soup.find("div", {"class": "total-time"})
+            length = time_tag.get_text(strip=True) if time_tag else None
+
+            result.update({
+                "url": url,
+                "description": description,
+                "keywords": [k.strip() for k in keywords if k.strip()],
+                "length": length,
+            })
+
+        except Exception as e:
+            print(f"Error on {url}: {e}")
+
+        # Small delay to avoid overloading
+        time.sleep(0.05)
+        return result
+
     def fetch_sound_details_from_hrefs(self):
-        session = requests.Session()
-        session.headers.update(
-            {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            }
-        )
-
-        # initialise new columns
-        self.sound_details["url"] = None
-        self.sound_details["description"] = None
-        self.sound_details["keywords"] = None
-        self.sound_details["length"] = None
-
         self.logger.info("Fetch sound details from hyperref...")
-        for i, row in self.sound_details.iterrows():
-            href = row["href"]
-            # title = row["title"]
-            url = f"https://soundbible.com/{href}"
 
-            try:
-                response = session.get(url, timeout=12)
-                if response.status_code != 200:
-                    self.logger.info(
-                        f"Failed to fetch {url} (status {response.status_code})"
-                    )
-                    continue
+        # Prepare arguments: (index, href) tuples
+        fetch_args = [(i, row["href"]) for i, row in self.sound_details.iterrows()]
 
-                soup = BeautifulSoup(response.text, "html.parser")
+        # Use multiprocessing pool with 8 workers
+        with Pool(processes=8) as pool:
+            results = pool.map(SoundBibleScraper._fetch_single_sound_detail, fetch_args)
 
-                # --- Description depuis la section #course-details ---
-                # On cible le premier <p> dans la colonne de gauche (col-lg-8)
-                description = None
-                section = soup.find("section", id="course-details")
-                if section:
-                    p_tag = section.select_one(".col-lg-8 p")
-                    if not p_tag:
-                        # fallback: premier <p> sous la section si la structure diffère
-                        p_tag = section.find("p")
-                    if p_tag:
-                        # Nettoyage des espaces / sauts de ligne
-                        description = " ".join(p_tag.stripped_strings)
-
-                # --- Keywords (on conserve la récupération via meta) ---
-                kw_tag = soup.find("meta", {"name": "keywords"})
-                keywords = (
-                    kw_tag["content"].split(",")
-                    if kw_tag and kw_tag.has_attr("content")
-                    else []
-                )
-
-                # --- Durée audio (dans la section, plus précis) ---
-                time_tag = soup.select_one("#course-details .total-time")
-                if not time_tag:
-                    # fallback global si besoin
-                    time_tag = soup.find("div", {"class": "total-time"})
-                length = time_tag.get_text(strip=True) if time_tag else None
-
-                # Update DataFrame using .at for correct assignment
-                self.sound_details.at[i, "url"] = url
-                self.sound_details.at[i, "description"] = description
-                self.sound_details.at[i, "keywords"] = [k.strip() for k in keywords if k.strip()]
-                self.sound_details.at[i, "length"] = length
-
-            except Exception as e:
-                self.logger.info(f"Error on {url}: {e}")
-
-            # Avoid overloading website
-            time.sleep(0.2)
+        # Update DataFrame with results
+        for result in results:
+            idx = result["index"]
+            self.sound_details.at[idx, "url"] = result["url"]
+            self.sound_details.at[idx, "description"] = result["description"]
+            self.sound_details.at[idx, "keywords"] = result["keywords"]
+            self.sound_details.at[idx, "length"] = result["length"]
 
     def clean_sounds_description(self):
         cleaned_descriptions = []
@@ -190,7 +206,10 @@ class SoundBibleScraper:
 
         self.sound_details["clean_description"] = cleaned_descriptions
 
-    def fetch_audio_urls_from_details(self):
+    @staticmethod
+    def _fetch_single_audio_url(args):
+        """Worker function to fetch audio URL for a single sound."""
+        idx, url, href = args
         BASE_URL = "https://soundbible.com/"
 
         # Selectors
@@ -199,7 +218,6 @@ class SoundBibleScraper:
         )
         SEL_TIME_PRIMARY = "#ag1 > div:nth-child(2) > div > div > div > div.ap-controls.scrubbar-loaded > div.scrubbar > div.total-time"
 
-        # Fallback selectors
         FALLBACK_AUDIO_SELECTORS = [
             "div.audioplayer-inner .the-media audio source",
             "div.audioplayer-inner audio source",
@@ -212,120 +230,137 @@ class SoundBibleScraper:
             "div.total-time",
         ]
 
-        session = requests.Session()
-        session.headers.update(
-            {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            }
-        )
+        result = {
+            "index": idx,
+            "url": url,
+            "audio_length": None,
+            "audio_file": None,
+            "audio_url": None,
+        }
 
-        self.sound_details["audio_length"] = None
-        self.sound_details["audio_file"] = None
-        self.sound_details["audio_url"] = None
-        self.logger.info("Fetch audio URL from details...")
-        for idx, row in self.sound_details.iterrows():
-            # get url or construct with href
-            url = None
-            if "url" in row and pd.notna(row["url"]):
-                url = row["url"]
-            elif "href" in row and pd.notna(row["href"]):
-                url = urljoin(BASE_URL, str(row["href"]))
+        # Construct URL if needed
+        if not url and href:
+            url = urljoin(BASE_URL, str(href))
+            result["url"] = url
+
+        if not url:
+            print(f"[{idx}] No URL or href found, skipping")
+            return result
+
+        try:
+            session = requests.Session()
+            session.headers.update(
+                {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/124.0.0.0 Safari/537.36"
+                }
+            )
+
+            resp = session.get(url, timeout=15)
+            if resp.status_code != 200:
+                print(f"Status {resp.status_code}, skipping {url}")
+                return result
+
+            soup = BeautifulSoup(resp.text, "html.parser")
+
+            # Extract audio source URL
+            src = None
+            tag = soup.select_one(SEL_AUDIO_PRIMARY)
+            if tag and tag.has_attr("src"):
+                src = tag["src"]
             else:
-                self.logger.info(f"[{idx}] Aucun 'url' ni 'href' trouvé, skip")
-                continue
+                # Fallback: look for data-source attribute
+                ds_tag = soup.select_one("#ag1 [data-source], [data-source]")
+                if ds_tag and ds_tag.has_attr("data-source"):
+                    data_src = ds_tag["data-source"]
+                    m = re.search(
+                        r"(?:mp3|wav)/[A-Za-z0-9._\-\s()%]+(?:\.mp3|\.wav)",
+                        data_src,
+                        re.IGNORECASE,
+                    )
+                    if m:
+                        src = m.group(0)
 
+            if not src:
+                for s in FALLBACK_AUDIO_SELECTORS:
+                    t = soup.select_one(s)
+                    if t and t.has_attr("src"):
+                        src = t["src"]
+                        break
 
-            try:
-                resp = session.get(url, timeout=15)
-                if resp.status_code != 200:
-                    self.logger.info(f"status {resp.status_code}, skip")
-                    continue
-
-                soup = BeautifulSoup(resp.text, "html.parser")
-
-                # 1) Try main selector
-                src = None
-                tag = soup.select_one(SEL_AUDIO_PRIMARY)
-                if tag and tag.has_attr("src"):
-                    src = tag["src"]
+            # Normalize source URL to full URL
+            audio_url_full = None
+            audio_file_name = None
+            if src:
+                src = src.strip()
+                if src.startswith("http://") or src.startswith("https://"):
+                    audio_url_full = src
                 else:
-                    # fallback - chercher un attribut data-source sur un parent (cas fréquent)
-                    # ex: <div ... data-source="mp3/airplane-takeoff_daniel_simion.mp3" ...>
-                    ds_tag = soup.select_one("#ag1 [data-source], [data-source]")
-                    if ds_tag and ds_tag.has_attr("data-source"):
-                        data_src = ds_tag["data-source"]
-                        # le contenu peut être JSON-like; on cherche le premier mp3/wav
-                        m = re.search(
-                            r"(?:mp3|wav)/[A-Za-z0-9._\-\s()%]+(?:\.mp3|\.wav)",
-                            data_src,
-                            re.IGNORECASE,
-                        )
-                        if m:
-                            src = m.group(0)
-                    # si toujours rien, essayer autres fallback selectors
-                if not src:
-                    for s in FALLBACK_AUDIO_SELECTORS:
-                        t = soup.select_one(s)
-                        if t and t.has_attr("src"):
-                            src = t["src"]
-                            break
+                    audio_url_full = urljoin(url, src)
+                parsed = urlparse(audio_url_full)
+                audio_file_name = unquote(os.path.basename(parsed.path))
+            else:
+                # Last resort: find any source tag with mp3/wav
+                found = None
+                for s in soup.find_all("source"):
+                    ssrc = s.get("src") or s.get("data-src") or ""
+                    if re.search(r"\.(mp3|wav)$", ssrc, re.IGNORECASE):
+                        found = ssrc
+                        break
+                if found:
+                    audio_url_full = urljoin(url, found)
+                    audio_file_name = unquote(os.path.basename(urlparse(audio_url_full).path))
 
-                # Normalize src -> full url
-                if src:
-                    src = src.strip()
-                    # si src est du type "mp3/xxx.mp3" (relatif) ou "./mp3/..." -> construire URL complète
-                    if src.startswith("http://") or src.startswith("https://"):
-                        audio_url_full = src
-                    else:
-                        # urljoin sur la page courante permet de couvrir ../ ou chemins relatifs
-                        audio_url_full = urljoin(url, src)
-                    # extraire le nom de fichier décodé
-                    parsed = urlparse(audio_url_full)
-                    audio_file_name = unquote(os.path.basename(parsed.path))
-                else:
-                    # dernier recours : parcourir tous les <source> et prendre le premier contenant mp3/wav
-                    found = None
-                    for s in soup.find_all("source"):
-                        ssrc = s.get("src") or s.get("data-src") or ""
-                        if re.search(r"\.(mp3|wav)$", ssrc, re.IGNORECASE):
-                            found = ssrc
-                            break
-                    if found:
-                        audio_url_full = urljoin(url, found)
-                        audio_file_name = unquote(
-                            os.path.basename(urlparse(audio_url_full).path)
-                        )
-
-                # 2) audio length : main selector
-                audio_length = None
-                time_tag = soup.select_one(SEL_TIME_PRIMARY)
-                if time_tag:
-                    audio_length = time_tag.get_text(strip=True)
-                else:
-                    # fallback selectors
-                    for s in FALLBACK_TIME_SELECTORS:
-                        t = soup.select_one(s)
-                        if t and t.get_text(strip=True):
-                            audio_length = t.get_text(strip=True)
-                            break
-
-                # autre fallback : chercher le premier div.total-time dans la page
-                if not audio_length:
-                    t = soup.find("div", class_="total-time")
-                    if t:
+            # Extract audio length
+            audio_length = None
+            time_tag = soup.select_one(SEL_TIME_PRIMARY)
+            if time_tag:
+                audio_length = time_tag.get_text(strip=True)
+            else:
+                for s in FALLBACK_TIME_SELECTORS:
+                    t = soup.select_one(s)
+                    if t and t.get_text(strip=True):
                         audio_length = t.get_text(strip=True)
+                        break
 
-                # Update DataFrame using .at for correct assignment
-                self.sound_details.at[idx, "index"] = idx
-                self.sound_details.at[idx, "url"] = url
-                self.sound_details.at[idx, "audio_length"] = audio_length
-                self.sound_details.at[idx, "audio_file"] = audio_file_name
-                self.sound_details.at[idx, "audio_url"] = audio_url_full
+            if not audio_length:
+                t = soup.find("div", class_="total-time")
+                if t:
+                    audio_length = t.get_text(strip=True)
 
-            except Exception as e:
-                self.logger.info(f"erreur sur {url}: {e}")
+            result.update({
+                "audio_length": audio_length,
+                "audio_file": audio_file_name,
+                "audio_url": audio_url_full,
+            })
+
+        except Exception as e:
+            print(f"Error on {url}: {e}")
+
+        time.sleep(0.05)
+        return result
+
+    def fetch_audio_urls_from_details(self):
+        self.logger.info("Fetch audio URL from details...")
+
+        # Prepare arguments: (index, url, href) tuples
+        fetch_args = []
+        for idx, row in self.sound_details.iterrows():
+            url = row.get("url") if pd.notna(row.get("url")) else None
+            href = row.get("href") if pd.notna(row.get("href")) else None
+            fetch_args.append((idx, url, href))
+
+        # Use multiprocessing pool with 8 workers
+        with Pool(processes=8) as pool:
+            results = pool.map(SoundBibleScraper._fetch_single_audio_url, fetch_args)
+
+        # Update DataFrame with results
+        for result in results:
+            idx = result["index"]
+            self.sound_details.at[idx, "audio_length"] = result["audio_length"]
+            self.sound_details.at[idx, "audio_file"] = result["audio_file"]
+            self.sound_details.at[idx, "audio_url"] = result["audio_url"]
 
         self.sound_details["audio_url_wav"] = self.sound_details[
             "audio_url"

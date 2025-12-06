@@ -62,40 +62,6 @@ def find_sound_url(sound_title: str, metadata_df: pd.DataFrame) -> Optional[str]
     return None
 
 
-def download_sound_effect(
-    url: str, output_path: Path, force_download: bool = False
-) -> bool:
-    """
-    Download a sound effect file from URL.
-
-    Args:
-        url: URL to download from
-        output_path: Local path to save file
-        force_download: Re-download even if file exists
-
-    Returns:
-        True if successful, False otherwise
-    """
-    if output_path.exists() and not force_download:
-        print(f"Already downloaded: {output_path.name}")
-        return True
-
-    try:
-        print(f"Downloading: {output_path.name}")
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
-
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_bytes(response.content)
-
-        print(f"Downloaded: {output_path.name}")
-        return True
-
-    except Exception as e:
-        print(f"Download failed: {e}")
-        return False
-
-
 def parse_time_string(time_str: str) -> float:
     """Convert time string (e.g., '1.23s') to float seconds."""
     return float(time_str.rstrip("s"))
@@ -201,9 +167,9 @@ def prepare_sound_effects(
         safe_filename = safe_filename.replace(" ", "_")
         output_path = download_dir / f"{safe_filename}{file_ext}"
 
-        # Download sound effect
-        if not download_sound_effect(sound_url, output_path):
-            print(f"Failed to download sound url : {sound_url}")
+        # Load sound effect if exists
+        if not Path(output_path).exists():
+            print(f"Sound : {sound_url} has not been found at {output_path}")
             continue
 
         # Convert MP3 to WAV if needed

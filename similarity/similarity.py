@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Module pour calculer la similarité entre des embeddings de parole et des embeddings de sons.
-"""
-
 import pandas as pd
 import numpy as np
 import json
 import os
+import faiss
 from typing import List, Dict, Any
 
 
@@ -25,6 +21,34 @@ def cosine_similarity(a, b):
     b = np.array(b) if not isinstance(b, np.ndarray) else b
 
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
+def build_faiss_index(embeddings: List[List[float]]) -> faiss.Index:
+    """
+    Build a FAISS index from a list of embeddings for efficient similarity search.
+
+    Args:
+        embeddings: List of embedding vectors (list of lists or list of arrays)
+
+    Returns:
+        FAISS index (IndexFlatIP) ready for similarity search using cosine similarity
+    """
+    # Convert to numpy array
+    embeddings_array = np.array(embeddings, dtype=np.float32)
+
+    # Get dimension
+    dimension = embeddings_array.shape[1]
+
+    # Normalize vectors for cosine similarity (so we can use inner product)
+    faiss.normalize_L2(embeddings_array)
+
+    # Create FAISS index using inner product (equivalent to cosine similarity with normalized vectors)
+    index = faiss.IndexFlatIP(dimension)
+
+    # Add embeddings to index
+    index.add(embeddings_array)
+
+    return index
 
 
 def find_similar_sounds(
@@ -122,3 +146,4 @@ def find_similar_sounds(
         print(f"Résultats sauvegardés dans : {output_path}")
 
     return results
+

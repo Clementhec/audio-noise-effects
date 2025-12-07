@@ -1,5 +1,7 @@
 # Agentic Sound Editing Pipeline
 
+![image](img/soundeasy.gif)
+
 An intelligent audio processing system that automatically enhances audio and video content by adding contextually relevant sound effects based on speech and video content analysis.
 
 
@@ -64,11 +66,6 @@ to be reused if necessary in comparable contexts,
 to guarantee consistent sound additions and leverage repetition effects.
 
 
-## References
-
-- [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
-
-
 ## Configuration
 
 ### API Key Setup
@@ -101,4 +98,8 @@ brew install ffmpeg
 # Download from https://ffmpeg.org/download.html
 ```
 
+## References
 
+- [Kablammo Font](https://www.vectrotype.com/kablammo)
+- [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
+ 

@@ -17,31 +17,6 @@ from utils.audio_extraction import extract_audio_from_video
 from merging_audio.video_audio_merger import run_complete_video_audio_merge
 
 
-def setup_directories(output_dir: str = "data"):
-    """Create necessary directories if they don't exist.
-
-    Args:
-        output_dir: Base output directory for all generated files
-    """
-    # Base output directory and subdirectories for pipeline stages
-    directories = [
-        output_dir,  # Base output directory
-        f"{output_dir}/audio",  # Extracted audio files
-        f"{output_dir}/soundbible",  # soundbible sounds metadata
-        f"{output_dir}/soundbible/downloaded_sounds",  # soundbible download directory
-        f"{output_dir}/speech_to_text",  # Transcription and word timing files
-        f"{output_dir}/embeddings",  # Speech embeddings
-        f"{output_dir}/similarity",  # Similarity matching results
-        f"{output_dir}/filtered",  # LLM-filtered results
-        f"{output_dir}/output",  # Final video output
-    ]
-
-    for directory in directories:
-        dir_path = Path(directory)
-        dir_path.mkdir(parents=True, exist_ok=True)
-        print(f"Directory ready: {directory}")
-
-
 def run_stt_step(
     audio_path: Path, transcription_path: Path, word_timing_path: Path
 ) -> tuple[Path, Path]:
@@ -447,156 +422,202 @@ def validate_args(args):
         args.run_video_merge = True
 
 
+class SoundEasy:
+    def __init__(
+        self,
+        data_dir: Path,
+        video_path: Path,
+    ):
+        self.input_video_path = video_path
+        self.base_name = video_path.stem
+        self.data_dir = data_dir
+
+        paths = self._derive_paths()
+        self._setup_directories(paths)
+
+    def _derive_paths(self):
+        """
+        Define intermediate data paths,
+        Yield all of them to make sure that parent folders exist
+        """
+        # extracted audio file
+        self.audio_base_path = self.data_dir / "audio" / (self.base_name + ".wav")
+
+        # sound_audio_urls_path = soundbible_details_path / "soundbible_audio_files.csv"
+        self.transcription_path = self.data_dir / Path(
+            f"speech_to_text/{self.base_name}_full_transcription.json"
+        )
+        self.word_timing_path = self.data_dir / Path(
+            f"speech_to_text/{self.base_name}_word_timing.json"
+        )
+        self.embeddings_path = self.data_dir / Path(
+            f"embeddings/{self.base_name}_video_speech_embeddings.csv"
+        )
+        self.soundbible_metadata_path = self.data_dir / Path(
+            "input/soundbible_metadata.csv"
+        )
+
+        # sounds audio .wav files
+        self.sounds_path = self.data_dir / Path("sounds")
+        self.soundbible_details_path = self.sounds_path / "soundbible_details.csv"
+        self.sounds_soundbible_path = self.sounds_path / Path("soundbible")
+        # TODO : to integrate to the pipeline,
+        # TODO for instance if relevance of best matches is below some threshold
+        self.sounds_elevenlabs_path = self.sounds_path / Path("elevenlabs")
+
+        # stored sound embeddings
+        self.sound_embeddings_path = self.data_dir / Path(
+            "embeddings/soundbible_sound_embeddings.csv"
+        )
+
+        # similarity results intermediate output
+        self.similarity_results_path = self.data_dir / Path(
+            f"similarity/{self.base_name}_similarity.json"
+        )
+
+        # filtered sound effects additions summary
+        self.filtered_results_path = self.data_dir / Path(
+            f"filtered/{self.base_name}_video_filtered_sounds.json"
+        )
+
+        # final video output
+        self.output_video_path = self.data_dir / Path(
+            f"output/{self.base_name}_soundeasy.mp4"
+        )
+
+        yield self.audio_base_path
+        yield self.transcription_path
+        yield self.word_timing_path
+        yield self.embeddings_path
+        yield self.soundbible_metadata_path
+        yield self.sounds_path
+        yield self.soundbible_details_path
+        yield self.sounds_soundbible_path
+        yield self.sounds_elevenlabs_path
+        yield self.sound_embeddings_path
+        yield self.similarity_results_path
+        yield self.filtered_results_path
+        yield self.output_video_path
+
+    def _setup_directories(paths):
+        """
+        Create necessary directories if they don't exist.
+        """
+
+        for p in paths:
+            if p.extension == "":
+                p.mkdir(parents=True, exists_ok=True)
+            else:
+                p.parent.mkdir(parents=True, exists_ok=True)
+
+    def run(self, args):
+        if not self.audio_base_path.exists() or args.force_regenerate:
+            _ = extract_audio_from_video(
+                self.input_video_path, output_path=self.audio_base_path
+            )
+        if args.run_stt:
+            transcription_path, word_timing_path = run_stt_step(
+                audio_path=self.audio_base_path,
+                transcription_path=transcription_path,
+                word_timing_path=word_timing_path,
+            )
+        elif args.run_embeddings or args.run_video_merge:
+            if not transcription_path.exists():
+                print(f"Error: missing {transcription_path}")
+                sys.exit(1)
+            if not word_timing_path.exists():
+                print(f"Error: missing {word_timing_path}")
+                sys.exit(1)
+
+        if args.run_embeddings:
+            embeddings_path = run_embeddings_step(
+                transcription_path,
+                word_timing_path,
+                embeddings_path,
+                force_regenerate=args.force_regenerate,
+            )
+        elif args.run_matching:
+            if not embeddings_path.exists():
+                print(f"Missing video speech embeddings : {embeddings_path}")
+                sys.exit(1)
+            print(f"Use existing video speech embeddings : {embeddings_path}")
+
+            from utils.sound_embedding.sound_embedder import SoundEmbedder
+
+            if not self.soundbible_details_path.exists():
+                from sounds.soundbible_utils import SoundBibleScraper
+
+                BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
+                soundbible_details_full = SoundBibleScraper(
+                    base_url=BASE_URL, download_dir=self.sounds_soundbible_path
+                ).run()
+                self.soundbible_details_path.parent.mkdir(parents=True, exist_ok=True)
+                soundbible_details_full.to_csv(self.soundbible_details_path)
+
+            if not embeddings_path.exists():
+                SoundEmbedder().process_sound_dataframe(
+                    soundbible_details_full, output_path=embeddings_path
+                )
+
+        if args.run_matching:
+            similarity_results_path = run_semantic_matching_step(
+                embeddings_path,
+                similarity_results_path,
+                top_k=args.top_k,
+                sound_embeddings_path=embeddings_path,
+            )
+        elif args.run_llm_filter:
+            if not similarity_results_path.exists():
+                print(f"Missing similarity results : {similarity_results_path}")
+                sys.exit(1)
+            print(f"Using existing similarity results : {similarity_results_path}")
+
+        if args.run_llm_filter:
+            filtered_results_path = run_llm_filtering_step(
+                similarity_results_path,
+                filtered_results_path,
+                max_sounds=args.max_sounds,
+            )
+        elif args.run_video_merge:
+            if not filtered_results_path.exists():
+                print(f"Error : missing filtered results : {filtered_results_path}")
+                sys.exit(1)
+            print(f"Using existing filtered results: {filtered_results_path}")
+
+        if args.run_video_merge:
+            if not self.audio_base_path.exists():
+                print(f"Missing audio path : {self.audio_base_path}")
+                sys.exit(1)
+
+            final_video_path = run_complete_video_audio_merge(
+                video_path=self.input_video_path,
+                filtered_results_path=filtered_results_path,
+                speech_embedding_file=embeddings_path,
+                word_timing_path=word_timing_path,
+                original_audio_path=self.audio_base_path,
+                output_video_path=self.output_video_path,
+                sound_intensity=args.sound_intensity,
+                sound_duration=args.sound_duration,
+                metadata_path=self.soundbible_details_path,
+                soundbible_download_dir=self.sounds_soundbible_path,
+            )
+
+            print("Generated files:")
+            print(f"Audio: {self.audio_base_path}")
+            print(f"Final video path : {final_video_path}")
+
+
 def main():
     args = parse_arguments()
 
     validate_args(args)
-    setup_directories(output_dir=args.output_dir)
 
-    # Initialize paths from default locations
-    input_video_path = Path(args.video)
-
-    # video identifier
-    base_name = input_video_path.stem
-
-    # extracted audio file
-    audio_base_path = Path(args.output_dir) / "audio" / (base_name + ".wav")
-
-    # sound_audio_urls_path = soundbible_details_path / "soundbible_audio_files.csv"
-    transcription_path = Path(args.output_dir) / Path(
-        f"speech_to_text/{base_name}_full_transcription.json"
-    )
-    word_timing_path = Path(args.output_dir) / Path(
-        f"speech_to_text/{base_name}_word_timing.json"
-    )
-    embeddings_path = Path(args.output_dir) / Path(
-        f"embeddings/{base_name}_video_speech_embeddings.csv"
-    )
-    soundbible_metadata_path = Path(args.output_dir) / Path(
-        "input/soundbible_metadata.csv"
+    pipe = SoundEasy(
+        video_path=Path(args.video),
+        data_dir=Path(args.output_dir),
     )
 
-    # sounds audio .wav files
-    sounds_path = Path(args.output_dir) / Path("sounds")
-    soundbible_details_path = sounds_path / "soundbible_details.csv"
-    sounds_soundbible_path = sounds_path / Path("soundbible")
-    # TODO : to integrate to the pipeline,
-    # TODO for instance if relevance of best matches is below some threshold
-    sounds_elevenlabs_path = sounds_path / Path("elevenlabs")
-
-    # stored sound embeddings
-    sound_embeddings_path = Path(args.output_dir) / Path(
-        "embeddings/soundbible_sound_embeddings.csv"
-    )
-
-    # similarity results intermediate output
-    similarity_results_path = Path(args.output_dir) / Path(
-        f"similarity/{base_name}_similarity.json"
-    )
-
-    # filtered sound effects additions summary
-    filtered_results_path = Path(args.output_dir) / Path(
-        f"filtered/{base_name}_video_filtered_sounds.json"
-    )
-
-    # final video output
-    output_video_path = Path(args.output_dir) / Path(
-        f"output/{base_name}_soundeasy.mp4"
-    )
-
-    _ = extract_audio_from_video(
-        input_video_path, output_path=audio_base_path
-    )
-    if args.run_stt:
-        transcription_path, word_timing_path = run_stt_step(
-            audio_path=audio_base_path,
-            transcription_path=transcription_path,
-            word_timing_path=word_timing_path,
-        )
-    elif args.run_embeddings or args.run_video_merge:
-        if not transcription_path.exists():
-            print(f"Error: missing {transcription_path}")
-            sys.exit(1)
-        if not word_timing_path.exists():
-            print(f"Error: missing {word_timing_path}")
-            sys.exit(1)
-
-    if args.run_embeddings:
-        embeddings_path = run_embeddings_step(
-            transcription_path,
-            word_timing_path,
-            embeddings_path,
-            force_regenerate=args.force_regenerate,
-        )
-    elif args.run_matching:
-        if not embeddings_path.exists():
-            print(f"Missing video speech embeddings : {embeddings_path}")
-            sys.exit(1)
-        print(f"Use existing video speech embeddings : {embeddings_path}")
-
-        from utils.sound_embedding.sound_embedder import SoundEmbedder
-
-        if not soundbible_details_path.exists():
-            from sounds.soundbible_utils import SoundBibleScraper
-
-            BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
-            soundbible_details_full = SoundBibleScraper(
-                base_url=BASE_URL, download_dir=sounds_soundbible_path
-            ).run()
-            soundbible_details_path.parent.mkdir(parents=True, exist_ok=True)
-            soundbible_details_full.to_csv(soundbible_details_path)
-
-        if not embeddings_path.exists():
-            SoundEmbedder().process_sound_dataframe(
-                soundbible_details_full, output_path=embeddings_path
-            )
-
-    if args.run_matching:
-        similarity_results_path = run_semantic_matching_step(
-            embeddings_path,
-            similarity_results_path,
-            top_k=args.top_k,
-            sound_embeddings_path=embeddings_path,
-        )
-    elif args.run_llm_filter:
-        if not similarity_results_path.exists():
-            print(f"Missing similarity results : {similarity_results_path}")
-            sys.exit(1)
-        print(f"Using existing similarity results : {similarity_results_path}")
-
-    if args.run_llm_filter:
-        filtered_results_path = run_llm_filtering_step(
-            similarity_results_path,
-            filtered_results_path,
-            max_sounds=args.max_sounds,
-        )
-    elif args.run_video_merge:
-        if not filtered_results_path.exists():
-            print(f"Error : missing filtered results : {filtered_results_path}")
-            sys.exit(1)
-        print(f"Using existing filtered results: {filtered_results_path}")
-
-    if args.run_video_merge:
-        if not audio_base_path.exists():
-            print(f"Missing audio path : {audio_base_path}")
-            sys.exit(1)
-
-        final_video_path = run_complete_video_audio_merge(
-            video_path=input_video_path,
-            filtered_results_path=filtered_results_path,
-            speech_embedding_file=embeddings_path,
-            word_timing_path=word_timing_path,
-            original_audio_path=audio_base_path,
-            output_video_path=output_video_path,
-            sound_intensity=args.sound_intensity,
-            sound_duration=args.sound_duration,
-            metadata_path=soundbible_details_path,
-            soundbible_download_dir=sounds_soundbible_path,
-        )
-
-        print("Generated files:")
-        print(f"Audio: {audio_base_path}")
-        print(f"Final video path : {final_video_path}")
+    pipe.run(args)
 
 
 if __name__ == "__main__":

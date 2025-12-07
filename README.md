@@ -101,29 +101,4 @@ brew install ffmpeg
 # Download from https://ffmpeg.org/download.html
 ```
 
-## Project Guidelines
-
-### Microservice Architecture
-Each pipeline step is designed as an independent module with clear inputs and outputs, enabling:
-- Parallel development
-- Easy testing and debugging
-- Flexible deployment options
-- Modular replacement of components
-
-### Data Flow Conventions
-- **Input/Output Folders**: Each module can dump intermediate results to designated folders for inspection
-- **Audio Format**: Use `.wav` format for all audio processing (lossless, widely supported)
-- **Metadata Format**: CSV files for sound libraries, JSON for configuration
-- **Embeddings**: Store as CSV columns with array representations
-
-## Current Status & Roadmap
-
-The core components for speech analysis and semantic matching are functional. 
-Current development focuses on:
-- Audio/video extraction and format conversion
-- Real-time audio mixing and synchronization
-- Timeline generation and event scheduling
-- End-to-end pipeline integration
-- Performance optimization for large audio files
-
 

@@ -13,7 +13,7 @@ from utils import get_embeddings
 from llm_filtering.filtering import filter_sounds
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
-from video_preprocessing import extract_audio_from_video
+from utils.audio_extraction import extract_audio_from_video
 from merging_audio.video_audio_merger import run_complete_video_audio_merge
 
 
@@ -40,61 +40,6 @@ def setup_directories(output_dir: str = "data"):
         dir_path = Path(directory)
         dir_path.mkdir(parents=True, exist_ok=True)
         print(f"Directory ready: {directory}")
-
-
-def extract_audio(
-    video_path: str,
-    output_dir: str = "speech_to_text/input",
-    sample_rate: int = 16000,
-    channels: int = 1,
-    extension: str = ".mp4",
-) -> Path:
-    """
-    Extract audio from video file.
-
-    Args:
-        video_path: Path to input video file
-        output_dir: Directory to save audio file
-        sample_rate: Audio sample rate (default: 16000 Hz for STT)
-        channels: Number of audio channels (default: 1 for mono)
-
-    Returns:
-        Path to extracted audio file
-    """
-    print("=" * 70)
-    print("STEP 1: Extract Audio from Video")
-    print("=" * 70)
-
-    video_path = Path(video_path)
-
-    if not video_path.exists():
-        raise FileNotFoundError(f"Video file not found: {video_path}")
-
-    if not video_path.suffix == extension:
-        raise ValueError(
-            f"Video extension is set to '{extension}' but got video '{video_path}'"
-        )
-
-    # Create output path with same root name
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    audio_filename = video_path.stem + ".wav"
-    audio_path = output_dir / audio_filename
-
-    print(f"Video file: {video_path}")
-    print(f"Output directory: {output_dir}")
-    print(f"Audio file: {audio_filename}")
-
-    # Extract audio
-    result_path = extract_audio_from_video(
-        video_path, output_path=audio_path, sample_rate=sample_rate, channels=channels
-    )
-
-    print(f"Audio extraction complete!")
-    print(f"Saved to: {result_path}")
-
-    return result_path
 
 
 def run_stt_step(
@@ -559,17 +504,12 @@ def main():
         f"output/{base_name}_soundeasy.mp4"
     )
 
-    # * START OF THE PROCESS *
-
-    audio_path = extract_audio(
-        args.video,
-        output_dir=audio_base_path,
-        sample_rate=args.sample_rate,
-        channels=args.channels,
+    _ = extract_audio_from_video(
+        input_video_path, output_path=audio_base_path
     )
     if args.run_stt:
         transcription_path, word_timing_path = run_stt_step(
-            audio_path=audio_path,
+            audio_path=audio_base_path,
             transcription_path=transcription_path,
             word_timing_path=word_timing_path,
         )
@@ -637,8 +577,8 @@ def main():
         print(f"Using existing filtered results: {filtered_results_path}")
 
     if args.run_video_merge:
-        if not audio_path.exists():
-            print(f"Missing audio path : {audio_path}")
+        if not audio_base_path.exists():
+            print(f"Missing audio path : {audio_base_path}")
             sys.exit(1)
 
         final_video_path = run_complete_video_audio_merge(
@@ -646,7 +586,7 @@ def main():
             filtered_results_path=filtered_results_path,
             speech_embedding_file=embeddings_path,
             word_timing_path=word_timing_path,
-            original_audio_path=audio_path,
+            original_audio_path=audio_base_path,
             output_video_path=output_video_path,
             sound_intensity=args.sound_intensity,
             sound_duration=args.sound_duration,
@@ -655,7 +595,7 @@ def main():
         )
 
         print("Generated files:")
-        print(f"Audio: {audio_path}")
+        print(f"Audio: {audio_base_path}")
         print(f"Final video path : {final_video_path}")
 
 

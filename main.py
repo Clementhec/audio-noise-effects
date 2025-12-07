@@ -450,7 +450,7 @@ class SoundEasy:
         self.word_timing_path = self.data_dir / Path(
             f"speech_to_text/{self.base_name}_word_timing.json"
         )
-        self.embeddings_path = self.data_dir / Path(
+        self.speech_embeddings_path = self.data_dir / Path(
             f"embeddings/{self.base_name}_video_speech_embeddings.csv"
         )
         self.soundbible_metadata_path = self.data_dir / Path(
@@ -488,7 +488,7 @@ class SoundEasy:
         yield self.audio_base_path
         yield self.transcription_path
         yield self.word_timing_path
-        yield self.embeddings_path
+        yield self.speech_embeddings_path
         yield self.soundbible_metadata_path
         yield self.sounds_path
         yield self.soundbible_details_path
@@ -510,6 +510,24 @@ class SoundEasy:
             else:
                 p.parent.mkdir(parents=True, exists_ok=True)
 
+    def embed_sounds_if_necessary(self):
+        from utils.sound_embedding.sound_embedder import SoundEmbedder
+
+        if not self.soundbible_details_path.exists():
+            from sounds.soundbible_utils import SoundBibleScraper
+
+            BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
+            soundbible_details_full = SoundBibleScraper(
+                base_url=BASE_URL, download_dir=self.sounds_soundbible_path
+            ).run()
+            self.soundbible_details_path.parent.mkdir(parents=True, exist_ok=True)
+            soundbible_details_full.to_csv(self.soundbible_details_path)
+
+        if not self.sound_embeddings_path.exists():
+            SoundEmbedder().process_sound_dataframe(
+                soundbible_details_full, output_path=self.sound_embeddings_path
+            )
+
     def run(self, args):
         if not self.audio_base_path.exists() or args.force_regenerate:
             _ = extract_audio_from_video(
@@ -530,41 +548,26 @@ class SoundEasy:
                 sys.exit(1)
 
         if args.run_embeddings:
-            embeddings_path = run_embeddings_step(
+            speech_embeddings_path = run_embeddings_step(
                 transcription_path,
                 word_timing_path,
-                embeddings_path,
+                self.speech_embeddings_path,
                 force_regenerate=args.force_regenerate,
             )
         elif args.run_matching:
             if not embeddings_path.exists():
-                print(f"Missing video speech embeddings : {embeddings_path}")
+                print(f"Missing video speech embeddings : {speech_embeddings_path}")
                 sys.exit(1)
-            print(f"Use existing video speech embeddings : {embeddings_path}")
+            print(f"Use existing video speech embeddings : {speech_embeddings_path}")
 
-            from utils.sound_embedding.sound_embedder import SoundEmbedder
-
-            if not self.soundbible_details_path.exists():
-                from sounds.soundbible_utils import SoundBibleScraper
-
-                BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
-                soundbible_details_full = SoundBibleScraper(
-                    base_url=BASE_URL, download_dir=self.sounds_soundbible_path
-                ).run()
-                self.soundbible_details_path.parent.mkdir(parents=True, exist_ok=True)
-                soundbible_details_full.to_csv(self.soundbible_details_path)
-
-            if not embeddings_path.exists():
-                SoundEmbedder().process_sound_dataframe(
-                    soundbible_details_full, output_path=embeddings_path
-                )
+            self.embed_sounds_if_necessary()
 
         if args.run_matching:
             similarity_results_path = run_semantic_matching_step(
-                embeddings_path,
+                speech_embeddings_path,
                 similarity_results_path,
                 top_k=args.top_k,
-                sound_embeddings_path=embeddings_path,
+                sound_embeddings_path=self.sound_embeddings_path,
             )
         elif args.run_llm_filter:
             if not similarity_results_path.exists():
@@ -592,7 +595,7 @@ class SoundEasy:
             final_video_path = run_complete_video_audio_merge(
                 video_path=self.input_video_path,
                 filtered_results_path=filtered_results_path,
-                speech_embedding_file=embeddings_path,
+                speech_embedding_file=speech_embeddings_path,
                 word_timing_path=word_timing_path,
                 original_audio_path=self.audio_base_path,
                 output_video_path=self.output_video_path,

@@ -1,31 +1,11 @@
 import os
 import json
 from dotenv import load_dotenv
-# import google.generativeai as genai
 from google import genai
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel, Field
 
 from filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
-
-
-class FilteredSound(BaseModel):
-    """Individual filtered sound entry from LLM response."""
-    speech_index: int = Field(description="Index of the sentence")
-    speech_text: str = Field(description="Original text of the sentence")
-    should_add_sound: bool = Field(description="Whether a sound should be added")
-    target_word: Optional[str] = Field(
-        default=None,
-        description="Specific word where to place the sound (null if should_add_sound=false)"
-    )
-    selected_sound_index: int = Field(description="Index (0, 1, or 2) of the selected sound")
-    reasoning: str = Field(description="Explanation of the decision")
-    relevance_rank: int = Field(description="Unique integer rank (1 = most relevant)")
-
-
-class FilterResponse(BaseModel):
-    """Complete LLM filter response structure."""
-    filtered_sounds: List[FilteredSound] = Field(description="List of all filtered sounds")
+from filtering.schemas import FilteredSounds, FilteredResponse
 
 
 def get_gemini_model(api_key: Optional[str] = None):
@@ -45,17 +25,7 @@ def get_gemini_model(api_key: Optional[str] = None):
             raise ValueError(
                 "GOOGLE_API_KEY must be defined in the environment or passed as a parameter"
             )
-
-    # genai.configure(api_key=api_key)
-
-    # generation_config = {
-    #     "response_mime_type": "application/json",
-    #     "response_schema": FilterResponse.model_json_schema(),
-    # }
-
-    # return genai.GenerativeModel(
-    #     "gemini-2.5-flash-lite", generation_config=generation_config
-    # )
+    return genai.Client()
 
 
 def create_prompt(
@@ -127,7 +97,6 @@ def filter_sounds(
         Dictionary with all sounds ranked by unique rank (1 = best, 2 = 2nd best, etc.)
     """
     model = get_gemini_model(api_key)
-    model = genai.Client()
     prompt = create_prompt(similarity_data, max_sounds, user_prompt)
     response = model.models.generate_content(
         model="gemini-2.5-flash",

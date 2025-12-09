@@ -588,7 +588,9 @@ class SoundEasy:
             )
         elif args.run_video_merge:
             if not self.filtered_results_path.exists():
-                print(f"Error : missing filtered results : {filtered_results_path}")
+                print(
+                    f"Error : missing filtered results : {self.filtered_results_path}"
+                )
                 sys.exit(1)
             print(f"Using existing filtered results: {self.filtered_results_path}")
 
@@ -608,6 +610,7 @@ class SoundEasy:
                 sound_duration=args.sound_duration,
                 metadata_path=self.soundbible_details_path,
                 soundbible_download_dir=self.sounds_soundbible_path,
+                max_sounds=args.max_sounds,
             )
 
             print("Generated files:")

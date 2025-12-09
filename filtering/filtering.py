@@ -5,7 +5,7 @@ from google import genai
 from typing import List, Dict, Any, Optional
 
 from filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
-from filtering.schemas import FilteredSounds, FilteredResponse
+from filtering.schemas import FilteredSound, FilterResponse
 
 
 def get_gemini_model(api_key: Optional[str] = None):
@@ -139,7 +139,7 @@ def filter_sounds(
                     "selected_sound": {
                         "sound_title": selected_sound["sound_title"],
                         "sound_description": selected_sound["sound_description"],
-                        "audio_url_wav": selected_sound["audio_url_wav"],
+                        "audio_url_wav": selected_sound["sound_location"],
                         "similarity_score": selected_sound["similarity"],
                     },
                     "reasoning": item.reasoning,

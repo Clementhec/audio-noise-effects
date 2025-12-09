@@ -31,7 +31,7 @@ def get_gemini_model(api_key: Optional[str] = None):
 def create_prompt(
     similarity_data: List[Dict[str, Any]],
     max_sounds: Optional[int] = None,
-    user_prompt: Optional[str] = None,
+    user_prompt: str = "",
 ) -> str:
     """
     Create the prompt for the LLM.
@@ -51,9 +51,14 @@ def create_prompt(
             f"\n- You should prioritize the top {max_sounds} most impactful sentences"
         )
 
-    user_context = ""
-    if user_prompt:
-        user_context = f"\n\nUSER SPECIFIC INSTRUCTIONS:\n{user_prompt}\n"
+    user_context = f"""
+    
+**USER SPECIFIC INSTRUCTIONS**:
+{user_prompt}
+
+You should adapt your ranking according to the user guidance.
+
+"""
 
     # Build prompt header with dynamic parts
     prompt = FILTER_PROMPT_HEADER.format(
@@ -80,7 +85,7 @@ def filter_sounds(
     similarity_data: List[Dict[str, Any]],
     max_sounds: Optional[int] = 4,
     api_key: Optional[str] = None,
-    user_prompt: Optional[str] = None,
+    user_prompt: Optional[str] = "",
     output_file: Optional[str] = None,
 ) -> Dict[str, Any]:
     """

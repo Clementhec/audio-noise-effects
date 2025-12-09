@@ -21,11 +21,12 @@ IMPORTANT RULES:
 
 {user_context}
 
-Here is the data to analyze:
-
+Here is the data to analyze :
+<DATA>
 """
 
 FILTER_PROMPT_FOOTER = """
+</DATA>
 
 For each sentence, provide:
 - speech_index: the index of the sentence

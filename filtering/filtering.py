@@ -183,3 +183,9 @@ def filter_sounds(
     print(f"Result saved to {output_file}")
 
     return result
+
+if __name__ == "__main__":
+    with open("similarity/output/similarity.json", "r", encoding="utf-8") as f:
+        sample_data = json.load(f)
+    result = filter_sounds(sample_data, max_sounds=2, keep_only_with_sound=True)
+    print(json.dumps(result, indent=2, ensure_ascii=False))

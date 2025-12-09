@@ -15,7 +15,11 @@ IMPORTANT RULES:
 - Rank 1 = most impactful/relevant, higher numbers = less relevant
 - Favor concrete sounds (thunder, barking, rain) rather than general ambiances
 - Maximum one keyword per sentence (the most relevant one)
-- Use the sound_index (0, 1, or 2) to reference which sound from the suggestions you select{max_sounds_instruction}{user_context}
+- Use the sound_index (0, 1, or 2) to reference which sound from the suggestions you select
+
+{max_sounds_instruction}
+
+{user_context}
 
 Here is the data to analyze:
 

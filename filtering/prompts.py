@@ -27,24 +27,17 @@ Here is the data to analyze:
 
 FILTER_PROMPT_FOOTER = """
 
-RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
-Your overall response should be a valid JSON string AS IS.
+For each sentence, provide:
+- speech_index: the index of the sentence
+- speech_text: the original text of the sentence
+- should_add_sound: whether a sound should be added (true/false)
+- target_word: the specific word where to place the sound (null if should_add_sound=false)
+- selected_sound_index: the index (0, 1, or 2) of the selected sound from the suggestions
+- reasoning: explanation of your decision
+- relevance_rank: unique integer rank (1 = most relevant, 2 = second most relevant, etc.)
 
-CRITICAL: Use ONLY the sound_index (0, 1, or 2) to reference sounds. DO NOT copy titles or URLs.
-
-{{
-  "filtered_sounds": [
-    {{
-      "speech_index": 0,
-      "speech_text": "original text",
-      "should_add_sound": true/false,
-      "target_word": "specific word where to place the sound (null if should_add_sound=false)",
-      "selected_sound_index" : "EXACT sound index identifier",
-      "reasoning": "explanation of the decision",
-      "relevance_rank": "integer numeric relevance, (most is 1)"
-    }}
-  ]
-}}
-
-ALL sentences must be included with UNIQUE ranks (1, 2, 3, 4...). Order by rank ascending (1 first).
+CRITICAL:
+- Use ONLY the sound_index (0, 1, or 2) to reference sounds
+- ALL sentences must be included with UNIQUE ranks (1, 2, 3, 4...)
+- Order by rank ascending (1 first)
 """

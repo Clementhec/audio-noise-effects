@@ -1,13 +1,34 @@
 import os
 import json
 from dotenv import load_dotenv
-import google.generativeai as genai
+# import google.generativeai as genai
+from google import genai
 from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field
 
-from llm_filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
+from filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
 
 
-def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
+class FilteredSound(BaseModel):
+    """Individual filtered sound entry from LLM response."""
+    speech_index: int = Field(description="Index of the sentence")
+    speech_text: str = Field(description="Original text of the sentence")
+    should_add_sound: bool = Field(description="Whether a sound should be added")
+    target_word: Optional[str] = Field(
+        default=None,
+        description="Specific word where to place the sound (null if should_add_sound=false)"
+    )
+    selected_sound_index: int = Field(description="Index (0, 1, or 2) of the selected sound")
+    reasoning: str = Field(description="Explanation of the decision")
+    relevance_rank: int = Field(description="Unique integer rank (1 = most relevant)")
+
+
+class FilterResponse(BaseModel):
+    """Complete LLM filter response structure."""
+    filtered_sounds: List[FilteredSound] = Field(description="List of all filtered sounds")
+
+
+def get_gemini_model(api_key: Optional[str] = None):
     """
     Configure and return a Gemini model.
 
@@ -25,8 +46,16 @@ def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
                 "GOOGLE_API_KEY must be defined in the environment or passed as a parameter"
             )
 
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel("gemini-2.5-flash-lite")
+    # genai.configure(api_key=api_key)
+
+    # generation_config = {
+    #     "response_mime_type": "application/json",
+    #     "response_schema": FilterResponse.model_json_schema(),
+    # }
+
+    # return genai.GenerativeModel(
+    #     "gemini-2.5-flash-lite", generation_config=generation_config
+    # )
 
 
 def create_prompt(
@@ -58,8 +87,7 @@ def create_prompt(
 
     # Build prompt header with dynamic parts
     prompt = FILTER_PROMPT_HEADER.format(
-        max_sounds_instruction=max_sounds_instruction,
-        user_context=user_context
+        max_sounds_instruction=max_sounds_instruction, user_context=user_context
     )
 
     # Add sentence data
@@ -76,28 +104,6 @@ def create_prompt(
     prompt += FILTER_PROMPT_FOOTER
 
     return prompt
-
-
-def clean_json_response(response_text: str) -> str:
-    """
-    Clean the LLM response to extract pure JSON.
-
-    Args:
-        response_text: Raw LLM response
-
-    Returns:
-        Cleaned JSON
-    """
-    response_text = response_text.strip().replace(' ""', ' "')
-
-    # Clean markdown if present
-    if response_text.startswith("```"):
-        lines = response_text.split("\n")
-        response_text = "\n".join(lines[1:-1])
-        if response_text.startswith("json"):
-            response_text = response_text[4:].strip()
-
-    return response_text
 
 
 def filter_sounds(
@@ -121,26 +127,33 @@ def filter_sounds(
         Dictionary with all sounds ranked by unique rank (1 = best, 2 = 2nd best, etc.)
     """
     model = get_gemini_model(api_key)
+    model = genai.Client()
     prompt = create_prompt(similarity_data, max_sounds, user_prompt)
-    response = model.generate_content(prompt)
+    response = model.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "response_json_schema": FilterResponse.model_json_schema(),
+        },
+    )
+    # response = model.generate_content(prompt)
 
-    # TODO : this step should not be ! JSON response expected as is.
-    # TODO : LLM should return a structured output
-    response_text = clean_json_response(response.text)
-
+    # Parse and validate the structured JSON response using Pydantic
     try:
-        llm_result = json.loads(response_text)
-    except json.JSONDecodeError as e:
-        print("Error decoding LLM filter response")
+        llm_result = FilterResponse.model_validate_json(response.text)
+    except Exception as e:
+        print(f"Error validating LLM filter response: {e}")
         raise e
+
     # Reconstruct complete data from indexes
     # to avoid LLM hallucinations
     result = {"filtered_sounds": []}
 
-    for item in llm_result["filtered_sounds"]:
-        try:  # TODO : this is a quickfix, JSON should be well structured
-            speech_idx = item["speech_index"]
-            sound_idx = item["selected_sound_index"]
+    for item in llm_result.filtered_sounds:
+        try:
+            speech_idx = item.speech_index
+            sound_idx = item.selected_sound_index
 
             # Retrieve original data
             original_data = similarity_data[speech_idx]
@@ -151,20 +164,20 @@ def filter_sounds(
                 {
                     "speech_index": speech_idx,
                     "speech_text": original_data["speech_text"],
-                    "relevance_rank": item["relevance_rank"],
-                    "target_word": item["target_word"],
-                    "should_add_sound": item["should_add_sound"],
+                    "relevance_rank": item.relevance_rank,
+                    "target_word": item.target_word,
+                    "should_add_sound": item.should_add_sound,
                     "selected_sound": {
                         "sound_title": selected_sound["sound_title"],
                         "sound_description": selected_sound["sound_description"],
                         "audio_url_wav": selected_sound["audio_url_wav"],
                         "similarity_score": selected_sound["similarity"],
                     },
-                    "reasoning": item["reasoning"],
+                    "reasoning": item.reasoning,
                 }
             )
-        except:
-            print("TODO : LLM filter did not output expected JSON struct")
+        except Exception as e:
+            print(f"Error processing filtered sound at index {item.speech_index}: {e}")
             pass
 
     # Sort by ascending relevance rank (1 = best)
@@ -184,8 +197,9 @@ def filter_sounds(
 
     return result
 
+
 if __name__ == "__main__":
     with open("similarity/output/similarity.json", "r", encoding="utf-8") as f:
         sample_data = json.load(f)
-    result = filter_sounds(sample_data, max_sounds=2, keep_only_with_sound=True)
+    result = filter_sounds(sample_data, max_sounds=2)
     print(json.dumps(result, indent=2, ensure_ascii=False))

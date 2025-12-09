@@ -10,7 +10,7 @@ from ast import literal_eval
 
 
 from utils import get_embeddings
-from llm_filtering.filtering import filter_sounds
+from filtering.filtering import filter_sounds
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
 from utils.audio_extraction import extract_audio_from_video

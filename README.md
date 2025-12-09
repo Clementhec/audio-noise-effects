@@ -66,6 +66,19 @@ to be reused if necessary in comparable contexts,
 to guarantee consistent sound additions and leverage repetition effects.
 
 
+### Sound selection
+
+To select which sounds are going to be eventually included in the video,
+a LLM is asked to rank the relevance of each selected sounds,
+for a given part of the speech, according to the user input.
+
+This key step can be tailored with the following parameters :
+- The `max_sounds` parameter guides the LLM to prioritize the top N most impactful sentences. All sentences are still ranked with unique relevance scores (1, 2, 3...), but the LLM focuses on selecting the best N.
+
+The motivation of using an LLM at this step is that it is expected to align better with the user prompt, and have more adaptability than taking the top-k from the similarity search (which would always return the most straightforward match).
+
+The current LLM is `Gemini 2.5 Flash Lite`.
+
 ## Configuration
 
 ### API Key Setup

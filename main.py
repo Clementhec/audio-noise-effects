@@ -326,9 +326,40 @@ def parse_arguments():
     )
 
     parser.add_argument(
+        "--run-matching",
+        action="store_true",
+        help="Run similarity matching with sound effects (requires embeddings file or --run-embeddings)",
+    )
+
+    parser.add_argument(
+        "--run-llm-filter",
+        action="store_true",
+        help="Use LLM to intelligently filter best sound matches (requires similarity results or --run-matching)",
+    )
+
+    parser.add_argument(
+        "--run-video-merge",
+        action="store_true",
+        help="Merge sound effects with video to create final output (requires filtered results, word timings, or --run-llm-filter)",
+    )
+
+    parser.add_argument(
+        "--top-k",
+        type=int,
+        default=5,
+        help="Number of top similar sounds to find for each segment (default: 5)",
+    )
+
+    parser.add_argument(
         "--full-pipeline",
         action="store_true",
         help="Run complete pipeline: extract + STT + embeddings + matching + LLM filter + video merge",
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        default="data",
+        help="Output directory for intermediate files (default: data)",
     )
 
     parser.add_argument(
@@ -346,41 +377,10 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--output-dir",
-        default="data",
-        help="Output directory for intermediate files (default: data)",
-    )
-
-    parser.add_argument(
-        "--run-matching",
-        action="store_true",
-        help="Run similarity matching with sound effects (requires embeddings file or --run-embeddings)",
-    )
-
-    parser.add_argument(
-        "--top-k",
-        type=int,
-        default=5,
-        help="Number of top similar sounds to find for each segment (default: 5)",
-    )
-
-    parser.add_argument(
-        "--run-llm-filter",
-        action="store_true",
-        help="Use LLM to intelligently filter best sound matches (requires similarity results or --run-matching)",
-    )
-
-    parser.add_argument(
         "--max-sounds",
         type=int,
         default=None,
         help="Maximum number of sentences to select for sound effects (default: LLM decides)",
-    )
-
-    parser.add_argument(
-        "--run-video-merge",
-        action="store_true",
-        help="Merge sound effects with video to create final output (requires filtered results, word timings, or --run-llm-filter)",
     )
 
     parser.add_argument(
@@ -499,16 +499,16 @@ class SoundEasy:
         yield self.filtered_results_path
         yield self.output_video_path
 
-    def _setup_directories(paths):
+    def _setup_directories(self, paths):
         """
         Create necessary directories if they don't exist.
         """
 
         for p in paths:
-            if p.extension == "":
-                p.mkdir(parents=True, exists_ok=True)
+            if p.suffix == "":
+                p.mkdir(parents=True, exist_ok=True)
             else:
-                p.parent.mkdir(parents=True, exists_ok=True)
+                p.parent.mkdir(parents=True, exist_ok=True)
 
     def embed_sounds_if_necessary(self):
         from utils.sound_embedding.sound_embedder import SoundEmbedder
@@ -534,69 +534,74 @@ class SoundEasy:
                 self.input_video_path, output_path=self.audio_base_path
             )
         if args.run_stt:
-            transcription_path, word_timing_path = run_stt_step(
+            _ = run_stt_step(
                 audio_path=self.audio_base_path,
-                transcription_path=transcription_path,
-                word_timing_path=word_timing_path,
+                transcription_path=self.transcription_path,
+                word_timing_path=self.word_timing_path,
             )
         elif args.run_embeddings or args.run_video_merge:
-            if not transcription_path.exists():
-                print(f"Error: missing {transcription_path}")
+            if not self.transcription_path.exists():
+                print(f"Error: missing {self.transcription_path}")
                 sys.exit(1)
-            if not word_timing_path.exists():
-                print(f"Error: missing {word_timing_path}")
+            if not self.word_timing_path.exists():
+                print(f"Error: missing {self.word_timing_path}")
                 sys.exit(1)
 
         if args.run_embeddings:
-            speech_embeddings_path = run_embeddings_step(
-                transcription_path,
-                word_timing_path,
+            _ = run_embeddings_step(
+                self.transcription_path,
+                self.word_timing_path,
                 self.speech_embeddings_path,
                 force_regenerate=args.force_regenerate,
             )
         elif args.run_matching:
-            if not embeddings_path.exists():
-                print(f"Missing video speech embeddings : {speech_embeddings_path}")
+            if not self.speech_embeddings_path.exists():
+                print(
+                    f"Missing video speech embeddings : {self.speech_embeddings_path}"
+                )
                 sys.exit(1)
-            print(f"Use existing video speech embeddings : {speech_embeddings_path}")
+            print(
+                f"Use existing video speech embeddings : {self.speech_embeddings_path}"
+            )
 
-            self.embed_sounds_if_necessary()
+        self.embed_sounds_if_necessary()
 
         if args.run_matching:
             similarity_results_path = run_semantic_matching_step(
-                speech_embeddings_path,
-                similarity_results_path,
-                top_k=args.top_k,
+                embeddings_path=self.speech_embeddings_path,
                 sound_embeddings_path=self.sound_embeddings_path,
+                soundbible_metadata_path=self.soundbible_details_path,
+                similarity_results_path=self.similarity_results_path,
+                top_k=args.top_k,
             )
         elif args.run_llm_filter:
-            if not similarity_results_path.exists():
+            if not self.similarity_results_path.exists():
                 print(f"Missing similarity results : {similarity_results_path}")
                 sys.exit(1)
-            print(f"Using existing similarity results : {similarity_results_path}")
+            print(f"Using existing similarity results : {self.similarity_results_path}")
 
         if args.run_llm_filter:
-            filtered_results_path = run_llm_filtering_step(
-                similarity_results_path,
-                filtered_results_path,
+            _ = run_llm_filtering_step(
+                self.similarity_results_path,
+                self.filtered_results_path,
                 max_sounds=args.max_sounds,
             )
         elif args.run_video_merge:
-            if not filtered_results_path.exists():
+            if not self.filtered_results_path.exists():
                 print(f"Error : missing filtered results : {filtered_results_path}")
                 sys.exit(1)
-            print(f"Using existing filtered results: {filtered_results_path}")
+            print(f"Using existing filtered results: {self.filtered_results_path}")
 
         if args.run_video_merge:
             if not self.audio_base_path.exists():
                 print(f"Missing audio path : {self.audio_base_path}")
                 sys.exit(1)
 
-            final_video_path = run_complete_video_audio_merge(
+            _ = run_complete_video_audio_merge(
                 video_path=self.input_video_path,
-                filtered_results_path=filtered_results_path,
-                speech_embedding_file=speech_embeddings_path,
-                word_timing_path=word_timing_path,
+                filtered_results_path=self.filtered_results_path,
+                speech_embedding_file=self.speech_embeddings_path,
+                word_timing_path=self.word_timing_path,
                 original_audio_path=self.audio_base_path,
                 output_video_path=self.output_video_path,
                 sound_intensity=args.sound_intensity,
@@ -607,7 +612,7 @@ class SoundEasy:
 
             print("Generated files:")
             print(f"Audio: {self.audio_base_path}")
-            print(f"Final video path : {final_video_path}")
+            print(f"Final video path : {self.output_video_path}")
 
 
 def main():

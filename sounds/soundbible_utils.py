@@ -96,6 +96,7 @@ class SoundBibleScraper:
         all_results = list(chain.from_iterable(results))
 
         self.sound_details = pd.DataFrame(all_results)
+        
 
     @staticmethod
     def _fetch_single_sound_detail(args):
@@ -180,10 +181,10 @@ class SoundBibleScraper:
         # Update DataFrame with results
         for result in results:
             idx = result["index"]
-            self.sound_details.at[idx, "url"] = result["url"]
-            self.sound_details.at[idx, "description"] = result["description"]
-            self.sound_details.at[idx, "keywords"] = result["keywords"]
-            self.sound_details.at[idx, "length"] = result["length"]
+            self.sound_details.at[idx, "url"] = result.get("url", "")
+            self.sound_details.at[idx, "description"] = result.get("description", "")
+            self.sound_details.at[idx, "keywords"] = result.get("keywords", "")
+            self.sound_details.at[idx, "length"] = result.get("length", None)
 
     def clean_sounds_description(self):
         cleaned_descriptions = []
@@ -395,6 +396,8 @@ class SoundBibleScraper:
 
     def run(self) -> pd.DataFrame:
         self.fetch_sound_hrefs()
+        self.sound_details["keywords"] = ""
+        self.sound_details["length"] = None
         self.fetch_sound_details_from_hrefs()
         self.clean_sounds_description()
         self.fetch_audio_urls_from_details()

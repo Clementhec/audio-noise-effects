@@ -151,16 +151,13 @@ def filter_sounds(
     response = model.generate_content(prompt)
 
     # TODO : this step should not be ! JSON response expected as is.
+    # TODO : LLM should return a structured output
     response_text = clean_json_response(response.text)
 
-    print(response)
-    print()
-    print(response_text)
     try:
         llm_result = json.loads(response_text)
     except json.JSONDecodeError as e:
         print("Error decoding LLM filter response")
-        print(f"First 200 chars of cleaned response: {response_text[:200]}")
         raise e
     # Reconstruct complete data from indexes
     # to avoid LLM hallucinations

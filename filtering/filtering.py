@@ -1,11 +1,14 @@
 import os
 import json
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
 from typing import List, Dict, Any, Optional
 
+from filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
+from filtering.schemas import FilteredSound, FilterResponse
 
-def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
+
+def get_gemini_model(api_key: Optional[str] = None):
     """
     Configure and return a Gemini model.
 
@@ -22,15 +25,13 @@ def get_gemini_model(api_key: Optional[str] = None) -> genai.GenerativeModel:
             raise ValueError(
                 "GOOGLE_API_KEY must be defined in the environment or passed as a parameter"
             )
-
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel("gemini-2.5-flash-lite")
+    return genai.Client()
 
 
 def create_prompt(
     similarity_data: List[Dict[str, Any]],
     max_sounds: Optional[int] = None,
-    user_prompt: Optional[str] = None,
+    user_prompt: str = "",
 ) -> str:
     """
     Create the prompt for the LLM.
@@ -43,33 +44,28 @@ def create_prompt(
     Returns:
         Formatted prompt for the LLM
     """
+    # Build dynamic instructions
     max_sounds_instruction = ""
     if max_sounds is not None:
         max_sounds_instruction = (
             f"\n- You should prioritize the top {max_sounds} most impactful sentences"
         )
 
-    user_context = ""
-    if user_prompt:
-        user_context = f"\n\nUSER SPECIFIC INSTRUCTIONS:\n{user_prompt}\n"
+    user_context = f"""
+    
+**USER SPECIFIC INSTRUCTIONS**:
+{user_prompt}
 
-    prompt = f"""You are an expert in sound design for audio. Your role is to analyze sentences with their suggested corresponding sounds and determine:
-
-1. A unique relevance rank for each sentence (1 = most relevant, 2 = second most relevant, etc.)
-2. On which specific word(s) to place the sound effect for a natural result
-3. Which sound among the suggestions (by index) is most appropriate
-
-IMPORTANT RULES:
-- You MUST assign a UNIQUE rank to each sentence (no duplicates: 1, 2, 3, 4, 5...)
-- Rank 1 = most impactful/relevant, higher numbers = less relevant
-- Favor concrete sounds (thunder, barking, rain) rather than general ambiances
-- Maximum one keyword per sentence (the most relevant one)
-- Use the sound_index (0, 1, or 2) to reference which sound from the suggestions you select {max_sounds_instruction} {user_context}
-
-Here is the data to analyze:
+You should adapt your ranking according to the user guidance.
 
 """
 
+    # Build prompt header with dynamic parts
+    prompt = FILTER_PROMPT_HEADER.format(
+        max_sounds_instruction=max_sounds_instruction, user_context=user_context
+    )
+
+    # Add sentence data
     for item in similarity_data:
         prompt += f"\n--- Sentence {item['speech_index']} ---\n"
         prompt += f'Text: "{item["speech_text"]}"\n'
@@ -78,59 +74,18 @@ Here is the data to analyze:
             prompt += f"  {i}. {match['sound_title']} (similarity: {match['similarity']:.2f})\n"
             prompt += f"     Description: {match['sound_description']}\n"
             prompt += f"     URL: {match['audio_url_wav']}\n"
-    prompt += """
 
-RESPOND ONLY with valid JSON in the following format (no markdown, no ```json):
-Your overall response should be a valid JSON string AS IS.
+    # Add footer
+    prompt += FILTER_PROMPT_FOOTER
 
-CRITICAL: Use ONLY the sound_index (0, 1, or 2) to reference sounds. DO NOT copy titles or URLs.
-
-{
-  "filtered_sounds": [
-    {
-      "speech_index": 0,
-      "speech_text": "original text",
-      "should_add_sound": true/false,
-      "target_word": "specific word where to place the sound (null if should_add_sound=false)",
-      "selected_sound_index" : "EXACT sound index identifier",
-      "reasoning": "explanation of the decision",
-      "relevance_rank": "integer numeric relevance, (most is 1)" 
-    }
-  ]
-}
-
-ALL sentences must be included with UNIQUE ranks (1, 2, 3, 4...). Order by rank ascending (1 first).
-"""
     return prompt
-
-
-def clean_json_response(response_text: str) -> str:
-    """
-    Clean the LLM response to extract pure JSON.
-
-    Args:
-        response_text: Raw LLM response
-
-    Returns:
-        Cleaned JSON
-    """
-    response_text = response_text.strip().replace(' ""', ' "')
-
-    # Clean markdown if present
-    if response_text.startswith("```"):
-        lines = response_text.split("\n")
-        response_text = "\n".join(lines[1:-1])
-        if response_text.startswith("json"):
-            response_text = response_text[4:].strip()
-
-    return response_text
 
 
 def filter_sounds(
     similarity_data: List[Dict[str, Any]],
     max_sounds: Optional[int] = 4,
     api_key: Optional[str] = None,
-    user_prompt: Optional[str] = None,
+    user_prompt: Optional[str] = "",
     output_file: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
@@ -148,25 +103,31 @@ def filter_sounds(
     """
     model = get_gemini_model(api_key)
     prompt = create_prompt(similarity_data, max_sounds, user_prompt)
-    response = model.generate_content(prompt)
+    response = model.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "response_json_schema": FilterResponse.model_json_schema(),
+        },
+    )
+    # response = model.generate_content(prompt)
 
-    # TODO : this step should not be ! JSON response expected as is.
-    # TODO : LLM should return a structured output
-    response_text = clean_json_response(response.text)
-
+    # Parse and validate the structured JSON response using Pydantic
     try:
-        llm_result = json.loads(response_text)
-    except json.JSONDecodeError as e:
-        print("Error decoding LLM filter response")
+        llm_result = FilterResponse.model_validate_json(response.text)
+    except Exception as e:
+        print(f"Error validating LLM filter response: {e}")
         raise e
+
     # Reconstruct complete data from indexes
     # to avoid LLM hallucinations
     result = {"filtered_sounds": []}
 
-    for item in llm_result["filtered_sounds"]:
-        try:  # TODO : this is a quickfix, JSON should be well structured
-            speech_idx = item["speech_index"]
-            sound_idx = item["selected_sound_index"]
+    for item in llm_result.filtered_sounds:
+        try:
+            speech_idx = item.speech_index
+            sound_idx = item.selected_sound_index
 
             # Retrieve original data
             original_data = similarity_data[speech_idx]
@@ -177,20 +138,20 @@ def filter_sounds(
                 {
                     "speech_index": speech_idx,
                     "speech_text": original_data["speech_text"],
-                    "relevance_rank": item["relevance_rank"],
-                    "target_word": item["target_word"],
-                    "should_add_sound": item["should_add_sound"],
+                    "relevance_rank": item.relevance_rank,
+                    "target_word": item.target_word,
+                    "should_add_sound": item.should_add_sound,
                     "selected_sound": {
                         "sound_title": selected_sound["sound_title"],
                         "sound_description": selected_sound["sound_description"],
-                        "audio_url_wav": selected_sound["audio_url_wav"],
+                        "audio_url_wav": selected_sound["sound_location"],
                         "similarity_score": selected_sound["similarity"],
                     },
-                    "reasoning": item["reasoning"],
+                    "reasoning": item.reasoning,
                 }
             )
-        except:
-            print("TODO : LLM filter did not output expected JSON struct")
+        except Exception as e:
+            print(f"Error processing filtered sound at index {item.speech_index}: {e}")
             pass
 
     # Sort by ascending relevance rank (1 = best)
@@ -209,3 +170,10 @@ def filter_sounds(
     print(f"Result saved to {output_file}")
 
     return result
+
+
+if __name__ == "__main__":
+    with open("similarity/output/similarity.json", "r", encoding="utf-8") as f:
+        sample_data = json.load(f)
+    result = filter_sounds(sample_data, max_sounds=2)
+    print(json.dumps(result, indent=2, ensure_ascii=False))

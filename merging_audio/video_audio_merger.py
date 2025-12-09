@@ -103,7 +103,7 @@ def find_word_timing(
 
 
 def prepare_sound_effects(
-    filtered_results: Dict,
+    filtered_sounds: List[Dict],
     metadata_df: pd.DataFrame,
     word_timings: List[Dict],
     embedding_file: Path,
@@ -130,7 +130,7 @@ def prepare_sound_effects(
     assert embedding_file.suffix == ".csv", "Embedding file should be csv"
     embeddings = pd.read_csv(embedding_file)
 
-    for item in filtered_results.get("filtered_sounds", []):
+    for item in filtered_sounds:
         if not item.get("should_add_sound", False):
             continue
 
@@ -148,45 +148,31 @@ def prepare_sound_effects(
         target_word = item.get("target_word")
         speech_text = item.get("speech_text")
 
+        sound_location = selected_sound.get("audio_url_wav")
+
         if not all([sound_title, target_word, speech_text]):
             continue
 
         print(f"Processing: '{target_word}' → {sound_title}")
 
         # Find sound URL
-        sound_url = find_sound_url(sound_title, metadata_df)
-        if not sound_url:
-            print(f"Sound effect {sound_url} not found !")
-            continue
+        # sound_url = find_sound_url(sound_title, metadata_df)
+        # if not sound_url:
+        #     print(f"Sound effect {sound_url} not found !")
+        #     continue
 
         # Determine file extension and output path
-        file_ext = ".wav" if sound_url.endswith(".wav") else ".mp3"
-        safe_filename = "".join(
-            c for c in sound_title if c.isalnum() or c in (" ", "-", "_")
-        )
-        safe_filename = safe_filename.replace(" ", "_")
-        output_path = download_dir / f"{safe_filename}{file_ext}"
+        # file_ext = ".wav" if sound_url.endswith(".wav") else ".mp3"
+        # safe_filename = "".join(
+        #     c for c in sound_title if c.isalnum() or c in (" ", "-", "_")
+        # )
+        # safe_filename = safe_filename.replace(" ", "_")
+        # output_path = download_dir / f"{safe_filename}{file_ext}"
 
         # Load sound effect if exists
-        if not Path(output_path).exists():
-            print(f"Sound : {sound_url} has not been found at {output_path}")
+        if not Path(sound_location).exists():
+            print(f"Sound : {sound_title} has not been found at {sound_location}")
             continue
-
-        # Convert MP3 to WAV if needed
-        if file_ext == ".mp3":
-            wav_path = output_path.with_suffix(".wav")
-            if not wav_path.exists():
-                try:
-                    print(f"Converting to WAV...")
-                    audio = AudioSegment.from_mp3(output_path)
-                    audio.export(wav_path, format="wav")
-                    output_path = wav_path
-                    print(f"Converted to WAV")
-                except Exception as e:
-                    print(f"Conversion failed: {e}")
-                    continue
-            else:
-                output_path = wav_path
 
         # Find word timing
         start_time = find_word_timing(
@@ -201,7 +187,7 @@ def prepare_sound_effects(
 
         duration = 3.0
 
-        prepared_sounds.append((output_path, start_time, duration, sound_title))
+        prepared_sounds.append((sound_location, start_time, duration, sound_title))
         print(f"Ready: {sound_title} at {start_time:.2f}s")
 
     return prepared_sounds
@@ -362,6 +348,7 @@ def run_complete_video_audio_merge(
     soundbible_download_dir: Path,
     sound_intensity: float = 0.3,
     sound_duration: Optional[float] = None,
+    max_sounds: int = -1,
 ) -> Path:
     """
     Complete pipeline to merge sound effects with video.
@@ -392,9 +379,15 @@ def run_complete_video_audio_merge(
     print(f"Loaded {len(word_timings)} word timings")
     print(f"Loaded {len(metadata_df)} sound metadata entries")
 
-    # Prepare sound effects (download and find timings)
+    filtered_sounds = filtered_results.get("filtered_sounds", [])
+    filtered_sounds = sorted(filtered_sounds, key=lambda x: x.get("relevance_rank"))
+    filtered_sounds = filtered_sounds[:max_sounds]
+
+    print(f"Remaining {len(filtered_sounds)} to merge :")
+    print(filtered_sounds)
+
     prepared_sounds = prepare_sound_effects(
-        filtered_results,
+        filtered_sounds,
         metadata_df,
         word_timings,
         embedding_file=speech_embedding_file,

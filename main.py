@@ -10,7 +10,7 @@ from ast import literal_eval
 
 
 from utils import get_embeddings
-from llm_filtering.filtering import filter_sounds
+from filtering.filtering import filter_sounds
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
 from utils.audio_extraction import extract_audio_from_video
@@ -183,6 +183,7 @@ def run_llm_filtering_step(
     similarity_results_path: Path,
     filtered_results_path: Path,
     max_sounds: Optional[int] = None,
+    user_message: Optional[str] = None
 ) -> Path:
     """
     Use LLM to filter and select best sound matches.
@@ -200,10 +201,6 @@ def run_llm_filtering_step(
     print("=" * 70)
 
     print(f"Similarity results: {similarity_results_path}")
-    if max_sounds:
-        print(f"Max sounds to select: {max_sounds}")
-    else:
-        print("Max sounds: LLM will decide")
 
     # Load similarity results
     print("Loading similarity results...")
@@ -228,7 +225,7 @@ def run_llm_filtering_step(
     result = filter_sounds(
         similarity_data=similarity_data,
         max_sounds=max_sounds,
-        # keep_only_with_sound=True,
+        user_prompt=user_message,
         output_file=str(output_path),
     )
 
@@ -312,6 +309,13 @@ def parse_arguments():
     )
 
     parser.add_argument("video", help="Path to input video file (.mp4)")
+
+    parser.add_argument(
+        "--user-prompt",
+        type=str,
+        default="",
+        help="User's artistic direction guidance",
+    )
 
     parser.add_argument(
         "--run-stt",
@@ -582,13 +586,16 @@ class SoundEasy:
 
         if args.run_llm_filter:
             _ = run_llm_filtering_step(
-                self.similarity_results_path,
-                self.filtered_results_path,
+                similarity_results_path=self.similarity_results_path,
+                filtered_results_path=self.filtered_results_path,
                 max_sounds=args.max_sounds,
+                user_message=args.user_prompt
             )
         elif args.run_video_merge:
             if not self.filtered_results_path.exists():
-                print(f"Error : missing filtered results : {filtered_results_path}")
+                print(
+                    f"Error : missing filtered results : {self.filtered_results_path}"
+                )
                 sys.exit(1)
             print(f"Using existing filtered results: {self.filtered_results_path}")
 
@@ -608,6 +615,7 @@ class SoundEasy:
                 sound_duration=args.sound_duration,
                 metadata_path=self.soundbible_details_path,
                 soundbible_download_dir=self.sounds_soundbible_path,
+                max_sounds=args.max_sounds,
             )
 
             print("Generated files:")

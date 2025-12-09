@@ -13,6 +13,7 @@ from .embeddings_utils import (
     indices_of_nearest_neighbors_from_distances,
     get_embedding_dimension,
 )
+from .logger import setup_logger, get_logger, project_logger
 
 __all__ = [
     "get_model",
@@ -22,4 +23,7 @@ __all__ = [
     "distances_from_embeddings",
     "indices_of_nearest_neighbors_from_distances",
     "get_embedding_dimension",
+    "setup_logger",
+    "get_logger",
+    "project_logger",
 ]

@@ -1,5 +1,7 @@
 # Agentic Sound Editing Pipeline
 
+![image](img/soundeasy.gif)
+
 An intelligent audio processing system that automatically enhances audio and video content by adding contextually relevant sound effects based on speech and video content analysis.
 
 
@@ -40,8 +42,28 @@ Input (Audio/Video)
 Output (Enhanced Audio/Video)
 ```
 
-## References
-- [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
+### Audio Extraction
+
+Example sample rates :
+
+- **16000 Hz**: Standard for speech recognition (Google STT, Whisper)
+- **22050 Hz**: Acceptable quality for speech
+- **44100 Hz**: CD quality, good for music
+- **48000 Hz**: Professional audio/video standard
+
+
+### Sounds
+
+By default, sounds from the open-source sound library [SoundBible](https://soundbible.com/) are used.
+
+The library contains mainstream sounds, but is not comprehensive.
+For situations that require more subtlety, 
+one can leverage the text-to-sound generation API from [ElevenLabs](https://elevenlabs.io/sound-effects), 
+which can further enhance the video experience.
+
+Generated sounds are then stored in the sounds bank, and their embeddings are cached, 
+to be reused if necessary in comparable contexts, 
+to guarantee consistent sound additions and leverage repetition effects.
 
 
 ## Configuration
@@ -56,36 +78,28 @@ GOOGLE_API_KEY=your_google_api_key_here
 ELEVENLABS_API_KEY=your_api_key_here
 ```
 
+Get your key from: 
+- [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+## Requirements
+
+### Audio extraction and merging 
+
+Install ffmpeg on your system:
+
 ```bash
-export OPENAI_API_KEY="your-api-key-here"
+# Ubuntu/Debian
+sudo apt-get install ffmpeg
+
+# macOS
+brew install ffmpeg
+
+# Windows
+# Download from https://ffmpeg.org/download.html
 ```
 
+## References
 
-Get your key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
-
-## Project Guidelines
-
-### Microservice Architecture
-Each pipeline step is designed as an independent module with clear inputs and outputs, enabling:
-- Parallel development
-- Easy testing and debugging
-- Flexible deployment options
-- Modular replacement of components
-
-### Data Flow Conventions
-- **Input/Output Folders**: Each module can dump intermediate results to designated folders for inspection
-- **Audio Format**: Use `.wav` format for all audio processing (lossless, widely supported)
-- **Metadata Format**: CSV files for sound libraries, JSON for configuration
-- **Embeddings**: Store as CSV columns with array representations
-
-## Current Status & Roadmap
-
-The core components for speech analysis and semantic matching are functional. 
-Current development focuses on:
-- Audio/video extraction and format conversion
-- Real-time audio mixing and synchronization
-- Timeline generation and event scheduling
-- End-to-end pipeline integration
-- Performance optimization for large audio files
-
-
+- [Kablammo Font](https://www.vectrotype.com/kablammo)
+- [Eleven labs deref project](https://videotosfx.elevenlabs.io/)
+ 

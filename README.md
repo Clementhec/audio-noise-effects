@@ -79,6 +79,25 @@ The motivation of using an LLM at this step is that it is expected to align bett
 
 The current LLM is `Gemini 2.5 Flash Lite`.
 
+
+### Video context retrieval
+
+**Attempted models :**
+- Video-LLaVA
+- Qwen
+- Gemini
+- TwelveLabs : Marengo
+
+**References and guides**
+
+- [Video-LLaVA Documentation](https://huggingface.co/docs/transformers/en/model_doc/video_llava)
+- [Video-LLaVA GitHub](https://github.com/PKU-YuanGroup/Video-LLaVA)
+- [Model on HuggingFace](https://huggingface.co/LanguageBind/Video-LLaVA-7B-hf)
+
+Google Cloud : 
+- [introduction to the CLI](https://docs.cloud.google.com/storage/docs/discover-object-storage-gcloud)
+
+
 ## Configuration
 
 ### API Key Setup

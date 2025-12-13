@@ -85,8 +85,13 @@ The current LLM is `Gemini 2.5 Flash Lite`.
 **Attempted models :**
 - Video-LLaVA
 - Qwen
-- Gemini
+- VertexAI: Gemini
 - TwelveLabs : Marengo
+
+```bash
+gcloud services enable aiplatform.googleapis.com --project=video-context-inference
+gcloud services enable generativelanguage.googleapis.com --project=video-context-inference
+```
 
 **References and guides**
 

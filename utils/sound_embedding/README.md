@@ -214,15 +214,3 @@ class SoundEmbeddingLoader:
         max_seconds: Optional[float] = None
     ) -> pd.DataFrame
 ```
-
-### Convenience Functions
-
-```python
-def process_sound_file(
-    input_path: str = "data/soundbible_details_from_section.csv",
-    output_path: str = "data/soundbible_embeddings.csv",
-    batch_size: int = 32
-) -> pd.DataFrame
-
-def load_sound_embeddings(filepath: str) -> pd.DataFrame
-```

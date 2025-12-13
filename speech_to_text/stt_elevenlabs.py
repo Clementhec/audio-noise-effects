@@ -166,7 +166,6 @@ def transcribe_audio_file(
     with open(audio_file_path, "rb") as f:
         audio_data = BytesIO(f.read())
 
-
     # Call the main transcription function
     result = transcribe_audio_elevenlabs(
         audio_source=audio_data,

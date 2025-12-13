@@ -52,7 +52,9 @@ def read_video_pyav(container, indices):
     return np.stack([x.to_ndarray(format="rgb24") for x in frames])
 
 
-def load_model(model_name: str = "LanguageBind/Video-LLaVA-7B-hf", device: str = "auto"):
+def load_model(
+    model_name: str = "LanguageBind/Video-LLaVA-7B-hf", device: str = "auto"
+):
     """
     Load the Video-LLaVA model and processor.
 
@@ -92,7 +94,7 @@ def process_video(
     processor,
     prompt: Optional[str] = None,
     num_frames: int = 8,
-    max_new_tokens: int = 200
+    max_new_tokens: int = 200,
 ) -> str:
     """
     Process a video file and generate a text description.
@@ -129,7 +131,9 @@ def process_video(
 
     # Default prompt if none provided
     if prompt is None:
-        prompt = "USER: <video>\nDescribe the content of this video in detail. ASSISTANT:"
+        prompt = (
+            "USER: <video>\nDescribe the content of this video in detail. ASSISTANT:"
+        )
     else:
         prompt = f"USER: <video>\n{prompt} ASSISTANT:"
 
@@ -140,8 +144,10 @@ def process_video(
 
     # Move inputs to the same device as model
     if torch.cuda.is_available():
-        inputs = {k: v.to("cuda") if isinstance(v, torch.Tensor) else v
-                  for k, v in inputs.items()}
+        inputs = {
+            k: v.to("cuda") if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
 
     # Generate description
     with torch.no_grad():
@@ -149,7 +155,7 @@ def process_video(
             **inputs,
             max_new_tokens=max_new_tokens,
             do_sample=False,  # Deterministic output
-            temperature=0.0
+            temperature=0.0,
         )
 
     # Decode output
@@ -167,7 +173,7 @@ def save_output(
     video_path: str,
     description: str,
     output_dir: str = "output",
-    prompt: Optional[str] = None
+    prompt: Optional[str] = None,
 ) -> str:
     """
     Save the video description to a JSON file in the output directory.
@@ -197,11 +203,11 @@ def save_output(
         "timestamp": timestamp,
         "prompt": prompt or "Default description prompt",
         "description": description,
-        "model": "LanguageBind/Video-LLaVA-7B-hf"
+        "model": "LanguageBind/Video-LLaVA-7B-hf",
     }
 
     # Save to JSON
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2, ensure_ascii=False)
 
     print(f"\nOutput saved to: {output_file}")
@@ -218,48 +224,44 @@ Examples:
   python video_llava_analyzer.py video.mp4
   python video_llava_analyzer.py video.mp4 --prompt "What is happening in this video?"
   python video_llava_analyzer.py video.mp4 --output-dir ./results --frames 16
-        """
+        """,
     )
 
-    parser.add_argument(
-        "video_path",
-        type=str,
-        help="Path to the input MP4 video file"
-    )
+    parser.add_argument("video_path", type=str, help="Path to the input MP4 video file")
 
     parser.add_argument(
         "--prompt",
         type=str,
         default=None,
-        help="Custom prompt for video analysis (default: general description)"
+        help="Custom prompt for video analysis (default: general description)",
     )
 
     parser.add_argument(
         "--output-dir",
         type=str,
         default="output",
-        help="Output directory for results (default: ./output)"
+        help="Output directory for results (default: ./output)",
     )
 
     parser.add_argument(
         "--frames",
         type=int,
         default=8,
-        help="Number of frames to sample from video (default: 8)"
+        help="Number of frames to sample from video (default: 8)",
     )
 
     parser.add_argument(
         "--max-tokens",
         type=int,
         default=200,
-        help="Maximum tokens to generate (default: 200)"
+        help="Maximum tokens to generate (default: 200)",
     )
 
     parser.add_argument(
         "--model",
         type=str,
         default="LanguageBind/Video-LLaVA-7B-hf",
-        help="HuggingFace model name (default: LanguageBind/Video-LLaVA-7B-hf)"
+        help="HuggingFace model name (default: LanguageBind/Video-LLaVA-7B-hf)",
     )
 
     args = parser.parse_args()
@@ -275,22 +277,19 @@ Examples:
             processor,
             prompt=args.prompt,
             num_frames=args.frames,
-            max_new_tokens=args.max_tokens
+            max_new_tokens=args.max_tokens,
         )
 
         # Print description
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print("VIDEO DESCRIPTION:")
-        print("="*80)
+        print("=" * 80)
         print(description)
-        print("="*80 + "\n")
+        print("=" * 80 + "\n")
 
         # Save output
         output_file = save_output(
-            args.video_path,
-            description,
-            args.output_dir,
-            args.prompt
+            args.video_path, description, args.output_dir, args.prompt
         )
 
         print(f" Analysis complete!")
@@ -298,6 +297,7 @@ Examples:
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

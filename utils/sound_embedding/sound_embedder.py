@@ -7,19 +7,12 @@ Uses HuggingFace sentence-transformers (all-MiniLM-L6-v2) for local, offline emb
 This ensures compatibility with speech embeddings for semantic matching.
 """
 
-import os
-import sys
 import json
 import pandas as pd
-import numpy as np
-from typing import Optional, List
-from pathlib import Path
+from typing import Optional
 import ast
 
-# Add parent directory to path to import utils
-sys.path.append(str(Path(__file__).parent))
-
-from utils.embeddings_utils import get_embeddings, get_embedding_dimension
+from utils.embeddings_utils import get_embeddings
 
 
 class SoundEmbedder:
@@ -153,12 +146,11 @@ class SoundEmbedder:
             lambda x: x if isinstance(x, list) else x.tolist()
         )
 
-        # Save to CSV
         df_csv.to_csv(output_path, index=False)
-        print(f"  Saved embeddings to: {output_path}")
+        print(f"Saved embeddings to: {output_path}")
 
         # Also save metadata as JSON
-        metadata_path = output_path.replace(".csv", "_metadata.json")
+        metadata_path = str(output_path).replace(".csv", "_metadata.json")
         metadata = {
             "embedding_model": self.EMBEDDING_MODEL,
             "embedding_dimension": self.EMBEDDING_DIMENSION,
@@ -168,59 +160,10 @@ class SoundEmbedder:
         }
         with open(metadata_path, "w") as f:
             json.dump(metadata, f, indent=2)
-        print(f"  Saved metadata to: {metadata_path}")
-
-
-def process_sound_file(
-    input_path: str = "data/soundbible_details_from_section.csv",
-    output_path: str = "data/soundbible_embeddings.csv",
-    batch_size: int = 32,
-) -> pd.DataFrame:
-    """
-    Convenience function to process a sound CSV file.
-
-    Args:
-        input_path: Path to input CSV (semicolon or comma delimited)
-        output_path: Path to save embeddings
-        batch_size: Number of sounds to process at once
-
-    Returns:
-        DataFrame with embeddings
-    """
-    print(f"Loading sound data from: {input_path}")
-
-    # Try to load with semicolon delimiter first (original format)
-    try:
-        df = pd.read_csv(input_path, sep=";")
-        print(f"Loaded {len(df)} sounds (semicolon-delimited)")
-    except:
-        # Fall back to comma delimiter
-        df = pd.read_csv(input_path)
-        print(f"Loaded {len(df)} sounds (comma-delimited)")
-
-    # Show column info
-    print(f"Columns: {list(df.columns)}")
-    print(f"Sample data:")
-    print(df[["title", "description"]].head(3))
-    print()
-
-    # Create embedder and process
-    embedder = SoundEmbedder(batch_size=batch_size, show_progress=True)
-    df_embedded = embedder.process_sound_dataframe(
-        df, save_output=True, output_path=output_path
-    )
-
-    return df_embedded
+        print(f"Saved metadata to: {metadata_path}")
 
 
 if __name__ == "__main__":
-    """
-    Example usage:
-
-    python sound_embedder.py
-    python sound_embedder.py --input data/sounds.csv --output data/sounds_embedded.csv
-    python sound_embedder.py --batch-size 64
-    """
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -241,6 +184,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    batch_size = 32
 
     print("=" * 70)
     print("Sound Embedding Generator")
@@ -253,26 +197,21 @@ if __name__ == "__main__":
     print("=" * 70)
     print()
 
-    # Process the file
-    df = process_sound_file(
-        input_path=args.input, output_path=args.output, batch_size=args.batch_size
+    df = pd.read_csv(args.input)
+
+    embedder = SoundEmbedder(batch_size=batch_size, show_progress=True)
+    df_embedded = embedder.process_sound_dataframe(
+        df, save_output=True, output_path=args.output
     )
 
     print()
     print("=" * 70)
     print("Summary:")
-    print(f"Total sounds embedded: {len(df)}")
+    print(f"Total sounds embedded: {len(df_embedded)}")
     print(
-        f"Embedding dimension: {len(df['embedding'].iloc[0]) if len(df) > 0 else 'N/A'}"
+        f"Embedding dimension: {len(df_embedded['embedding'].iloc[0]) if len(df_embedded) > 0 else 'N/A'}"
     )
-    print(f"Model: {df['embedding_model'].iloc[0] if len(df) > 0 else 'N/A'}")
+    print(
+        f"Model: {df_embedded['embedding_model'].iloc[0] if len(df_embedded) > 0 else 'N/A'}"
+    )
     print("=" * 70)
-
-    # Show a sample
-    if len(df) > 0:
-        print("\nSample embedded sound:")
-        sample = df.iloc[0]
-        print(f"Title: {sample['title']}")
-        print(f"Description: {sample['description'][:100]}...")
-        print(f"Embedding text: {sample['embedding_text'][:150]}...")
-        print(f"Embedding (first 5): {sample['embedding'][:5]}")

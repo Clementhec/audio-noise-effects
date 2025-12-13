@@ -49,7 +49,7 @@ def configure_gemini(api_key: Optional[str] = None):
 def analyze_video_with_timeline(
     video_path: str,
     model_name: str = "gemini-1.5-pro",
-    custom_prompt: Optional[str] = None
+    custom_prompt: Optional[str] = None,
 ) -> dict:
     """
     Analyze video and extract timeline of actions.
@@ -74,6 +74,7 @@ def analyze_video_with_timeline(
 
     # Wait for video to be processed
     import time
+
     while video_file.state.name == "PROCESSING":
         print("Processing video...")
         time.sleep(2)
@@ -106,7 +107,7 @@ Format your response as a structured timeline with clear timestamps."""
     # Generate analysis
     response = model.generate_content(
         [video_file, prompt],
-        request_options={"timeout": 600}  # 10 minute timeout for long videos
+        request_options={"timeout": 600},  # 10 minute timeout for long videos
     )
 
     # Clean up uploaded file
@@ -118,7 +119,7 @@ Format your response as a structured timeline with clear timestamps."""
         "model": model_name,
         "prompt": prompt,
         "analysis": response.text,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
 
 
@@ -140,7 +141,7 @@ def save_results(results: dict, output_dir: str = "output") -> str:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = output_path / f"{video_name}_gemini_timeline_{timestamp}.json"
 
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
     print(f"\nResults saved to: {output_file}")
@@ -166,20 +167,18 @@ Examples:
 
   # Use Gemini Flash (faster, cheaper)
   python gemini_video_analyzer.py video.mp4 --model gemini-1.5-flash
-        """
+        """,
     )
 
     parser.add_argument(
-        "video_path",
-        type=str,
-        help="Path to the input video file (MP4, MOV, etc.)"
+        "video_path", type=str, help="Path to the input video file (MP4, MOV, etc.)"
     )
 
     parser.add_argument(
         "--api-key",
         type=str,
         default=None,
-        help="Google API key (or set GOOGLE_API_KEY environment variable)"
+        help="Google API key (or set GOOGLE_API_KEY environment variable)",
     )
 
     parser.add_argument(
@@ -187,21 +186,18 @@ Examples:
         type=str,
         default="gemini-1.5-pro",
         choices=["gemini-1.5-pro", "gemini-1.5-flash"],
-        help="Gemini model to use (default: gemini-1.5-pro)"
+        help="Gemini model to use (default: gemini-1.5-pro)",
     )
 
     parser.add_argument(
-        "--prompt",
-        type=str,
-        default=None,
-        help="Custom prompt for video analysis"
+        "--prompt", type=str, default=None, help="Custom prompt for video analysis"
     )
 
     parser.add_argument(
         "--output-dir",
         type=str,
         default="output",
-        help="Output directory for results (default: ./output)"
+        help="Output directory for results (default: ./output)",
     )
 
     args = parser.parse_args()
@@ -212,9 +208,7 @@ Examples:
 
         # Analyze video
         results = analyze_video_with_timeline(
-            args.video_path,
-            model_name=args.model,
-            custom_prompt=args.prompt
+            args.video_path, model_name=args.model, custom_prompt=args.prompt
         )
 
         # Print results
@@ -232,6 +226,7 @@ Examples:
     except Exception as e:
         print(f"\nError: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

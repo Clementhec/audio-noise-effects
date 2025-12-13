@@ -24,7 +24,11 @@ from typing import Optional
 import av
 import torch
 import numpy as np
-from transformers import VideoLlavaForConditionalGeneration, VideoLlavaProcessor, BitsAndBytesConfig
+from transformers import (
+    VideoLlavaForConditionalGeneration,
+    VideoLlavaProcessor,
+    BitsAndBytesConfig,
+)
 
 
 def read_video_pyav(container, indices):
@@ -79,7 +83,7 @@ def load_model(
         torch_dtype=dtype,
         device_map="auto",
         low_cpu_mem_usage=True,
-        quantization_config=quantization_config
+        quantization_config=quantization_config,
     )
 
     processor = VideoLlavaProcessor.from_pretrained(model_name)

@@ -33,7 +33,7 @@ def analyze_video_twelvelabs(
     prompt: str,
     api_key: str,
     index_name: Optional[str] = None,
-    model_name: str = "marengo-retrieval-2.6"
+    model_name: str = "marengo-retrieval-2.6",
 ) -> dict:
     """
     Analyze video using TwelveLabs Marengo model.
@@ -81,7 +81,7 @@ def analyze_video_twelvelabs(
                     "name": "marengo2.6",
                     "options": ["visual", "conversation", "text_in_video"],
                 }
-            ]
+            ],
         )
         index_id = index.id
         print(f"Index created with ID: {index_id}")
@@ -96,11 +96,7 @@ def analyze_video_twelvelabs(
 
     # Upload video
     print(f"\nUploading video: {video_path}")
-    task = client.task.create(
-        index_id=index_id,
-        file=video_path,
-        language="en"
-    )
+    task = client.task.create(index_id=index_id, file=video_path, language="en")
 
     print(f"Upload task created with ID: {task.id}")
     print("Waiting for video processing...")
@@ -109,10 +105,7 @@ def analyze_video_twelvelabs(
     def on_task_update(task):
         print(f"  Status: {task.status}")
 
-    task.wait_for_done(
-        sleep_interval=5,
-        callback=on_task_update
-    )
+    task.wait_for_done(sleep_interval=5, callback=on_task_update)
 
     if task.status != "ready":
         raise ValueError(f"Video processing failed with status: {task.status}")
@@ -127,34 +120,32 @@ def analyze_video_twelvelabs(
 
     # Use generate API for text generation
     try:
-        response = client.generate.text(
-            video_id=video_id,
-            prompt=prompt
-        )
+        response = client.generate.text(video_id=video_id, prompt=prompt)
         analysis_text = response.data
     except AttributeError:
         # Fallback to search if generate doesn't work
         search_results = client.search.query(
             index_id=index_id,
             query_text=prompt,
-            options=["visual", "conversation", "text_in_video"]
+            options=["visual", "conversation", "text_in_video"],
         )
 
         # Extract and format search results
         results_data = []
         for result in search_results.data[:5]:  # Top 5 results
-            results_data.append({
-                "score": result.score,
-                "start": result.start,
-                "end": result.end,
-                "confidence": result.confidence,
-                "metadata": result.metadata if hasattr(result, 'metadata') else None
-            })
+            results_data.append(
+                {
+                    "score": result.score,
+                    "start": result.start,
+                    "end": result.end,
+                    "confidence": result.confidence,
+                    "metadata": result.metadata
+                    if hasattr(result, "metadata")
+                    else None,
+                }
+            )
 
-        analysis_text = {
-            "search_results": results_data,
-            "prompt": prompt
-        }
+        analysis_text = {"search_results": results_data, "prompt": prompt}
 
     print("\nAnalysis complete!")
 
@@ -166,7 +157,7 @@ def analyze_video_twelvelabs(
         "index_id": index_id,
         "index_name": index_name,
         "response": analysis_text,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
 
     return result
@@ -190,10 +181,10 @@ def save_to_json(results: dict, output_path: Optional[str] = None) -> str:
 
     # Ensure directory exists
     output_dir = Path(output_path).parent
-    if output_dir != Path('.'):
+    if output_dir != Path("."):
         output_dir.mkdir(exist_ok=True, parents=True)
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
     print(f"\nResults saved to: {output_path}")
@@ -228,48 +219,43 @@ Examples:
       --prompt "Analyze this video" \\
       --api-key "tlk_xxxxx" \\
       --output results/analysis.json
-        """
+        """,
     )
 
     parser.add_argument(
-        "video_path",
-        type=str,
-        help="Path to the input video file (.mp4)"
+        "video_path", type=str, help="Path to the input video file (.mp4)"
     )
 
     parser.add_argument(
-        "--prompt",
-        type=str,
-        required=True,
-        help="Text prompt for video analysis"
+        "--prompt", type=str, required=True, help="Text prompt for video analysis"
     )
 
     parser.add_argument(
         "--api-key",
         type=str,
         default=None,
-        help="TwelveLabs API key (or set TWELVE_LABS_API_KEY environment variable)"
+        help="TwelveLabs API key (or set TWELVE_LABS_API_KEY environment variable)",
     )
 
     parser.add_argument(
         "--index",
         type=str,
         default=None,
-        help="Index name to use (creates temporary index if not specified)"
+        help="Index name to use (creates temporary index if not specified)",
     )
 
     parser.add_argument(
         "--model",
         type=str,
         default="marengo-retrieval-2.6",
-        help="TwelveLabs model to use (default: marengo-retrieval-2.6)"
+        help="TwelveLabs model to use (default: marengo-retrieval-2.6)",
     )
 
     parser.add_argument(
         "--output",
         type=str,
         default=None,
-        help="Output JSON file path (auto-generated if not specified)"
+        help="Output JSON file path (auto-generated if not specified)",
     )
 
     args = parser.parse_args()
@@ -288,7 +274,7 @@ Examples:
             prompt=args.prompt,
             api_key=api_key,
             index_name=args.index,
-            model_name=args.model
+            model_name=args.model,
         )
 
         # Print results
@@ -312,6 +298,7 @@ Examples:
     except Exception as e:
         print(f"\nError: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

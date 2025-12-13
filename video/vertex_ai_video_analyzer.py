@@ -18,22 +18,17 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-
-try:
-    import vertexai
-    from vertexai.generative_models import GenerativeModel, Part
-except ImportError:
-    print("Error: vertexai package not found.")
-    print("Install it with: pip install google-cloud-aiplatform")
-    sys.exit(1)
+import vertexai
+from dotenv import load_dotenv
+from vertexai.generative_models import GenerativeModel, Part
 
 
 def analyze_video_vertexai(
     video_path: str,
     prompt: str,
     project_id: str,
-    location: str = "us-central1",
-    model_name: str = "gemini-1.5-pro"
+    location: str = "europe-west1",
+    model_name: str = "gemini-2.5-flash",
 ) -> dict:
     """
     Analyze video using Vertex AI Gemini model.
@@ -56,6 +51,9 @@ def analyze_video_vertexai(
     print(f"Location: {location}")
     print(f"Model: {model_name}")
 
+    load_dotenv()
+    api_key = os.getenv("GOOGLE_API_KEY")
+
     # Initialize Vertex AI
     vertexai.init(project=project_id, location=location)
 
@@ -65,10 +63,7 @@ def analyze_video_vertexai(
         video_data = f.read()
 
     # Create video part
-    video_part = Part.from_data(
-        data=video_data,
-        mime_type="video/mp4"
-    )
+    video_part = Part.from_data(data=video_data, mime_type="video/mp4")
 
     # Create model
     model = GenerativeModel(model_name)
@@ -83,7 +78,7 @@ def analyze_video_vertexai(
         generation_config={
             "temperature": 0.4,
             "max_output_tokens": 8192,
-        }
+        },
     )
 
     print("\nAnalysis complete!")
@@ -95,7 +90,7 @@ def analyze_video_vertexai(
         "project_id": project_id,
         "location": location,
         "response": response.text,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
 
 
@@ -117,10 +112,10 @@ def save_to_json(results: dict, output_path: Optional[str] = None) -> str:
 
     # Ensure directory exists
     output_dir = Path(output_path).parent
-    if output_dir != Path('.'):
+    if output_dir != Path("."):
         output_dir.mkdir(exist_ok=True, parents=True)
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
     print(f"\nResults saved to: {output_path}")
@@ -148,49 +143,47 @@ Examples:
       --prompt "Provide a timeline of actions" \\
       --project my-project \\
       --output results/analysis.json
-        """
+        """,
     )
 
     parser.add_argument(
-        "video_path",
-        type=str,
-        help="Path to the input video file (.mp4)"
+        "--video-path", type=str, help="Path to the input video file (.mp4)"
     )
 
     parser.add_argument(
-        "--prompt",
-        type=str,
-        required=True,
-        help="Text prompt for video analysis"
+        "--prompt", type=str, required=True, help="Text prompt for video analysis"
     )
 
     parser.add_argument(
-        "--project",
-        type=str,
-        required=True,
-        help="Google Cloud Project ID"
+        "--project", type=str, required=True, help="Google Cloud Project ID"
     )
 
     parser.add_argument(
         "--location",
         type=str,
-        default="us-central1",
-        help="GCP region (default: us-central1)"
+        default="europe-west1",
+        help="GCP region (default: europe-west1)",
     )
 
     parser.add_argument(
         "--model",
         type=str,
-        default="gemini-1.5-pro",
-        choices=["gemini-1.5-pro", "gemini-1.5-flash", "gemini-1.5-pro-002", "gemini-1.5-flash-002"],
-        help="Gemini model to use (default: gemini-1.5-pro)"
+        default="gemini-2.5-flash",
+        choices=[
+            "gemini-2.5-flash",
+            "gemini-1.5-pro",
+            "gemini-1.5-flash",
+            "gemini-1.5-pro-002",
+            "gemini-1.5-flash-002",
+        ],
+        help="Gemini model to use (default: gemini-1.5-pro)",
     )
 
     parser.add_argument(
         "--output",
         type=str,
         default=None,
-        help="Output JSON file path (auto-generated if not specified)"
+        help="Output JSON file path (auto-generated if not specified)",
     )
 
     args = parser.parse_args()
@@ -202,7 +195,7 @@ Examples:
             prompt=args.prompt,
             project_id=args.project,
             location=args.location,
-            model_name=args.model
+            model_name=args.model,
         )
 
         # Print results
@@ -220,6 +213,7 @@ Examples:
     except Exception as e:
         print(f"\nError: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

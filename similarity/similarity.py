@@ -89,6 +89,7 @@ def find_similar_sounds(
                     "sound_description": sound_row.get("description", "N/A"),
                     "similarity": float(similarity),
                     "audio_url_wav": sound_row.get("audio_url_wav", "N/A"),
+                    "sound_location": sound_row.get("sound_location", None),
                 }
             )
 

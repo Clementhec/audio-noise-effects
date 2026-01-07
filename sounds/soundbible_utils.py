@@ -96,7 +96,6 @@ class SoundBibleScraper:
         all_results = list(chain.from_iterable(results))
 
         self.sound_details = pd.DataFrame(all_results)
-        
 
     @staticmethod
     def _fetch_single_sound_detail(args):
@@ -154,12 +153,14 @@ class SoundBibleScraper:
                 time_tag = soup.find("div", {"class": "total-time"})
             length = time_tag.get_text(strip=True) if time_tag else None
 
-            result.update({
-                "url": url,
-                "description": description,
-                "keywords": [k.strip() for k in keywords if k.strip()],
-                "length": length,
-            })
+            result.update(
+                {
+                    "url": url,
+                    "description": description,
+                    "keywords": [k.strip() for k in keywords if k.strip()],
+                    "length": length,
+                }
+            )
 
         except Exception as e:
             print(f"Error on {url}: {e}")
@@ -311,7 +312,9 @@ class SoundBibleScraper:
                         break
                 if found:
                     audio_url_full = urljoin(url, found)
-                    audio_file_name = unquote(os.path.basename(urlparse(audio_url_full).path))
+                    audio_file_name = unquote(
+                        os.path.basename(urlparse(audio_url_full).path)
+                    )
 
             # Extract audio length
             audio_length = None
@@ -330,11 +333,13 @@ class SoundBibleScraper:
                 if t:
                     audio_length = t.get_text(strip=True)
 
-            result.update({
-                "audio_length": audio_length,
-                "audio_file": audio_file_name,
-                "audio_url": audio_url_full,
-            })
+            result.update(
+                {
+                    "audio_length": audio_length,
+                    "audio_file": audio_file_name,
+                    "audio_url": audio_url_full,
+                }
+            )
 
         except Exception as e:
             print(f"Error on {url}: {e}")

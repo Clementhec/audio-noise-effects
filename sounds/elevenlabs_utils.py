@@ -94,9 +94,12 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=float, default=2.0)
     parser.add_argument("--prompt-influence", type=float, default=1.0)
     args = parser.parse_args()
-    generate_sound_effect(
+    print(f"Sound descritption : {args.text}")
+    print(f"Sound duration : {args.duration}")
+    sound_path = generate_sound_effect(
         sound_description=args.text,
         sound_folder=args.sound_folder,
         duration_seconds=args.duration,
         prompt_influence=args.prompt_influence,
     )
+    print(f"Sound generated at : {sound_path}")

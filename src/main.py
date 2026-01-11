@@ -60,7 +60,11 @@ def run_stt_step(
     print(f"Word timings: {result_word_timing_path}")
     print(f"Full text: {result['full_transcript'][:100]}...")
 
-    return result_transcription_path, result_word_timing_path
+    # Return result object in prod mode, paths in dev mode
+    if mode == "prod":
+        return result
+    else:
+        return result_transcription_path, result_word_timing_path
 
 
 def run_embeddings_step(
@@ -69,6 +73,7 @@ def run_embeddings_step(
     embeddings_path: Path,
     force_regenerate: bool = True,
     mode: str = "dev",
+    stt_data: Optional[dict] = None,
 ) -> pd.DataFrame:
     """
     Step 3: Generate embeddings from transcription.
@@ -78,6 +83,8 @@ def run_embeddings_step(
         word_timing_path: Path to word_timing.json
         embeddings_path: Path where embeddings should be saved
         force_regenerate: If True, regenerate embeddings even if file exists
+        mode: Execution mode (dev or prod)
+        stt_data: Pre-loaded STT data (for prod mode)
 
     Returns:
         Path to generated embeddings CSV
@@ -101,12 +108,18 @@ def run_embeddings_step(
         """Convert time string from STT format to float seconds."""
         return float(time_str.rstrip("s"))
 
-    print("Loading STT output...")
-    with open(word_timing_path, "r") as f:
-        raw_word_timings = json.load(f)
+    # Load STT data from memory (prod mode) or files (dev mode)
+    if stt_data is not None:
+        print("Using in-memory STT data (mode prod)")
+        raw_word_timings = stt_data.get("word_timings", [])
+        transcription_data = stt_data
+    else:
+        print("Loading STT output...")
+        with open(word_timing_path, "r") as f:
+            raw_word_timings = json.load(f)
 
-    with open(transcription_path, "r") as f:
-        transcription_data = json.load(f)
+        with open(transcription_path, "r") as f:
+            transcription_data = json.load(f)
 
     # Handle both formats (from process_stt_embeddings.py or stt_elevenlabs.py)
     if isinstance(transcription_data, list):
@@ -594,12 +607,17 @@ class SoundEasy:
                 sys.exit(1)
 
         if args.run_embeddings:
+            stt_data_arg = None
+            if args.mode == "prod":
+                stt_data_arg = results.get("stt")
+                
             embeddings_df = run_embeddings_step(
                 self.transcription_path,
                 self.word_timing_path,
                 self.speech_embeddings_path,
                 force_regenerate=args.force_regenerate,
                 mode=args.mode,
+                stt_data=stt_data_arg,
             )
             if args.mode == "prod":
                 results["embeddings"] = embeddings_df
@@ -721,7 +739,17 @@ def main():
         print("\n" + "=" * 70)
         print("RÉSULTAT FINAL (MODE PRODUCTION)")
         print("=" * 70)
-        print(json.dumps(results, indent=2, ensure_ascii=False))
+        
+        # Convert non-serializable objects to JSON-compatible format
+        json_results = {}
+        for key, value in results.items():
+            if isinstance(value, pd.DataFrame):
+                # Convert DataFrame to list of dicts
+                json_results[key] = value.to_dict('records')
+            else:
+                json_results[key] = value
+        
+        print(json.dumps(json_results, indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

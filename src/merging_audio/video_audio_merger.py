@@ -7,6 +7,7 @@ from pydub import AudioSegment
 from typing import List, Dict, Optional, Tuple
 
 from merging_audio.audio_merger import merge_audio_files, AudioEntry
+from utils.classes import Mode
 
 
 def parse_time_string(time_str: str) -> float:
@@ -55,6 +56,7 @@ def prepare_sound_effects(
     word_timings: List[Dict],
     embedding_file: Path,
     download_dir: Path,
+    mode: Mode = Mode.dev,
 ) -> List[Tuple[Path, float, str]]:
     """
     Prepare sound effects: download files and find timings.
@@ -64,10 +66,12 @@ def prepare_sound_effects(
         metadata_df: Sound metadata DataFrame
         word_timings: Word timing data from STT
         download_dir: Directory to store downloaded sounds
+        mode: Execution mode (dev or prod)
 
     Returns:
-        List of tuples: (sound_file_path, start_time, sound_title)
+        List of tuples: (sound_file_path/url, start_time, sound_title)
     """
+
     download_dir.mkdir(parents=True, exist_ok=True)
     prepared_sounds = []
 
@@ -102,10 +106,12 @@ def prepare_sound_effects(
 
         print(f"Processing: '{target_word}' → {sound_title}")
 
-        # Load sound effect if exists
-        if not Path(sound_location).exists():
-            print(f"Sound : {sound_title} has not been found at {sound_location}")
-            continue
+        # In dev mode, check if the sound file exists locally
+        # In prod mode, sound_location is a web URL, so skip the check
+        if mode == Mode.dev:
+            if not Path(sound_location).exists():
+                print(f"Sound : {sound_title} has not been found at {sound_location}")
+                continue
 
         # Find word timing
         start_time = find_word_timing(

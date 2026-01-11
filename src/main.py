@@ -218,7 +218,7 @@ def run_llm_filtering_step(
         Dictionary with filtered results
     """
     print("=" * 70)
-    print("STEP 5: LLM Filtering")
+    print("LLM Filtering")
     print("=" * 70)
 
     # Load similarity results from file (dev mode) or use provided data (prod mode)
@@ -231,14 +231,6 @@ def run_llm_filtering_step(
         print("Using in-memory similarity data (mode prod)")
 
     print(f"Found {len(similarity_data)} speech segments")
-
-    # Run LLM filtering
-    print("Running LLM analysis...")
-    print("  The LLM will:")
-    print("  - Determine which sentences benefit most from sound effects")
-    print("  - Identify the specific word where to place each sound")
-    print("  - Select the most appropriate sound from top matches")
-    print()
 
     output_path = filtered_results_path
 
@@ -712,12 +704,9 @@ class SoundEasy:
             print("Generated files:")
             print(f"Audio: {self.audio_base_path}")
             print(f"Final video path : {self.output_video_path}")
-        elif args.run_video_merge and args.mode == Mode.prod:
+        elif args.mode == Mode.prod:
             print("Mode prod: Fusion vidéo ignorée")
-            base_name = self.input_video_path.stem
-            print(f"Loading data for {base_name}...")
-            with open(self.filtered_results_path, "r", encoding="utf-8") as f:
-                filtered_results = json.load(f)
+            filtered_results = results["filtered"]
 
             with open(self.word_timing_path, "r", encoding="utf-8") as f:
                 word_timings = json.load(f)
@@ -737,7 +726,6 @@ class SoundEasy:
             filtered_sounds = select_topk_sounds(args.max_sounds, filtered_results)
 
             print(f"Remaining {len(filtered_sounds)} to merge :")
-            print(filtered_sounds)
 
             prepared_sounds = prepare_sound_effects(
                 filtered_sounds,
@@ -745,8 +733,10 @@ class SoundEasy:
                 word_timings,
                 embedding_file=self.speech_embeddings_path,
                 download_dir=self.sounds_soundbible_path,
+                mode=args.mode,
             )
-
+            fields = ("url", "start", "duration", "name")
+            prepared_sounds = [dict(zip(fields, sound)) for sound in prepared_sounds]
             results["prepared_sounds"] = prepared_sounds
 
         # Return results in prod mode
@@ -768,20 +758,22 @@ def main():
 
     # In prod mode, output final results as JSON
     if args.mode == Mode.prod and results:
-        print("\n" + "=" * 70)
-        print("RÉSULTAT FINAL (MODE PRODUCTION)")
-        print("=" * 70)
 
-        # Convert non-serializable objects to JSON-compatible format
-        json_results = {}
-        for key, value in results.items():
-            if isinstance(value, pd.DataFrame):
-                # Convert DataFrame to list of dicts
-                json_results[key] = value.to_dict("records")
-            else:
-                json_results[key] = value
+        # print("\n" + "=" * 70)
+        # print("RÉSULTAT FINAL (MODE PRODUCTION)")
+        # print("=" * 70)
 
-        print(json.dumps(json_results, indent=2, ensure_ascii=False))
+        # # Convert non-serializable objects to JSON-compatible format
+        # json_results = {}
+        # for key, value in results.items():
+        #     if isinstance(value, pd.DataFrame):
+        #         # Convert DataFrame to list of dicts
+        #         json_results[key] = value.to_dict("records")
+        #     else:
+        #         json_results[key] = value
+
+        # print(json.dumps(json_results, indent=2, ensure_ascii=False))
+        print(json.dumps(results["prepared_sounds"], indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

@@ -146,7 +146,7 @@ def filter_sounds(
                     "selected_sound": {
                         "sound_title": selected_sound["sound_title"],
                         "sound_description": selected_sound["sound_description"],
-                        "audio_url_wav": selected_sound["sound_location"],
+                        "audio_url_wav": selected_sound["sound_location"] if mode == Mode.dev else selected_sound["audio_url_wav"],
                         "similarity_score": selected_sound["similarity"],
                     },
                     "reasoning": item.reasoning,

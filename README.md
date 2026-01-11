@@ -85,7 +85,7 @@ The current LLM is `Gemini 2.5 Flash Lite`.
 **Attempted models :**
 - Video-LLaVA
 - Qwen
-- VertexAI: Gemini
+- VertexAI: [Gemini models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions)
 - TwelveLabs : Marengo
 
 ```bash

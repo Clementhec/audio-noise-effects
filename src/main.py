@@ -7,6 +7,12 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 from ast import literal_eval
+from enum import Enum
+
+
+class Mode(str, Enum):
+    dev = "dev"
+    prod = "prod"
 
 
 from utils import get_embeddings
@@ -18,7 +24,10 @@ from merging_audio.video_audio_merger import run_complete_video_audio_merge
 
 
 def run_stt_step(
-    audio_path: Path, transcription_path: Path, word_timing_path: Path, mode: str = "dev"
+    audio_path: Path,
+    transcription_path: Path,
+    word_timing_path: Path,
+    mode: str = "dev",
 ) -> tuple[Path, Path]:
     """
     Step 2: Run Speech-to-Text processing.
@@ -191,7 +200,7 @@ def run_embeddings_step(
         print(f"Embeddings saved to: {output_path}")
     else:
         print("Mode prod: fichier d'embeddings intermédiaire non créé")
-        
+
     print(f"Total segments: {len(df)}")
 
     return df
@@ -203,7 +212,7 @@ def run_llm_filtering_step(
     max_sounds: Optional[int] = None,
     user_message: Optional[str] = None,
     mode: str = "dev",
-    similarity_data: Optional[list] = None
+    similarity_data: Optional[list] = None,
 ) -> dict:
     """
     Use LLM to filter and select best sound matches.
@@ -445,9 +454,8 @@ def parse_arguments():
 
     parser.add_argument(
         "--mode",
-        type=str,
-        choices=["dev", "prod"],
-        default="dev",
+        type=Mode,
+        default=Mode.dev,
         help="Execution mode: 'dev' creates intermediate JSON files, 'prod' returns JSON result only without fetching sounds or merging",
     )
 
@@ -468,7 +476,7 @@ def validate_args(args):
         args.run_matching = True
         args.run_llm_filter = True
         # In prod mode, skip video merge
-        if args.mode == "dev":
+        if args.mode == Mode.dev:
             args.run_video_merge = True
         else:
             args.run_video_merge = False
@@ -584,7 +592,7 @@ class SoundEasy:
     def run(self, args):
         # Store results for prod mode
         results = {}
-        
+
         if not self.audio_base_path.exists() or args.force_regenerate:
             _ = extract_audio_from_video(
                 self.input_video_path, output_path=self.audio_base_path
@@ -596,7 +604,7 @@ class SoundEasy:
                 word_timing_path=self.word_timing_path,
                 mode=args.mode,
             )
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 results["stt"] = stt_result
         elif args.run_embeddings or args.run_video_merge:
             if not self.transcription_path.exists():
@@ -608,9 +616,9 @@ class SoundEasy:
 
         if args.run_embeddings:
             stt_data_arg = None
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 stt_data_arg = results.get("stt")
-                
+
             embeddings_df = run_embeddings_step(
                 self.transcription_path,
                 self.word_timing_path,
@@ -619,7 +627,7 @@ class SoundEasy:
                 mode=args.mode,
                 stt_data=stt_data_arg,
             )
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 results["embeddings"] = embeddings_df
         elif args.run_matching:
             if not self.speech_embeddings_path.exists():
@@ -632,21 +640,25 @@ class SoundEasy:
             )
 
         # Skip soundbible download and embedding in prod mode
-        if args.mode == "dev":
+        if args.mode == Mode.dev:
             self.embed_sounds_if_necessary()
-        elif args.mode == "prod":
+        elif args.mode == Mode.prod:
             print("Mode prod: Téléchargement des sons soundbible ignoré")
             # In prod mode, we still need sound embeddings if they exist
             if not self.sound_embeddings_path.exists():
-                print(f"ATTENTION: Embeddings de sons manquants en mode prod: {self.sound_embeddings_path}")
-                print("Veuillez exécuter une fois en mode dev pour générer les embeddings de sons")
+                print(
+                    f"ATTENTION: Embeddings de sons manquants en mode prod: {self.sound_embeddings_path}"
+                )
+                print(
+                    "Veuillez exécuter une fois en mode dev pour générer les embeddings de sons"
+                )
                 sys.exit(1)
 
         if args.run_matching:
             embeddings_df_arg = None
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 embeddings_df_arg = results.get("embeddings")
-                
+
             similarity_results = run_semantic_matching_step(
                 embeddings_path=self.speech_embeddings_path,
                 sound_embeddings_path=self.sound_embeddings_path,
@@ -656,30 +668,32 @@ class SoundEasy:
                 mode=args.mode,
                 embeddings_df=embeddings_df_arg,
             )
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 results["similarity"] = similarity_results
         elif args.run_llm_filter:
-            if args.mode == "dev" and not self.similarity_results_path.exists():
+            if args.mode == Mode.dev and not self.similarity_results_path.exists():
                 print(f"Missing similarity results : {self.similarity_results_path}")
                 sys.exit(1)
-            if args.mode == "dev":
-                print(f"Using existing similarity results : {self.similarity_results_path}")
+            if args.mode == Mode.dev:
+                print(
+                    f"Using existing similarity results : {self.similarity_results_path}"
+                )
 
         if args.run_llm_filter:
             # In prod mode, use in-memory similarity_results
             similarity_data_arg = None
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 similarity_data_arg = results.get("similarity", [])
-                    
+
             filtered_result = run_llm_filtering_step(
                 similarity_results_path=self.similarity_results_path,
                 filtered_results_path=self.filtered_results_path,
                 max_sounds=args.max_sounds,
                 user_message=args.user_prompt,
                 mode=args.mode,
-                similarity_data=similarity_data_arg
+                similarity_data=similarity_data_arg,
             )
-            if args.mode == "prod":
+            if args.mode == Mode.prod:
                 results["filtered"] = filtered_result
         elif args.run_video_merge:
             if not self.filtered_results_path.exists():
@@ -690,7 +704,7 @@ class SoundEasy:
             print(f"Using existing filtered results: {self.filtered_results_path}")
 
         # Skip video merge in prod mode
-        if args.run_video_merge and args.mode == "dev":
+        if args.run_video_merge and args.mode == Mode.dev:
             if not self.audio_base_path.exists():
                 print(f"Missing audio path : {self.audio_base_path}")
                 sys.exit(1)
@@ -712,13 +726,13 @@ class SoundEasy:
             print("Generated files:")
             print(f"Audio: {self.audio_base_path}")
             print(f"Final video path : {self.output_video_path}")
-        elif args.run_video_merge and args.mode == "prod":
+        elif args.run_video_merge and args.mode == Mode.prod:
             print("Mode prod: Fusion vidéo ignorée")
-            
+
         # Return results in prod mode
-        if args.mode == "prod":
+        if args.mode == Mode.prod:
             return results
-        
+
         return None
 
 
@@ -733,22 +747,22 @@ def main():
     )
 
     results = pipe.run(args)
-    
+
     # In prod mode, output final results as JSON
-    if args.mode == "prod" and results:
+    if args.mode == Mode.prod and results:
         print("\n" + "=" * 70)
         print("RÉSULTAT FINAL (MODE PRODUCTION)")
         print("=" * 70)
-        
+
         # Convert non-serializable objects to JSON-compatible format
         json_results = {}
         for key, value in results.items():
             if isinstance(value, pd.DataFrame):
                 # Convert DataFrame to list of dicts
-                json_results[key] = value.to_dict('records')
+                json_results[key] = value.to_dict("records")
             else:
                 json_results[key] = value
-        
+
         print(json.dumps(json_results, indent=2, ensure_ascii=False))
 
 

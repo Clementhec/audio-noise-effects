@@ -18,7 +18,7 @@ from merging_audio.video_audio_merger import run_complete_video_audio_merge
 
 
 def run_stt_step(
-    audio_path: Path, transcription_path: Path, word_timing_path: Path
+    audio_path: Path, transcription_path: Path, word_timing_path: Path, mode: str = "dev"
 ) -> tuple[Path, Path]:
     """
     Step 2: Run Speech-to-Text processing.
@@ -45,6 +45,7 @@ def run_stt_step(
         word_timing_path=word_timing_path,
         transcription_path=transcription_path,
         language_code="en",
+        mode=mode,
     )
 
     # Get output file paths from result (use provided paths as fallback)
@@ -67,7 +68,8 @@ def run_embeddings_step(
     word_timing_path: Path,
     embeddings_path: Path,
     force_regenerate: bool = True,
-) -> Path:
+    mode: str = "dev",
+) -> pd.DataFrame:
     """
     Step 3: Generate embeddings from transcription.
 
@@ -171,20 +173,25 @@ def run_embeddings_step(
         lambda x: x.tolist() if isinstance(x, np.ndarray) else x
     )
 
-    df.to_csv(output_path, index=False)
-
-    print(f"Embeddings saved to: {output_path}")
+    if mode == "dev":
+        df.to_csv(output_path, index=False)
+        print(f"Embeddings saved to: {output_path}")
+    else:
+        print("Mode prod: fichier d'embeddings intermédiaire non créé")
+        
     print(f"Total segments: {len(df)}")
 
-    return output_path
+    return df
 
 
 def run_llm_filtering_step(
     similarity_results_path: Path,
     filtered_results_path: Path,
     max_sounds: Optional[int] = None,
-    user_message: Optional[str] = None
-) -> Path:
+    user_message: Optional[str] = None,
+    mode: str = "dev",
+    similarity_data: Optional[list] = None
+) -> dict:
     """
     Use LLM to filter and select best sound matches.
 
@@ -192,20 +199,24 @@ def run_llm_filtering_step(
         similarity_results_path: Path to similarity matching results JSON
         filtered_results_path: Path where filtered results should be saved
         max_sounds: Maximum number of sentences to select for sound effects (None = LLM decides)
+        mode: Execution mode (dev or prod)
+        similarity_data: Pre-loaded similarity data (for prod mode)
 
     Returns:
-        Path to filtered results JSON
+        Dictionary with filtered results
     """
     print("=" * 70)
     print("STEP 5: LLM Filtering")
     print("=" * 70)
 
-    print(f"Similarity results: {similarity_results_path}")
-
-    # Load similarity results
-    print("Loading similarity results...")
-    with open(similarity_results_path, "r", encoding="utf-8") as f:
-        similarity_data = json.load(f)
+    # Load similarity results from file (dev mode) or use provided data (prod mode)
+    if similarity_data is None:
+        print(f"Similarity results: {similarity_results_path}")
+        print("Loading similarity results...")
+        with open(similarity_results_path, "r", encoding="utf-8") as f:
+            similarity_data = json.load(f)
+    else:
+        print("Using in-memory similarity data (mode prod)")
 
     print(f"Found {len(similarity_data)} speech segments")
 
@@ -227,15 +238,17 @@ def run_llm_filtering_step(
         max_sounds=max_sounds,
         user_prompt=user_message,
         output_file=str(output_path),
+        mode=mode,
     )
 
     filtered_count = len(result.get("filtered_sounds", []))
 
     print(f"LLM filtering complete!")
     print(f"Selected {filtered_count} segments for sound effects")
-    print(f"Results saved to: {output_path}")
+    if mode == "dev":
+        print(f"Results saved to: {output_path}")
 
-    return output_path
+    return result
 
 
 def run_semantic_matching_step(
@@ -244,7 +257,9 @@ def run_semantic_matching_step(
     sound_embeddings_path: Path,
     soundbible_metadata_path: Path,
     top_k: int = 5,
-) -> Path:
+    mode: str = "dev",
+    embeddings_df: Optional[pd.DataFrame] = None,
+) -> list:
     """
     Step 4: Match speech embeddings with sound effects.
 
@@ -252,9 +267,11 @@ def run_semantic_matching_step(
         embeddings_path: Path to speech embeddings CSV
         similarity_results_path: Path where similarity results should be saved
         top_k: Number of top similar sounds to find for each segment
+        mode: Execution mode (dev or prod)
+        embeddings_df: Pre-loaded embeddings DataFrame (for prod mode)
 
     Returns:
-        Path to generated similarity results JSON
+        List of similarity results
     """
     print("=" * 70)
     print("Semantic Matching with Sound Effects")
@@ -265,9 +282,13 @@ def run_semantic_matching_step(
     print(f"Sound embeddings: {sound_embeddings_path}")
     print()
 
-    # Load speech embeddings
-    print("Loading speech embeddings...")
-    df_speech = pd.read_csv(embeddings_path)
+    # Load speech embeddings from file (dev mode) or use provided data (prod mode)
+    if embeddings_df is None:
+        print("Loading speech embeddings...")
+        df_speech = pd.read_csv(embeddings_path)
+    else:
+        print("Using in-memory speech embeddings (mode prod)")
+        df_speech = embeddings_df
 
     # Convert embeddings from string to list/array
     if "embedding" in df_speech.columns:
@@ -294,12 +315,14 @@ def run_semantic_matching_step(
         top_k=top_k,
         save_to_json_file=True,
         output_path=str(similarity_results_path),
+        mode=mode,
     )
 
     print(f"Matched {len(results)} speech segments")
-    print(f"Results saved to: {similarity_results_path}")
+    if mode == "dev":
+        print(f"Results saved to: {similarity_results_path}")
 
-    return similarity_results_path
+    return results
 
 
 def parse_arguments():
@@ -407,6 +430,14 @@ def parse_arguments():
         help="Force regeneration of embeddings even if they already exist",
     )
 
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["dev", "prod"],
+        default="dev",
+        help="Execution mode: 'dev' creates intermediate JSON files, 'prod' returns JSON result only without fetching sounds or merging",
+    )
+
     args = parser.parse_args()
     return args
 
@@ -423,7 +454,12 @@ def validate_args(args):
         args.run_embeddings = True
         args.run_matching = True
         args.run_llm_filter = True
-        args.run_video_merge = True
+        # In prod mode, skip video merge
+        if args.mode == "dev":
+            args.run_video_merge = True
+        else:
+            args.run_video_merge = False
+            print("Mode prod: La fusion vidéo sera ignorée dans le pipeline complet")
 
 
 class SoundEasy:
@@ -533,16 +569,22 @@ class SoundEasy:
             )
 
     def run(self, args):
+        # Store results for prod mode
+        results = {}
+        
         if not self.audio_base_path.exists() or args.force_regenerate:
             _ = extract_audio_from_video(
                 self.input_video_path, output_path=self.audio_base_path
             )
         if args.run_stt:
-            _ = run_stt_step(
+            stt_result = run_stt_step(
                 audio_path=self.audio_base_path,
                 transcription_path=self.transcription_path,
                 word_timing_path=self.word_timing_path,
+                mode=args.mode,
             )
+            if args.mode == "prod":
+                results["stt"] = stt_result
         elif args.run_embeddings or args.run_video_merge:
             if not self.transcription_path.exists():
                 print(f"Error: missing {self.transcription_path}")
@@ -552,12 +594,15 @@ class SoundEasy:
                 sys.exit(1)
 
         if args.run_embeddings:
-            _ = run_embeddings_step(
+            embeddings_df = run_embeddings_step(
                 self.transcription_path,
                 self.word_timing_path,
                 self.speech_embeddings_path,
                 force_regenerate=args.force_regenerate,
+                mode=args.mode,
             )
+            if args.mode == "prod":
+                results["embeddings"] = embeddings_df
         elif args.run_matching:
             if not self.speech_embeddings_path.exists():
                 print(
@@ -568,29 +613,56 @@ class SoundEasy:
                 f"Use existing video speech embeddings : {self.speech_embeddings_path}"
             )
 
-        self.embed_sounds_if_necessary()
+        # Skip soundbible download and embedding in prod mode
+        if args.mode == "dev":
+            self.embed_sounds_if_necessary()
+        elif args.mode == "prod":
+            print("Mode prod: Téléchargement des sons soundbible ignoré")
+            # In prod mode, we still need sound embeddings if they exist
+            if not self.sound_embeddings_path.exists():
+                print(f"ATTENTION: Embeddings de sons manquants en mode prod: {self.sound_embeddings_path}")
+                print("Veuillez exécuter une fois en mode dev pour générer les embeddings de sons")
+                sys.exit(1)
 
         if args.run_matching:
-            similarity_results_path = run_semantic_matching_step(
+            embeddings_df_arg = None
+            if args.mode == "prod":
+                embeddings_df_arg = results.get("embeddings")
+                
+            similarity_results = run_semantic_matching_step(
                 embeddings_path=self.speech_embeddings_path,
                 sound_embeddings_path=self.sound_embeddings_path,
                 soundbible_metadata_path=self.soundbible_details_path,
                 similarity_results_path=self.similarity_results_path,
                 top_k=args.top_k,
+                mode=args.mode,
+                embeddings_df=embeddings_df_arg,
             )
+            if args.mode == "prod":
+                results["similarity"] = similarity_results
         elif args.run_llm_filter:
-            if not self.similarity_results_path.exists():
-                print(f"Missing similarity results : {similarity_results_path}")
+            if args.mode == "dev" and not self.similarity_results_path.exists():
+                print(f"Missing similarity results : {self.similarity_results_path}")
                 sys.exit(1)
-            print(f"Using existing similarity results : {self.similarity_results_path}")
+            if args.mode == "dev":
+                print(f"Using existing similarity results : {self.similarity_results_path}")
 
         if args.run_llm_filter:
-            _ = run_llm_filtering_step(
+            # In prod mode, use in-memory similarity_results
+            similarity_data_arg = None
+            if args.mode == "prod":
+                similarity_data_arg = results.get("similarity", [])
+                    
+            filtered_result = run_llm_filtering_step(
                 similarity_results_path=self.similarity_results_path,
                 filtered_results_path=self.filtered_results_path,
                 max_sounds=args.max_sounds,
-                user_message=args.user_prompt
+                user_message=args.user_prompt,
+                mode=args.mode,
+                similarity_data=similarity_data_arg
             )
+            if args.mode == "prod":
+                results["filtered"] = filtered_result
         elif args.run_video_merge:
             if not self.filtered_results_path.exists():
                 print(
@@ -599,7 +671,8 @@ class SoundEasy:
                 sys.exit(1)
             print(f"Using existing filtered results: {self.filtered_results_path}")
 
-        if args.run_video_merge:
+        # Skip video merge in prod mode
+        if args.run_video_merge and args.mode == "dev":
             if not self.audio_base_path.exists():
                 print(f"Missing audio path : {self.audio_base_path}")
                 sys.exit(1)
@@ -621,6 +694,14 @@ class SoundEasy:
             print("Generated files:")
             print(f"Audio: {self.audio_base_path}")
             print(f"Final video path : {self.output_video_path}")
+        elif args.run_video_merge and args.mode == "prod":
+            print("Mode prod: Fusion vidéo ignorée")
+            
+        # Return results in prod mode
+        if args.mode == "prod":
+            return results
+        
+        return None
 
 
 def main():
@@ -633,7 +714,14 @@ def main():
         data_dir=Path(args.output_dir),
     )
 
-    pipe.run(args)
+    results = pipe.run(args)
+    
+    # In prod mode, output final results as JSON
+    if args.mode == "prod" and results:
+        print("\n" + "=" * 70)
+        print("RÉSULTAT FINAL (MODE PRODUCTION)")
+        print("=" * 70)
+        print(json.dumps(results, indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

@@ -87,6 +87,7 @@ def filter_sounds(
     api_key: Optional[str] = None,
     user_prompt: Optional[str] = "",
     output_file: Optional[str] = None,
+    mode: str = "dev",
 ) -> Dict[str, Any]:
     """
     Filter sounds using the LLM with a relevance ranking system.
@@ -157,17 +158,20 @@ def filter_sounds(
     # Sort by ascending relevance rank (1 = best)
     result["filtered_sounds"].sort(key=lambda x: x["relevance_rank"])
 
-    # Automatic save to output/
-    if output_file is None:
-        output_file = "llm_filtering/output/filtered_sounds.json"
+    # Automatic save to output/ only in dev mode
+    if mode == "dev":
+        if output_file is None:
+            output_file = "llm_filtering/output/filtered_sounds.json"
 
-    output_dir = os.path.dirname(output_file)
-    if output_dir and not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        output_dir = os.path.dirname(output_file)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=2, ensure_ascii=False)
-    print(f"Result saved to {output_file}")
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+        print(f"Result saved to {output_file}")
+    else:
+        print("Mode prod: fichier de résultats intermédiaires non créé")
 
     return result
 

@@ -7,15 +7,9 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 from ast import literal_eval
-from enum import Enum
-
-
-class Mode(str, Enum):
-    dev = "dev"
-    prod = "prod"
-
 
 from utils import get_embeddings
+from utils.classes import Mode
 from filtering.filtering import filter_sounds
 from similarity import find_similar_sounds
 from text_processing import SpeechSegmenter
@@ -70,7 +64,7 @@ def run_stt_step(
     print(f"Full text: {result['full_transcript'][:100]}...")
 
     # Return result object in prod mode, paths in dev mode
-    if mode == "prod":
+    if mode == Mode.prod:
         return result
     else:
         return result_transcription_path, result_word_timing_path
@@ -195,7 +189,7 @@ def run_embeddings_step(
         lambda x: x.tolist() if isinstance(x, np.ndarray) else x
     )
 
-    if mode == "dev":
+    if mode == Mode.dev:
         df.to_csv(output_path, index=False)
         print(f"Embeddings saved to: {output_path}")
     else:
@@ -267,7 +261,7 @@ def run_llm_filtering_step(
 
     print(f"LLM filtering complete!")
     print(f"Selected {filtered_count} segments for sound effects")
-    if mode == "dev":
+    if mode == Mode.dev:
         print(f"Results saved to: {output_path}")
 
     return result
@@ -341,7 +335,7 @@ def run_semantic_matching_step(
     )
 
     print(f"Matched {len(results)} speech segments")
-    if mode == "dev":
+    if mode == Mode.dev:
         print(f"Results saved to: {similarity_results_path}")
 
     return results

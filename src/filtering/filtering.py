@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from typing import List, Dict, Any, Optional
 
+from utils.classes import Mode
 from filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
 from filtering.schemas import FilteredSound, FilterResponse
 
@@ -159,7 +160,7 @@ def filter_sounds(
     result["filtered_sounds"].sort(key=lambda x: x["relevance_rank"])
 
     # Automatic save to output/ only in dev mode
-    if mode == "dev":
+    if mode == Mode.dev:
         if output_file is None:
             output_file = "llm_filtering/output/filtered_sounds.json"
 

@@ -28,70 +28,18 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [progress, setProgress] = useState(0)
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       setVideoFile(file)
-      
-      // Appel à l'API upload_file
-      try {
-        const formData = new FormData()
-        formData.append('video', file)
-        
-        console.log('Upload du fichier:', file.name)
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('Erreur du serveur:', errorData)
-          alert(`Erreur: ${errorData.error || 'Erreur lors de l\'upload'}\n\nAssurez-vous que votre serveur backend est démarré sur http://localhost:8000`)
-          return
-        }
-        
-        const data = await response.json()
-        console.log('Réponse de l\'API:', data)
-      } catch (error) {
-        console.error('Erreur lors de l\'upload:', error)
-        alert('Erreur de connexion. Vérifiez que votre serveur backend est démarré sur http://localhost:8000')
-      }
     }
   }
 
-  const handleDrop = async (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     const file = e.dataTransfer.files[0]
     if (file && file.type.startsWith("video/")) {
       setVideoFile(file)
-      
-      // Appel à l'API upload-video
-      try {
-        const formData = new FormData()
-        formData.append('video', file)
-        
-        console.log('Upload du fichier:', file.name)
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('Erreur du serveur:', errorData)
-          alert(`Erreur: ${errorData.error || 'Erreur lors de l\'upload'}\n\nAssurez-vous que votre serveur backend est démarré sur http://localhost:8000`)
-          return
-        }
-        
-        const data = await response.json()
-        console.log('Réponse de l\'API:', data)
-      } catch (error) {
-        console.error('Erreur lors de l\'upload:', error)
-        alert('Erreur de connexion. Vérifiez que votre serveur backend est démarré sur http://localhost:8000')
-      }
     }
   }
 

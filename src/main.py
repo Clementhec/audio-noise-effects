@@ -77,7 +77,7 @@ def run_embeddings_step(
     force_regenerate: bool = True,
     mode: str = "dev",
     stt_data: Optional[dict] = None,
-) -> pd.DataFrame:
+) -> Optional[pd.DataFrame]:
     """
     Step 3: Generate embeddings from transcription.
 
@@ -95,14 +95,11 @@ def run_embeddings_step(
     print("=" * 70)
     print("Generate Speech Embeddings")
     print("=" * 70)
-
-    output_path = embeddings_path
-
     # Check if embeddings already exist
-    if output_path.exists() and not force_regenerate:
-        print(f"Embeddings already exist: {output_path}")
+    if embeddings_path.exists() and not force_regenerate:
+        print(f"Embeddings already exist: {embeddings_path}")
         print("Skipping generation (use --force-regenerate to recreate)")
-        return output_path
+        return pd.read_csv(embeddings_path)
 
     print(f"Transcription file: {transcription_path}")
     print(f"Word timing file: {word_timing_path}")
@@ -189,15 +186,14 @@ def run_embeddings_step(
         lambda x: x.tolist() if isinstance(x, np.ndarray) else x
     )
 
+    print(f"Total segments: {len(df)}")
     if mode == Mode.dev:
-        df.to_csv(output_path, index=False)
-        print(f"Embeddings saved to: {output_path}")
+        df.to_csv(embeddings_path, index=False)
+        print(f"Embeddings saved to: {embeddings_path}")
+        return
     else:
         print("Mode prod: fichier d'embeddings intermédiaire non créé")
-
-    print(f"Total segments: {len(df)}")
-
-    return df
+        return df
 
 
 def run_llm_filtering_step(
@@ -292,11 +288,9 @@ def run_semantic_matching_step(
     print("=" * 70)
     print("Semantic Matching with Sound Effects")
     print("=" * 70)
-    print()
 
     print(f"Speech embeddings: {embeddings_path}")
     print(f"Sound embeddings: {sound_embeddings_path}")
-    print()
 
     # Load speech embeddings from file (dev mode) or use provided data (prod mode)
     if embeddings_df is None:
@@ -312,7 +306,6 @@ def run_semantic_matching_step(
             df_speech["embedding"] = df_speech["embedding"].apply(literal_eval)
 
     print(f"Loaded {len(df_speech)} speech segments")
-    print()
 
     # Load sound embeddings
     print("Loading sound embeddings...")
@@ -613,7 +606,7 @@ class SoundEasy:
             if args.mode == Mode.prod:
                 stt_data_arg = results.get("stt")
 
-            embeddings_df = run_embeddings_step(
+            results["embeddings"] = run_embeddings_step(
                 self.transcription_path,
                 self.word_timing_path,
                 self.speech_embeddings_path,
@@ -621,8 +614,7 @@ class SoundEasy:
                 mode=args.mode,
                 stt_data=stt_data_arg,
             )
-            if args.mode == Mode.prod:
-                results["embeddings"] = embeddings_df
+
         elif args.run_matching:
             if not self.speech_embeddings_path.exists():
                 print(
@@ -649,9 +641,9 @@ class SoundEasy:
                 sys.exit(1)
 
         if args.run_matching:
-            embeddings_df_arg = None
-            if args.mode == Mode.prod:
-                embeddings_df_arg = results.get("embeddings")
+            print(results)
+            embeddings_df_arg = results.get("embeddings")
+            print(embeddings_df_arg)
 
             similarity_results = run_semantic_matching_step(
                 embeddings_path=self.speech_embeddings_path,

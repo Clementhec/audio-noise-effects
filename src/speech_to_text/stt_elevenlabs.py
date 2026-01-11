@@ -7,6 +7,8 @@ import json
 from elevenlabs.client import ElevenLabs
 from typing import Optional, Union, Dict, Any
 
+from utils.classes import Mode
+
 
 def transcribe_audio_elevenlabs(
     audio_source: Union[str, BytesIO],

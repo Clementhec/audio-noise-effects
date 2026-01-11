@@ -714,12 +714,44 @@ class SoundEasy:
             print(f"Final video path : {self.output_video_path}")
         elif args.run_video_merge and args.mode == Mode.prod:
             print("Mode prod: Fusion vidéo ignorée")
+            base_name = self.input_video_path.stem
+            print(f"Loading data for {base_name}...")
+            with open(self.filtered_results_path, "r", encoding="utf-8") as f:
+                filtered_results = json.load(f)
+
+            with open(self.word_timing_path, "r", encoding="utf-8") as f:
+                word_timings = json.load(f)
+
+            metadata_df = pd.read_csv(self.soundbible_details_path)
+            print(
+                f"Loaded {len(filtered_results.get('filtered_sounds', []))} filtered sounds"
+            )
+            print(f"Loaded {len(word_timings)} word timings")
+            print(f"Loaded {len(metadata_df)} sound metadata entries")
+
+            from merging_audio.video_audio_merger import (
+                select_topk_sounds,
+                prepare_sound_effects,
+            )
+
+            filtered_sounds = select_topk_sounds(args.max_sounds, filtered_results)
+
+            print(f"Remaining {len(filtered_sounds)} to merge :")
+            print(filtered_sounds)
+
+            prepared_sounds = prepare_sound_effects(
+                filtered_sounds,
+                metadata_df,
+                word_timings,
+                embedding_file=self.speech_embeddings_path,
+                download_dir=self.sounds_soundbible_path,
+            )
+
+            results["prepared_sounds"] = prepared_sounds
 
         # Return results in prod mode
         if args.mode == Mode.prod:
             return results
-
-        return None
 
 
 def main():

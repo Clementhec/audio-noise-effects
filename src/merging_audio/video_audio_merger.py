@@ -1,65 +1,12 @@
-"""
-Video Audio Merger
-
-This module handles the final step of the pipeline:
-1. Map sound titles from LLM filtered results to sound file URLs from metadata
-2. Download sound effects if needed
-3. Find exact word timings for target words
-4. Merge sound effects with original audio track
-5. Combine merged audio with video to create final output
-"""
-
 import json
+import ffmpeg
 import requests
 import pandas as pd
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
-import ffmpeg
-from merging_audio.audio_merger import merge_audio_files, AudioEntry
 from pydub import AudioSegment
+from typing import List, Dict, Optional, Tuple
 
-
-def load_sound_metadata(
-    metadata_path: str = "data/soundbible_metadata.csv",
-) -> pd.DataFrame:
-    """
-    Load sound effects metadata containing URLs.
-
-    Args:
-        metadata_path: Path to metadata CSV file
-
-    Returns:
-        DataFrame with sound metadata
-    """
-    return pd.read_csv(metadata_path)
-
-
-def find_sound_url(sound_title: str, metadata_df: pd.DataFrame) -> Optional[str]:
-    """
-    Find the WAV download URL for a given sound title.
-
-    Args:
-        sound_title: Title of the sound effect
-        metadata_df: DataFrame containing sound metadata
-
-    Returns:
-        WAV file URL or None if not found
-    """
-    matches = metadata_df[metadata_df["title"] == sound_title]
-
-    if len(matches) == 0:
-        print(f"   Sound not found in metadata: {sound_title}")
-        return None
-
-    # Prefer WAV format, fallback to MP3
-    if "audio_url_wav" in matches.columns and pd.notna(
-        matches.iloc[0]["audio_url_wav"]
-    ):
-        return matches.iloc[0]["audio_url_wav"]
-    elif "audio_url" in matches.columns and pd.notna(matches.iloc[0]["audio_url"]):
-        return matches.iloc[0]["audio_url"]
-
-    return None
+from merging_audio.audio_merger import merge_audio_files, AudioEntry
 
 
 def parse_time_string(time_str: str) -> float:
@@ -154,20 +101,6 @@ def prepare_sound_effects(
             continue
 
         print(f"Processing: '{target_word}' → {sound_title}")
-
-        # Find sound URL
-        # sound_url = find_sound_url(sound_title, metadata_df)
-        # if not sound_url:
-        #     print(f"Sound effect {sound_url} not found !")
-        #     continue
-
-        # Determine file extension and output path
-        # file_ext = ".wav" if sound_url.endswith(".wav") else ".mp3"
-        # safe_filename = "".join(
-        #     c for c in sound_title if c.isalnum() or c in (" ", "-", "_")
-        # )
-        # safe_filename = safe_filename.replace(" ", "_")
-        # output_path = download_dir / f"{safe_filename}{file_ext}"
 
         # Load sound effect if exists
         if not Path(sound_location).exists():
@@ -284,7 +217,7 @@ def merge_sounds_with_original_audio(
     return output_path
 
 
-def combine_audio_with_video(
+def merge_audio_with_video(
     video_path: Path, audio_path: Path, output_path: Path
 ) -> Path:
     """
@@ -374,14 +307,12 @@ def run_complete_video_audio_merge(
     with open(word_timing_path, "r", encoding="utf-8") as f:
         word_timings = json.load(f)
 
-    metadata_df = load_sound_metadata(metadata_path)
+    metadata_df = pd.read_csv(metadata_path)
     print(f"Loaded {len(filtered_results.get('filtered_sounds', []))} filtered sounds")
     print(f"Loaded {len(word_timings)} word timings")
     print(f"Loaded {len(metadata_df)} sound metadata entries")
 
-    filtered_sounds = filtered_results.get("filtered_sounds", [])
-    filtered_sounds = sorted(filtered_sounds, key=lambda x: x.get("relevance_rank"))
-    filtered_sounds = filtered_sounds[:max_sounds]
+    filtered_sounds = select_topk_sounds(max_sounds, filtered_results)
 
     print(f"Remaining {len(filtered_sounds)} to merge :")
     print(filtered_sounds)
@@ -400,7 +331,6 @@ def run_complete_video_audio_merge(
 
     print(f"Prepared {len(prepared_sounds)} sound effects")
 
-    # Merge sounds with original audio
     merged_audio_path = Path(f"output/{base_name}_merged_audio.wav")
     merge_sounds_with_original_audio(
         original_audio_path,
@@ -410,9 +340,15 @@ def run_complete_video_audio_merge(
         default_sound_duration=sound_duration,
     )
 
-    # Combine merged audio with video
-    final_video_path = combine_audio_with_video(
+    final_video_path = merge_audio_with_video(
         video_path, merged_audio_path, output_video_path
     )
 
     return final_video_path
+
+
+def select_topk_sounds(max_sounds, filtered_results):
+    filtered_sounds = filtered_results.get("filtered_sounds", [])
+    filtered_sounds = sorted(filtered_sounds, key=lambda x: x.get("relevance_rank"))
+    filtered_sounds = filtered_sounds[:max_sounds]
+    return filtered_sounds

@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     
     // Faire l'appel à votre endpoint local
-    const response = await fetch('http://localhost:8000/upload-video', {
+    const response = await fetch('http://localhost:8000/sound-effects', {
       method: 'POST',
       body: formData,
     });

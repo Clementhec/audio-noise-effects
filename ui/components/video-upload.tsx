@@ -9,8 +9,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import VideoLoading from "@/components/video-loading"
 
+interface AudioBlock {
+  id: string
+  name: string
+  start: number
+  duration: number
+  volume: number
+  audioUrl?: string
+}
+
 interface VideoUploadProps {
-  onComplete: (videoFile: File, videoUrl: string) => void
+  onComplete: (videoFile: File, videoUrl: string, soundEffects: AudioBlock[]) => void
 }
 
 export default function VideoUpload({ onComplete }: VideoUploadProps) {
@@ -86,20 +95,59 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
     }
   }
 
-  const handleGenerate = () => {
-    if (videoFile && prompt) {
-      setState("processing")
-      // Simulate processing
-      let progressValue = 0
-      const interval = setInterval(() => {
-        progressValue += 5
-        setProgress(progressValue)
-        if (progressValue >= 100) {
-          clearInterval(interval)
-          const url = URL.createObjectURL(videoFile)
-          onComplete(videoFile, url)
-        }
-      }, 100)
+  const handleGenerate = async () => {
+    if (!videoFile || !prompt) return
+    
+    setState("processing")
+    setProgress(10)
+    
+    try {
+      const formData = new FormData()
+      formData.append('video', videoFile)
+      formData.append('prompt', prompt)
+      
+      setProgress(20)
+      
+      const response = await fetch('/api/sound-effects', {
+        method: 'POST',
+        body: formData,
+      })
+      
+      setProgress(50)
+      
+      if (!response.ok) {
+        throw new Error(`Erreur API: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      setProgress(80)
+      
+      // Transformer les résultats de l'API en blocks
+      let soundEffects: AudioBlock[] = []
+      if (data.effects && Array.isArray(data.effects)) {
+        soundEffects = data.effects.map((effect: any, index: number) => ({
+          id: effect.id || `block-${index + 1}`,
+          name: effect.name || effect.label || `Effet ${index + 1}`,
+          start: effect.start || effect.timestamp || 0,
+          duration: effect.duration || 5,
+          volume: effect.volume || 70,
+          audioUrl: effect.audioUrl || effect.url || effect.audio_url,
+        }))
+      }
+      
+      setProgress(100)
+      
+      // Attendre un peu pour que l'utilisateur voie 100%
+      setTimeout(() => {
+        const url = URL.createObjectURL(videoFile)
+        onComplete(videoFile, url, soundEffects)
+      }, 500)
+      
+    } catch (error) {
+      console.error('Erreur lors de la génération des effets sonores:', error)
+      alert('Erreur lors de la génération des effets sonores. Vérifiez que votre serveur backend est démarré sur http://localhost:8000')
+      setState("upload")
+      setProgress(0)
     }
   }
 

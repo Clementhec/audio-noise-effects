@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from typing import List, Dict, Any, Optional
 
+from utils.classes import Mode
 from filtering.prompts import FILTER_PROMPT_HEADER, FILTER_PROMPT_FOOTER
 from filtering.schemas import FilteredSound, FilterResponse
 
@@ -87,6 +88,7 @@ def filter_sounds(
     api_key: Optional[str] = None,
     user_prompt: Optional[str] = "",
     output_file: Optional[str] = None,
+    mode: str = "dev",
 ) -> Dict[str, Any]:
     """
     Filter sounds using the LLM with a relevance ranking system.
@@ -144,7 +146,7 @@ def filter_sounds(
                     "selected_sound": {
                         "sound_title": selected_sound["sound_title"],
                         "sound_description": selected_sound["sound_description"],
-                        "audio_url_wav": selected_sound["sound_location"],
+                        "audio_url_wav": selected_sound["sound_location"] if mode == Mode.dev else selected_sound["audio_url_wav"],
                         "similarity_score": selected_sound["similarity"],
                     },
                     "reasoning": item.reasoning,
@@ -157,17 +159,20 @@ def filter_sounds(
     # Sort by ascending relevance rank (1 = best)
     result["filtered_sounds"].sort(key=lambda x: x["relevance_rank"])
 
-    # Automatic save to output/
-    if output_file is None:
-        output_file = "llm_filtering/output/filtered_sounds.json"
+    # Automatic save to output/ only in dev mode
+    if mode == Mode.dev:
+        if output_file is None:
+            output_file = "llm_filtering/output/filtered_sounds.json"
 
-    output_dir = os.path.dirname(output_file)
-    if output_dir and not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        output_dir = os.path.dirname(output_file)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=2, ensure_ascii=False)
-    print(f"Result saved to {output_file}")
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+        print(f"Result saved to {output_file}")
+    else:
+        print("Mode prod: fichier de résultats intermédiaires non créé")
 
     return result
 

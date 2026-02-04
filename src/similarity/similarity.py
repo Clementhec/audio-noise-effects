@@ -8,6 +8,7 @@ import numpy as np
 import json
 import os
 from typing import List, Dict, Any
+from utils.classes import Mode
 
 
 def cosine_similarity(a, b):
@@ -33,6 +34,7 @@ def find_similar_sounds(
     top_k: int = 5,
     save_to_json_file: bool = True,
     output_path: str = None,
+    mode: str = "dev",
 ) -> List[Dict[str, Any]]:
     """
     Trouve les sons les plus similaires pour chaque segment de parole.
@@ -107,8 +109,8 @@ def find_similar_sounds(
             }
         )
 
-    # Sauvegarder en JSON si demandé
-    if save_to_json_file:
+    # Sauvegarder en JSON si demandé et en mode dev
+    if save_to_json_file and mode == Mode.dev:
         # Utiliser le chemin par défaut si non spécifié
         if output_path is None:
             output_path = os.path.join("similarity/output", "similarity.json")
@@ -121,5 +123,7 @@ def find_similar_sounds(
             json.dump(results, f, indent=2, ensure_ascii=False)
 
         print(f"Résultats sauvegardés dans : {output_path}")
+    elif mode == Mode.prod:
+        print("Mode prod: fichiers intermédiaires non créés")
 
     return results

@@ -7,6 +7,8 @@ import json
 from elevenlabs.client import ElevenLabs
 from typing import Optional, Union, Dict, Any
 
+from utils.classes import Mode
+
 
 def transcribe_audio_elevenlabs(
     audio_source: Union[str, BytesIO],
@@ -17,6 +19,7 @@ def transcribe_audio_elevenlabs(
     tag_audio_events: bool = False,
     language_code: Optional[str] = None,
     diarize: bool = False,
+    mode: str = "dev",
 ) -> Dict[str, Any]:
     """
     Transcrit un fichier audio en utilisant l'API ElevenLabs.
@@ -96,7 +99,7 @@ def transcribe_audio_elevenlabs(
         "word_timings": word_timings,
     }
 
-    if transcription_path:
+    if transcription_path and mode == Mode.dev:
         with open(transcription_path, "w", encoding="utf-8") as f:
             json.dump(
                 {"full_transcript": full_transcript, "segment_result": segment_result},
@@ -112,6 +115,8 @@ def transcribe_audio_elevenlabs(
             "transcription": transcription_path,
             "word_timing": word_timing_path,
         }
+    elif mode == Mode.prod:
+        print("Mode prod: fichiers de transcription intermédiaires non créés")
 
     return result
 
@@ -125,6 +130,7 @@ def transcribe_audio_file(
     tag_audio_events: bool = False,
     language_code: Optional[str] = None,
     diarize: bool = False,
+    mode: str = "dev",
 ) -> Dict[str, Any]:
     """
     Transcribe an audio file using ElevenLabs API (wrapper for file paths).
@@ -176,6 +182,7 @@ def transcribe_audio_file(
         diarize=diarize,
         word_timing_path=word_timing_path,
         transcription_path=transcription_path,
+        mode=mode,
     )
 
     return result

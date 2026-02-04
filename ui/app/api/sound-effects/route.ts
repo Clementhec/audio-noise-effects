@@ -5,8 +5,15 @@ export async function POST(request: NextRequest) {
     // Récupérer les données du formulaire
     const formData = await request.formData();
     
-    // Faire l'appel à votre endpoint local
-    const response = await fetch('http://localhost:8000/sound-effects', {
+    // Renommer 'prompt' en 'user_prompt' pour correspondre à l'API FastAPI
+    const prompt = formData.get('prompt');
+    if (prompt) {
+      formData.delete('prompt');
+      formData.append('user_prompt', prompt);
+    }
+    
+    // Faire l'appel au serveur FastAPI
+    const response = await fetch('http://localhost:8000/process-video', {
       method: 'POST',
       body: formData,
     });
@@ -15,10 +22,16 @@ export async function POST(request: NextRequest) {
       throw new Error(`Erreur du serveur: ${response.status}`);
     }
 
-    // Récupérer la réponse
-    const data = await response.json();
-
-    return NextResponse.json(data, { status: 200 });
+    // La réponse est maintenant une vidéo
+    const videoBlob = await response.blob();
+    
+    // Retourner un succès avec un message
+    return NextResponse.json({ 
+      success: true,
+      message: 'Vidéo traitée avec succès',
+      videoProcessed: true 
+    }, { status: 200 });
+    
   } catch (error) {
     console.error('Erreur lors de l\'appel à l\'API:', error);
     return NextResponse.json(

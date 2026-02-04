@@ -128,18 +128,49 @@ def run_embeddings_step(
                 }
             )
 
-    print(f'Transcript: "{transcript[:80]}..."')
+    print(f'Transcript: "{transcript[:80] if transcript else "(empty)"}..."')
     print(f"Total words: {len(word_timings)}")
+    
+    # Vérifications de sécurité
+    if not transcript or not transcript.strip():
+        print("⚠️  WARNING: Empty transcript - no speech detected in video")
+        print("This video may not contain any spoken words or the audio quality may be too low.")
+        raise ValueError(
+            "No speech detected in video. The video either contains no spoken words "
+            "or the audio quality is insufficient for transcription. "
+            "Please ensure your video has clear speech audio."
+        )
+    
+    if len(word_timings) == 0:
+        print("⚠️  WARNING: No word timings - transcript exists but no words detected")
+        raise ValueError(
+            "Transcription failed: No individual words detected. "
+            "This may indicate audio quality issues or no clear speech in the video."
+        )
+    
+    print(f"First few words: {word_timings[:3]}")
 
     # Segment the transcript
     print("Segmenting transcript...")
     segmenter = SpeechSegmenter(max_words_per_segment=15)
+    
+    # Try sentence-based segmentation first
     segments = segmenter.segment_by_sentences(transcript, word_timings)
+    
+    # Fallback to time-based segmentation if sentence method fails
+    if not segments and len(word_timings) > 0:
+        print("Sentence segmentation failed, using time-window segmentation...")
+        segments = segmenter.segment_by_time_windows(
+            transcript, word_timings, window_seconds=5.0, overlap_seconds=0.0
+        )
 
     print(f"Created {len(segments)} segments")
 
     if not segments:
-        raise ValueError("No segments created!")
+        print(f"DEBUG - Transcript length: {len(transcript)}")
+        print(f"DEBUG - Word timings count: {len(word_timings)}")
+        print(f"DEBUG - Transcript content: {transcript}")
+        raise ValueError(f"No segments created! Check transcript and word timings.")
 
     print("Generating embeddings...")
     segment_texts = [seg["text"] for seg in segments]
@@ -520,17 +551,24 @@ class SoundEasy:
         if not self.soundbible_details_path.exists():
             from sounds.soundbible_utils import SoundBibleScraper
 
+            print("📥 Scraping SoundBible metadata (this may take a few minutes)...")
             BASE_URL = "https://soundbible.com/free-sound-effects-{}.html"
             soundbible_details_full = SoundBibleScraper(
                 base_url=BASE_URL, download_dir=self.sounds_soundbible_path
-            ).run()
+            ).run(download_files=False)  # Only metadata, no file downloads
             self.soundbible_details_path.parent.mkdir(parents=True, exist_ok=True)
             soundbible_details_full.to_csv(self.soundbible_details_path)
+            print(f"✓ Scraped metadata for {len(soundbible_details_full)} sounds")
+        else:
+            print(f"✓ Using existing metadata: {self.soundbible_details_path}")
+            soundbible_details_full = pd.read_csv(self.soundbible_details_path)
 
         if not self.sound_embeddings_path.exists():
+            print("🔢 Generating embeddings from metadata...")
             SoundEmbedder().process_sound_dataframe(
                 soundbible_details_full, output_path=self.sound_embeddings_path
             )
+            print(f"✓ Embeddings saved to: {self.sound_embeddings_path}")
 
     def run(self, args):
         if not self.audio_base_path.exists() or args.force_regenerate:

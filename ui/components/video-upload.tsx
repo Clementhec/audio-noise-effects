@@ -44,7 +44,10 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
   }
 
   const handleGenerate = async () => {
-    if (!videoFile || !prompt) return
+    if (!videoFile) {
+      alert('Veuillez sélectionner une vidéo')
+      return
+    }
     
     setState("processing")
     setProgress(10)
@@ -52,11 +55,14 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
     try {
       const formData = new FormData()
       formData.append('video', videoFile)
-      formData.append('prompt', prompt)
+      formData.append('user_prompt', prompt)
+      formData.append('max_sounds', '10')
+      formData.append('sound_intensity', '0.3')
       
       setProgress(20)
       
-      const response = await fetch('/api/sound-effects', {
+      // Appel direct au serveur FastAPI
+      const response = await fetch('http://localhost:8000/process-video', {
         method: 'POST',
         body: formData,
       })
@@ -67,33 +73,36 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
         throw new Error(`Erreur API: ${response.status}`)
       }
       
+      // Le serveur retourne maintenant un JSON avec les audioBlocks
       const data = await response.json()
+      
       setProgress(80)
       
-      // Transformer les résultats de l'API en blocks
-      let soundEffects: AudioBlock[] = []
-      if (data.effects && Array.isArray(data.effects)) {
-        soundEffects = data.effects.map((effect: any, index: number) => ({
-          id: effect.id || `block-${index + 1}`,
-          name: effect.name || effect.label || `Effet ${index + 1}`,
-          start: effect.start || effect.timestamp || 0,
-          duration: effect.duration || 5,
-          volume: effect.volume || 70,
-          audioUrl: effect.audioUrl || effect.url || effect.audio_url,
-        }))
+      // Vérifier si c'est une erreur
+      if (!data.success) {
+        throw new Error(data.error || 'Erreur lors du traitement')
       }
+      
+      // Créer une URL pour la vidéo originale (pas de merge, juste preview)
+      const videoUrl = URL.createObjectURL(videoFile)
+      
+      // Les effets sonores sont dans le JSON
+      const soundEffects: AudioBlock[] = data.audioBlocks || []
+      
+      console.log(`✅ Reçu ${soundEffects.length} effets sonores du serveur`)
+      console.log('Audio blocks:', soundEffects)
       
       setProgress(100)
       
       // Attendre un peu pour que l'utilisateur voie 100%
       setTimeout(() => {
-        const url = URL.createObjectURL(videoFile)
-        onComplete(videoFile, url, soundEffects)
+        onComplete(videoFile, videoUrl, soundEffects)
       }, 500)
       
     } catch (error) {
-      console.error('Erreur lors de la génération des effets sonores:', error)
-      alert('Erreur lors de la génération des effets sonores. Vérifiez que votre serveur backend est démarré sur http://localhost:8000')
+      console.error('❌ Erreur lors du traitement:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+      alert(`Erreur lors de la génération des effets sonores:\n${errorMessage}\n\nVérifiez que votre serveur backend est démarré sur http://localhost:8000`)
       setState("upload")
       setProgress(0)
     }
@@ -176,7 +185,8 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
             className="text-lg font-bold text-[#DFFF00] drop-shadow-md block"
             style={{ fontFamily: 'Comic Sans MS, cursive, sans-serif' }}
           >
-{"Describe your magic audio effects 🎵"}
+            {"Describe your magic audio effects 🎵 "}
+            <span className="text-sm text-white/70 font-normal">(optional)</span>
           </label>
           <Textarea
             placeholder="Add cinematic thunder effects with rain ambience during outdoor scenes..."

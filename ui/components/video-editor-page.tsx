@@ -42,9 +42,10 @@ interface Track {
 interface VideoEditorPageProps {
   videoFile: File
   videoUrl: string
+  soundEffects?: AudioBlock[]
 }
 
-export default function VideoEditorPage({ videoFile, videoUrl }: VideoEditorPageProps) {
+export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = [] }: VideoEditorPageProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -164,18 +165,7 @@ export default function VideoEditorPage({ videoFile, videoUrl }: VideoEditorPage
       visible: true,
       locked: false,
       volume: 60,
-      blocks: [
-        { 
-          id: "block-1", 
-          name: "Thunder", 
-          start: 10, 
-          duration: 15, 
-          volume: 70,
-          audioUrl: "https://soundbible.com/wav/Thunder-Mike_Koenig-315681025.wav"
-        },
-        { id: "block-2", name: "Rain Ambience", start: 30, duration: 45, volume: 50 },
-        { id: "block-3", name: "Wind", start: 80, duration: 25, volume: 60 },
-      ],
+      blocks: soundEffects,
     },
   ])
 

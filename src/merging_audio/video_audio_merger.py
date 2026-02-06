@@ -19,6 +19,41 @@ from merging_audio.audio_merger import merge_audio_files, AudioEntry
 from pydub import AudioSegment
 
 
+def download_sound_on_demand(
+    sound_url: str, output_path: Path, force_download: bool = False
+) -> bool:
+    """
+    Download a single sound effect file on demand.
+    
+    Args:
+        sound_url: URL to download from
+        output_path: Local path to save file
+        force_download: Re-download even if file exists
+    
+    Returns:
+        True if successful (or already exists), False otherwise
+    """
+    if output_path.exists() and not force_download:
+        print(f"  ✓ Sound already cached: {output_path.name}")
+        return True
+    
+    try:
+        print(f"  📥 Downloading: {output_path.name}")
+        response = requests.get(sound_url, timeout=30)
+        response.raise_for_status()
+        
+        # Ensure parent directory exists
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        output_path.write_bytes(response.content)
+        print(f"  ✓ Downloaded: {output_path.name}")
+        return True
+    
+    except Exception as e:
+        print(f"  ❌ Download failed for {output_path.name}: {e}")
+        return False
+
+
 def load_sound_metadata(
     metadata_path: str = "data/soundbible_metadata.csv",
 ) -> pd.DataFrame:
@@ -148,31 +183,30 @@ def prepare_sound_effects(
         target_word = item.get("target_word")
         speech_text = item.get("speech_text")
 
-        sound_location = selected_sound.get("audio_url_wav")
+        sound_url = selected_sound.get("audio_url_wav")
 
-        if not all([sound_title, target_word, speech_text]):
+        if not all([sound_title, target_word, speech_text, sound_url]):
             continue
 
         print(f"Processing: '{target_word}' → {sound_title}")
 
-        # Find sound URL
-        # sound_url = find_sound_url(sound_title, metadata_df)
-        # if not sound_url:
-        #     print(f"Sound effect {sound_url} not found !")
-        #     continue
+        # Determine output path for downloaded sound
+        file_ext = ".wav" if sound_url.endswith(".wav") else ".mp3"
+        safe_filename = "".join(
+            c for c in sound_title if c.isalnum() or c in (" ", "-", "_")
+        )
+        safe_filename = safe_filename.replace(" ", "_")
+        sound_location = download_dir / f"{safe_filename}{file_ext}"
 
-        # Determine file extension and output path
-        # file_ext = ".wav" if sound_url.endswith(".wav") else ".mp3"
-        # safe_filename = "".join(
-        #     c for c in sound_title if c.isalnum() or c in (" ", "-", "_")
-        # )
-        # safe_filename = safe_filename.replace(" ", "_")
-        # output_path = download_dir / f"{safe_filename}{file_ext}"
-
-        # Load sound effect if exists
-        if not Path(sound_location).exists():
-            print(f"Sound : {sound_title} has not been found at {sound_location}")
-            continue
+        # Download sound on demand if not already cached
+        if not sound_location.exists():
+            print(f"  📥 Sound not cached, downloading on demand...")
+            success = download_sound_on_demand(sound_url, sound_location)
+            if not success:
+                print(f"  ❌ Failed to download: {sound_title}")
+                continue
+        else:
+            print(f"  ✓ Using cached sound: {sound_title}")
 
         # Find word timing
         start_time = find_word_timing(

@@ -399,14 +399,30 @@ class SoundBibleScraper:
             f"Downloaded {n} sounds out of {len(results)} ({n / len(results)}%)"
         )
 
-    def run(self) -> pd.DataFrame:
+    def run(self, download_files: bool = False) -> pd.DataFrame:
+        """
+        Run the complete scraping pipeline.
+        
+        Args:
+            download_files: If True, download all audio files (can be several GB!).
+                          If False, only fetch metadata (recommended - download on demand later).
+        
+        Returns:
+            DataFrame with sound metadata
+        """
         self.fetch_sound_hrefs()
         self.sound_details["keywords"] = ""
         self.sound_details["length"] = None
         self.fetch_sound_details_from_hrefs()
         self.clean_sounds_description()
         self.fetch_audio_urls_from_details()
-        self.download()
+        
+        if download_files:
+            print("⚠️  WARNING: Downloading ALL sound files (this may take a while and use several GB)")
+            self.download()
+        else:
+            print("✓ Metadata scraped successfully (files will be downloaded on demand)")
+        
         return self.sound_details
 
 
@@ -416,6 +432,7 @@ if __name__ == "__main__":
 
     scraper = SoundBibleScraper(BASE_URL, download_dir)
 
-    sound_details = scraper.run()
+    # Only scrape metadata by default (download on demand later)
+    sound_details = scraper.run(download_files=False)
 
     sound_details.to_csv("data/sounds/soundbible_metadata.csv", index=False)

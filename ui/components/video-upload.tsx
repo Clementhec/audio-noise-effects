@@ -9,8 +9,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import VideoLoading from "@/components/video-loading"
 
+interface AudioBlock {
+  id: string
+  name: string
+  start: number
+  duration: number
+  volume: number
+  audioUrl?: string
+}
+
 interface VideoUploadProps {
-  onComplete: (videoFile: File, videoUrl: string) => void
+  onComplete: (videoFile: File, videoUrl: string, soundEffects: AudioBlock[]) => void
 }
 
 export default function VideoUpload({ onComplete }: VideoUploadProps) {
@@ -19,87 +28,83 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [progress, setProgress] = useState(0)
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       setVideoFile(file)
-      
-      // Appel à l'API upload_file
-      try {
-        const formData = new FormData()
-        formData.append('video', file)
-        
-        console.log('Upload du fichier:', file.name)
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('Erreur du serveur:', errorData)
-          alert(`Erreur: ${errorData.error || 'Erreur lors de l\'upload'}\n\nAssurez-vous que votre serveur backend est démarré sur http://localhost:8000`)
-          return
-        }
-        
-        const data = await response.json()
-        console.log('Réponse de l\'API:', data)
-      } catch (error) {
-        console.error('Erreur lors de l\'upload:', error)
-        alert('Erreur de connexion. Vérifiez que votre serveur backend est démarré sur http://localhost:8000')
-      }
     }
   }
 
-  const handleDrop = async (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     const file = e.dataTransfer.files[0]
     if (file && file.type.startsWith("video/")) {
       setVideoFile(file)
-      
-      // Appel à l'API upload-video
-      try {
-        const formData = new FormData()
-        formData.append('video', file)
-        
-        console.log('Upload du fichier:', file.name)
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('Erreur du serveur:', errorData)
-          alert(`Erreur: ${errorData.error || 'Erreur lors de l\'upload'}\n\nAssurez-vous que votre serveur backend est démarré sur http://localhost:8000`)
-          return
-        }
-        
-        const data = await response.json()
-        console.log('Réponse de l\'API:', data)
-      } catch (error) {
-        console.error('Erreur lors de l\'upload:', error)
-        alert('Erreur de connexion. Vérifiez que votre serveur backend est démarré sur http://localhost:8000')
-      }
     }
   }
 
-  const handleGenerate = () => {
-    if (videoFile && prompt) {
-      setState("processing")
-      // Simulate processing
-      let progressValue = 0
-      const interval = setInterval(() => {
-        progressValue += 5
-        setProgress(progressValue)
-        if (progressValue >= 100) {
-          clearInterval(interval)
-          const url = URL.createObjectURL(videoFile)
-          onComplete(videoFile, url)
-        }
-      }, 100)
+  const handleGenerate = async () => {
+    if (!videoFile) {
+      alert('Veuillez sélectionner une vidéo')
+      return
+    }
+    
+    setState("processing")
+    setProgress(10)
+    
+    try {
+      const formData = new FormData()
+      formData.append('video', videoFile)
+      formData.append('user_prompt', prompt)
+      formData.append('max_sounds', '10')
+      formData.append('sound_intensity', '0.3')
+      
+      setProgress(20)
+      
+      // Appel direct au serveur FastAPI
+      const response = await fetch('http://localhost:8000/process-video', {
+        method: 'POST',
+        body: formData,
+      })
+      
+      setProgress(50)
+      
+      if (!response.ok) {
+        throw new Error(`Erreur API: ${response.status}`)
+      }
+      
+      // Le serveur retourne maintenant un JSON avec les audioBlocks
+      const data = await response.json()
+      
+      setProgress(80)
+      
+      // Vérifier si c'est une erreur
+      if (!data.success) {
+        throw new Error(data.error || 'Erreur lors du traitement')
+      }
+      
+      // Créer une URL pour la vidéo originale (pas de merge, juste preview)
+      const videoUrl = URL.createObjectURL(videoFile)
+      
+      // Les effets sonores sont dans le JSON
+      const soundEffects: AudioBlock[] = data.audioBlocks || []
+      
+      console.log(`✅ Reçu ${soundEffects.length} effets sonores du serveur`)
+      console.log('Audio blocks:', soundEffects)
+      
+      setProgress(100)
+      
+      // Attendre un peu pour que l'utilisateur voie 100%
+      setTimeout(() => {
+        onComplete(videoFile, videoUrl, soundEffects)
+      }, 500)
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du traitement:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+      alert(`Erreur lors de la génération des effets sonores:\n${errorMessage}\n\nVérifiez que votre serveur backend est démarré sur http://localhost:8000`)
+      setState("upload")
+      setProgress(0)
     }
   }
 
@@ -180,7 +185,8 @@ export default function VideoUpload({ onComplete }: VideoUploadProps) {
             className="text-lg font-bold text-[#DFFF00] drop-shadow-md block"
             style={{ fontFamily: 'Comic Sans MS, cursive, sans-serif' }}
           >
-{"Describe your magic audio effects 🎵"}
+            {"Describe your magic audio effects 🎵 "}
+            <span className="text-sm text-white/70 font-normal">(optional)</span>
           </label>
           <Textarea
             placeholder="Add cinematic thunder effects with rain ambience during outdoor scenes..."

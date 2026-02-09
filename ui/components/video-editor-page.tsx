@@ -170,6 +170,7 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
   ])
 
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null)
+  const [isScrubbing, setIsScrubbing] = useState(false)
   
   // États pour le drag & drop des blocs
   const [draggingBlock, setDraggingBlock] = useState<string | null>(null)
@@ -427,6 +428,30 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
     setResizeEdge(null)
     setResizeStartData(null)
   }
+
+  const seekToTime = (timeInSeconds: number) => {
+    const clampedTime = Math.max(0, Math.min(duration, timeInSeconds))
+    const video = videoRef.current
+    if (video) {
+      video.currentTime = clampedTime
+    }
+    setCurrentTime(clampedTime)
+  }
+
+  const handleTimelineSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!timelineRef.current) return
+    const rect = timelineRef.current.getBoundingClientRect()
+    const pixelsPerSecond = 10 * zoom[0]
+    const clickX = e.clientX - rect.left + timelineRef.current.scrollLeft
+    const newTime = clickX / pixelsPerSecond
+    seekToTime(newTime)
+  }
+
+  const handlePlayheadMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsScrubbing(true)
+  }
   
   // Effet pour gérer les événements globaux de souris pendant le drag
   useEffect(() => {
@@ -459,6 +484,32 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
       }
     }
   }, [draggingBlock, dragStartX, dragStartTime, zoom, duration, tracks])
+
+  // Effet pour gérer le drag du playhead (scrubbing)
+  useEffect(() => {
+    if (!isScrubbing) return
+
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!timelineRef.current) return
+      const rect = timelineRef.current.getBoundingClientRect()
+      const pixelsPerSecond = 10 * zoom[0]
+      const mouseX = e.clientX - rect.left + timelineRef.current.scrollLeft
+      const newTime = mouseX / pixelsPerSecond
+      seekToTime(newTime)
+    }
+
+    const handleGlobalMouseUp = () => {
+      setIsScrubbing(false)
+    }
+
+    window.addEventListener("mousemove", handleGlobalMouseMove)
+    window.addEventListener("mouseup", handleGlobalMouseUp)
+
+    return () => {
+      window.removeEventListener("mousemove", handleGlobalMouseMove)
+      window.removeEventListener("mouseup", handleGlobalMouseUp)
+    }
+  }, [isScrubbing, zoom, duration])
   
   // Debug: afficher tous les paramètres dans la console
   useEffect(() => {
@@ -700,6 +751,10 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
+              onMouseDown={(e) => {
+                if (draggingBlock || resizingBlock) return
+                handleTimelineSeek(e)
+              }}
             >
               {/* Calcul des pixels par seconde - utilisé partout pour la cohérence */}
               {(() => {
@@ -762,12 +817,16 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
 
                       {/* Playhead */}
                       <div
-                        className="absolute w-0.5 bg-foreground z-20 pointer-events-none"
+                        className={cn(
+                          "absolute w-0.5 bg-foreground z-20",
+                          isScrubbing ? "cursor-grabbing" : "cursor-grab"
+                        )}
                         style={{ 
                           left: `${currentTime * pixelsPerSecond}px`,
                           top: 0,
                           height: `${tracks.length * 56}px`
                         }}
+                        onMouseDown={handlePlayheadMouseDown}
                       >
                         <div className="w-3 h-3 bg-foreground rounded-full -ml-1.25 -mt-1.5" />
                       </div>

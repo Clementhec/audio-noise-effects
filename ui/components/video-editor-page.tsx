@@ -50,6 +50,7 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
   const [isMuted, setIsMuted] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(120)
+  const [videoAspect, setVideoAspect] = useState<number | null>(null)
   const [zoom, setZoom] = useState([1])
   const [showControls, setShowControls] = useState(true)
   
@@ -88,6 +89,9 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
     const video = videoRef.current
     if (video) {
       setDuration(video.duration)
+      if (video.videoWidth && video.videoHeight) {
+        setVideoAspect(video.videoWidth / video.videoHeight)
+      }
     }
   }
   
@@ -614,82 +618,94 @@ export default function VideoEditorPage({ videoFile, videoUrl, soundEffects = []
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Video Preview Section */}
         <div className="flex-shrink-0 border-b border-border bg-muted/30" style={{ height: "60%" }}>
-          <div className="h-full flex items-center justify-center p-4">
+          <div className="h-full flex items-center gap-4 px-4 pr-12">
+            <div className="hidden lg:block flex-1 h-full" aria-hidden="true" />
             <div 
-              className="flex flex-col w-full max-w-5xl h-full"
+              className="flex flex-col w-full h-full items-end"
               onMouseMove={handleVideoMouseMove}
               onMouseLeave={handleVideoMouseLeave}
             >
               {/* Video Container */}
-              <div className="flex-1 min-h-0 bg-black rounded-t-lg overflow-hidden shadow-2xl flex items-center justify-center cursor-pointer">
-                {videoUrl ? (
-                  <video
-                    ref={videoRef}
-                    src={videoUrl}
-                    className="h-full w-full object-contain"
-                    onTimeUpdate={handleVideoTimeUpdate}
-                    onLoadedMetadata={handleVideoLoadedMetadata}
-                    onEnded={handleVideoEnded}
-                    onClick={() => setIsPlaying(!isPlaying)}
-                  />
-                ) : (
-                  <div className="text-center space-y-4">
-                    <div className="mx-auto h-20 w-20 rounded-full bg-white/10 flex items-center justify-center">
-                      <Play className="h-10 w-10 text-white" />
-                    </div>
-                    <p className="text-white/70 text-sm">{"Video Preview"}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Playback Controls Bar */}
-              <div 
-                className={cn(
-                  "transition-opacity duration-300",
-                  showControls ? "opacity-100" : "opacity-0 pointer-events-none"
-                )}
-              >
-                <div className="bg-black/90 backdrop-blur-sm rounded-b-lg px-4 py-3 space-y-2">
-                  {/* Timeline Scrubber */}
-                  <div className="relative">
-                    <Slider
-                      value={[currentTime]}
-                      onValueChange={handleSeek}
-                      max={duration}
-                      step={0.1}
-                      className="cursor-pointer"
-                    />
-                  </div>
-
-                  {/* Controls Row */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-white hover:bg-white/20"
-                        onClick={() => setIsPlaying(!isPlaying)}
+              <div className="flex-1 min-h-0 w-full flex justify-end items-center">
+                <div className="w-full max-w-[420px] max-h-full flex flex-col">
+                  <div className="rounded-t-lg overflow-hidden shadow-2xl flex items-center justify-center cursor-pointer w-full">
+                    {videoUrl ? (
+                      <div
+                        className="w-full overflow-hidden rounded-t-lg bg-black/90"
+                        style={{ aspectRatio: videoAspect ?? "16 / 9" }}
                       >
-                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                      </Button>
-                      <span className="text-xs text-white/90 font-mono tabular-nums">
-                        {formatTime(currentTime)} / {formatTime(duration)}
-                      </span>
-                    </div>
+                        <video
+                          ref={videoRef}
+                          src={videoUrl}
+                          className="h-full w-full object-contain"
+                          onTimeUpdate={handleVideoTimeUpdate}
+                          onLoadedMetadata={handleVideoLoadedMetadata}
+                          onEnded={handleVideoEnded}
+                          onClick={() => setIsPlaying(!isPlaying)}
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center space-y-4 bg-black/90 rounded-t-lg h-full w-full flex flex-col items-center justify-center">
+                        <div className="mx-auto h-20 w-20 rounded-full bg-white/10 flex items-center justify-center">
+                          <Play className="h-10 w-10 text-white" />
+                        </div>
+                        <p className="text-white/70 text-sm">{"Video Preview"}</p>
+                      </div>
+                    )}
+                  </div>
+                  {/* Playback Controls Bar */}
+                  <div 
+                    className={cn(
+                      "transition-opacity duration-300",
+                      showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+                    )}
+                  >
+                    <div className="bg-black/90 backdrop-blur-sm rounded-b-lg px-4 py-3 space-y-2 w-full">
+                      {/* Timeline Scrubber */}
+                      <div className="relative">
+                        <Slider
+                          value={[currentTime]}
+                          onValueChange={handleSeek}
+                          max={duration}
+                          step={0.1}
+                          className="cursor-pointer"
+                        />
+                      </div>
 
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-white hover:bg-white/20"
-                        onClick={() => setIsMuted(!isMuted)}
-                      >
-                        {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                      </Button>
+                      {/* Controls Row */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-white hover:bg-white/20"
+                            onClick={() => setIsPlaying(!isPlaying)}
+                          >
+                            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                          </Button>
+                          <span className="text-xs text-white/90 font-mono tabular-nums">
+                            {formatTime(currentTime)} / {formatTime(duration)}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-white hover:bg-white/20"
+                            onClick={() => setIsMuted(!isMuted)}
+                          >
+                            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Playback Controls Bar */}
+              
             </div>
           </div>
         </div>
